@@ -9,11 +9,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['telephone', 'role', 'id_prop']
 
 class CombinedUserSerializer(serializers.ModelSerializer):
-    Profile = ProfileSerializer()
+    profile = ProfileSerializer()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'Profile']
+        fields = ['id', 'username', 'email', 'profile']
 
         # def create(self, validated_data):
         #     user_data = validated_data.pop('utilisateur')

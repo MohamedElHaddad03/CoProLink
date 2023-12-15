@@ -11,6 +11,7 @@ from .models import Profile
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
+from rest_framework.decorators import api_view
 
 class ProfileListCreateView(APIView):
     def get(self, request):
@@ -36,6 +37,7 @@ class ProfileRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = CombinedUserSerializer
 
+@api_view(['GET'])
 def List_Users(request):
     users=User.objects.all()
     serializer=CombinedUserSerializer(users,many=True)
