@@ -26,4 +26,4 @@ class Profile(models.Model):
         super(Profile, self).save(*args, **kwargs)
 
     def _str__(self):
-        return self.user.last_name+' '+self.user.first_name
+        return self.user.get_full_name
