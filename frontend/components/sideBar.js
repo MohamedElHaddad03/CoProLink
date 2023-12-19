@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image, Animated, Easing,SafeAreaView, StatusBar } from 'react-native';
 import icons from '../constants/icons';
+import { Ionicons } from '@expo/vector-icons';
 
 const Sidebar = ({ selectedItem, setSelectedItem }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -20,8 +21,10 @@ const Sidebar = ({ selectedItem, setSelectedItem }) => {
     setSidebarOpen(!isSidebarOpen);
   };
 
+
+
 const handleItemClick = (item) => {
-    setSelectedItem(item); // Update the selected item when an icon is clicked
+    setSelectedItem(item); 
   };
 
   return (
@@ -31,70 +34,52 @@ const handleItemClick = (item) => {
       <View>
         <TouchableOpacity style={{marginBottom:50}} onPress={toggleSidebar}>
           {!isSidebarOpen && (
-            <Image
-              source={icons.menu}
-              fadeDuration={0}
-              style={{ width: 30, height: 30, tintColor: iconColor }}
-            />
+            <Ionicons name="menu" size={30} color={iconColor} />
           )}
           {isSidebarOpen && (
-            <Image
-              source={icons.X}
-              fadeDuration={0}
-              style={{ width: 30, height: 30, tintColor: iconColor }}
-            />
+            <Ionicons name="close" size={40} color={iconColor} />
           )}
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={[styles.sidebarItem]}  >
-        <Image
-          source={icons.statistic}
-          fadeDuration={0}
-          style={{ width: 30, height: 30, tintColor: iconColor }}
-        />
+      <TouchableOpacity style={[styles.sidebarItem]}  onPress={() => handleItemClick('Statistiques')}>
+      <Ionicons name={ selectedItem === "Statistiques"? "stats-chart":"stats-chart-outline"} size={26} color={iconColor} />
         {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Statistiques</Text>
         )}
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.sidebarItem} onPress={() => handleItemClick('Documents')}>
-        <Image
-          source={icons.document}
-          fadeDuration={0}
-          style={{ width: 30, height: 30, tintColor: iconColor }}
-        />
+      <Ionicons name={ selectedItem === "Documents"? "documents":"documents-outline"} size={26} color={iconColor} />
         {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Documents</Text>
         )}
       </TouchableOpacity>
-      <TouchableOpacity style={styles.sidebarItem} onPress={() => handleItemClick('Profile')}>
-        <Image
-          source={icons.person}
-          fadeDuration={0}
-          style={{ width: 30, height: 30, tintColor: iconColor }}
-        />
-        {isSidebarOpen && (
-          <Text style={[styles.sidebarText, { color: iconColor }]}>Profil</Text>
-        )}
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.sidebarItem}>
-        <Image
-          source={icons.money}
-          fadeDuration={0}
-          style={{ width: 30, height: 30, tintColor: iconColor }}
-        />
+      <TouchableOpacity style={styles.sidebarItem} onPress={() => handleItemClick('Depenses')}>
+      <Ionicons name={ selectedItem === "Depenses"? "cash":"cash-outline"} size={26} color={iconColor} />
+
         {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Dépenses</Text>
         )}
       </TouchableOpacity>
-      <TouchableOpacity style={styles.sidebarItem}>
-        <Image
-          source={icons.card}
-          fadeDuration={0}
-          style={{ width: 30, height: 30, tintColor: iconColor }}
-        />
+      <TouchableOpacity style={styles.sidebarItem} onPress={() => handleItemClick('Paiement')}>
+      <Ionicons name={ selectedItem === "Paiement"? "card":"card-outline"} size={26} color={iconColor} />
+
         {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Paiments</Text>
+        )}
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.sidebarItem} onPress={() => handleItemClick('Profile')}>
+      <Ionicons name={ selectedItem === "Profile"? "person":"person-outline"} size={26} color={iconColor} />
+
+        {isSidebarOpen && (
+          <Text style={[styles.sidebarText, { color: iconColor }]}>Profil</Text>
+        )}
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.sidebarItem} onPress={() => handleItemClick('Settings')}>
+      <Ionicons name={ selectedItem === "Settings"? "settings":"settings-outline"} size={26} color={iconColor} />
+
+        {isSidebarOpen && (
+          <Text style={[styles.sidebarText, { color: iconColor }]}>Settings</Text>
         )}
       </TouchableOpacity>
       {/* Add other sidebar items as needed */}
@@ -125,7 +110,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 40,
-    paddingRight: 10,
+    paddingRight: 5,
   },
   sidebarText: {
     color: '#F0F8FF',
