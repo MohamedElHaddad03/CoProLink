@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image, Animated, Easing,SafeAreaView, StatusBar } from 'react-native';
 import icons from '../constants/icons';
 
-const Sidebar = () => {
+const Sidebar = ({ selectedItem, setSelectedItem }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const largeur = useRef(new Animated.Value(50)).current;
   const iconColor = isSidebarOpen ? '#3b67bb' : '#fff';
@@ -18,6 +18,10 @@ const Sidebar = () => {
     }).start();
 
     setSidebarOpen(!isSidebarOpen);
+  };
+
+const handleItemClick = (item) => {
+    setSelectedItem(item); // Update the selected item when an icon is clicked
   };
 
   return (
@@ -42,7 +46,7 @@ const Sidebar = () => {
           )}
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={[styles.sidebarItem]}>
+      <TouchableOpacity style={[styles.sidebarItem]}  >
         <Image
           source={icons.statistic}
           fadeDuration={0}
@@ -53,7 +57,7 @@ const Sidebar = () => {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.sidebarItem}>
+      <TouchableOpacity style={styles.sidebarItem} onPress={() => handleItemClick('Documents')}>
         <Image
           source={icons.document}
           fadeDuration={0}
@@ -63,7 +67,7 @@ const Sidebar = () => {
           <Text style={[styles.sidebarText, { color: iconColor }]}>Documents</Text>
         )}
       </TouchableOpacity>
-      <TouchableOpacity style={styles.sidebarItem}>
+      <TouchableOpacity style={styles.sidebarItem} onPress={() => handleItemClick('Profile')}>
         <Image
           source={icons.person}
           fadeDuration={0}
