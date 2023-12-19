@@ -1,7 +1,7 @@
 import React from 'react';
 import ProfileScreen from './Profile';
 import DocumentsManager from './DocumentsManager';
-// Other imports as needed
+import PaiementsManager from './PaiementsManager';
 
 const ControllerComponent = ({ selectedItem }) => {
 
@@ -11,6 +11,8 @@ const ControllerComponent = ({ selectedItem }) => {
       return <ProfileScreen />;
     case 'Documents':
       return <DocumentsManager />;
+    case 'Paiement':
+      return <PaiementsManager />;
     default:
       return null; 
   }

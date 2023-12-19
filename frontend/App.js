@@ -11,7 +11,7 @@ import ControllerComponent from './components/Controller';
 
 const App = () => {
 
-  const [selectedItem, setSelectedItem] = useState(null); 
+  const [selectedItem, setSelectedItem] = useState('Statistiques'); 
 
 
   return (
