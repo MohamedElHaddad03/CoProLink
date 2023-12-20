@@ -11,8 +11,8 @@ from django.utils import timezone
 @receiver(
     pre_save, sender=Propriete
 )  # y3ni apres une instance du modele Propriete dyalna, le signal va etre declenché
-def PaiementMensuel(sender, instance, created, **kwargs):
-    if created:
+def PaiementMensuel(sender, instance, **kwargs):
+    if kwargs.get('created'):
         today = timezone.now()
         current_month = today.month
         current_year = today.year
