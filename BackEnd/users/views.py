@@ -33,12 +33,12 @@ class ProfileListCreateView(APIView):
                 email=donnees["email"],
             )
 
-            copropriete_id = donnees["Profile"]["id_prop"]
+            copropriete_id = donnees["profile"]["id_prop"]
             copropriete = get_object_or_404(Copropriete, id_cop=copropriete_id)
             profile = Profile.objects.create(
                 user=user,
-                telephone=donnees["Profile"]["telephone"],
-                role=donnees["Profile"]["role"],
+                telephone=donnees["profile"]["telephone"],
+                role=donnees["profile"]["role"],
                 id_prop=copropriete,
             )
             profile.save()
@@ -49,6 +49,14 @@ class ProfileListCreateView(APIView):
 class ProfileRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = CombinedUserSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        super().destroy(request, *args, **kwargs)
+        return Response(
+            {"message": "L'utilisateur a été supprimé avec succès!"},
+            status=status.HTTP_200_OK,
+        )
 
 
 @api_view(["GET"])
@@ -83,7 +91,7 @@ class LoginView(APIView):
 
 class LogoutView(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -103,3 +111,6 @@ class LogoutView(APIView):
                 {"erreur": "Pas d'utilisateur connecté actuellement!"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+# def PaiementMensuel(request):
