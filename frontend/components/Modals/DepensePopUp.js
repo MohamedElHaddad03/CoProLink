@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export  const  CategoryPopUp = ({isModalVisible,toggleModal}) => {
+export  const  DepensePopUp = ({isModalVisible,toggleModal}) => {
 //   const [isModalVisible, setModalVisible] = useState(false);
 
 //   const toggleModal = () => {
 //     setModalVisible(!isModalVisible);
 //   };
-const [categ,setCateg]=useState('');
+const [name,setName]=useState('');
+const [desc,setDesc]=useState('');
+const [price,setPrice]=useState(0);
 
   return (
     <View style={styles.container}>
@@ -21,17 +23,40 @@ const [categ,setCateg]=useState('');
         <View style={styles.modalContainer}>
         
           <View style={styles.modalContent}>
-            <Text style={{marginTop:20,fontSize:21,fontWeight:'bold'}}>Categorie :</Text>
+            
           <TouchableOpacity onPress={toggleModal} style={styles.close}>
               <Ionicons name="close" size={30} color='red'  />
             </TouchableOpacity>
+            <Text style={{marginTop:20,fontSize:21,fontWeight:'bold'}}>Depense :</Text>
             <TextInput
-              id='Categorie'
-              value={categ}
-              onChange={(value) => setCateg(value)}
-              placeholder='Saisir la nouvelle Categorie'
+              id='Name'
+              value={name}
+              onChange={(value) => setName(value)}
+              placeholder='Saisir la nouvelle depense'
               style={styles.input}
             />
+            <Text style={{marginTop:20,fontSize:21,fontWeight:'bold'}}>Montant :</Text>
+            <TextInput
+              id='Price'
+              value={price}
+              onChange={(value) => setPrice(value)}
+                placeholder="Saisir le montant"
+                 keyboardType="numeric"
+              style={styles.input}
+            />
+             <Text style={{marginTop:20,fontSize:21,fontWeight:'bold'}}>Description :</Text>
+            <TextInput
+              id='Description'
+              value={desc}
+              onChange={(value) => setDesc(value)}
+              placeholder='Saisir la nouvelle Categorie'
+                         textAlignVertical="top"
+        multiline
+        numberOfLines={4}
+        maxLength={150}
+              style={[styles.input,{maxWidth:'100%'}]}
+            />
+             
             <View style={styles.btnContainer}>
   {/* <TouchableOpacity onPress={toggleModal} style={[styles.buttons,{backgroundColor:'#800020',}]}>
     <Text style={styles.buttonText}>Annuler</Text>
@@ -55,32 +80,34 @@ const styles = StyleSheet.create({
     borderColor:'#000',
     borderWidth:1,
     flex: 1,
-    width:'80%',
+    width:'100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContainer: {
+    
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: 'white',
     width:'80%',
+    backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
   },
   input:{
-    marginTop:20,
+    marginTop:10,
     borderRadius:5,
     padding:3,
     paddingLeft:20,
     paddingRight:20,
-    borderColor:'#000',
+    borderColor:'#f2f5f9',
     borderWidth:1,
+    width:"100%",
     backgroundColor:'#3b67bb20',
-
+    
 
 
   },
@@ -91,16 +118,18 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     marginTop: 20,
   },
   buttons: {
     borderRadius:10,
-    padding:3,
+    padding:5,
+    paddingHorizontal:25,
     flexDirection: 'row-reverse',
     alignItems: 'center',
   },
   buttonText: {
+    fontSize:20,
     marginRight: 5,
     color: 'white',
   },

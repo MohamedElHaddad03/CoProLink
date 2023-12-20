@@ -8,7 +8,7 @@ const Sidebar = ({ selectedItem, setSelectedItem }) => {
   const largeur = useRef(new Animated.Value(50)).current;
   const iconColor = isSidebarOpen ? '#3b67bb' : '#fff';
   const bgColor = isSidebarOpen ? '#fff' : '#3b67bb';
-
+ 
   const toggleSidebar = () => {
     const newValue = isSidebarOpen ? 50 : 200;
     Animated.timing(largeur, {
@@ -89,6 +89,7 @@ const handleItemClick = (item) => {
 
 const styles = StyleSheet.create({
   sidebar: {
+    zIndex:1,
     padding: 10,
     position: 'absolute', // Use absolute positioning for overlay
    // top: 0,

@@ -3,12 +3,17 @@ import CardDepense from "./cards/cardDepense"
 import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { CategoryPopUp } from "./Modals/CategoryPopUp";
+import { DepensePopUp } from "./Modals/DepensePopUp";
 
 export const Depense = () => {
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalCategVisible, setModalCategVisible] = useState(false);
+  const [isModalDepVisible, setModalDepVisible] = useState(false);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+  const toggleCategModal = () => {
+    setModalCategVisible(!isModalCategVisible);
+  }
+  const toggleDepgModal = () => {
+    setModalDepVisible(!isModalDepVisible);
   }
 
   const [data, setData] = useState([
@@ -34,27 +39,30 @@ export const Depense = () => {
     </View>
     <View style={styles.header}>
       
-      <TouchableOpacity style={styles.categoryButton}>
+      <TouchableOpacity onPress={() => setModalCategVisible(true)} style={styles.categoryButton}>
         <Ionicons name="add-circle-outline" size={30} color='white' />
         <Text style={styles.buttonText}>
           Categorie</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => setModalVisible(true)}
+        onPress={() => setModalDepVisible(true)}
       style={styles.expenseButton}>
   <Ionicons
     name="add-circle-outline"
     size={30}
     color="white"
+    onPress={() => setModalDepVisible(false)}
      // Change 'true' to {true}
   />
   <Text style={styles.buttonText}> Depense</Text>
 </TouchableOpacity>
 
-<CategoryPopUp isModalVisible={isModalVisible} toggleModal={()=>setModalVisible(!isModalVisible)} />
+<CategoryPopUp isModalVisible={isModalCategVisible} toggleModal={toggleCategModal} />
+<DepensePopUp isModalVisible={isModalDepVisible} toggleModal={toggleDepgModal} />
+
     </View>
     <KeyboardAvoidingView behavior='height'>
-      <ScrollView style={[styles.FlatlistContainer]}>
+      <ScrollView style={[styles.FlatlistContainer]} showsVerticalScrollIndicator={false}>
 
         {categories.map(category => {
           const categoryItems = data.filter(item => item.Categorie === category);
