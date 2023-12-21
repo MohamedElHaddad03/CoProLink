@@ -63,7 +63,7 @@ class Paiement(models.Model):
     id_pay = models.AutoField(primary_key=True)
     montant = models.FloatField()
     date_creation = models.DateField()
-    date_paiement = models.DateField()
+    date_paiement = models.DateField(null=True,blank=True)
     etat = models.BooleanField(default=False)
     id_cot = models.ForeignKey(Cotisation, on_delete=models.CASCADE) 
     id_prop = models.ForeignKey(Propriete, on_delete=models.CASCADE)  

@@ -17,33 +17,9 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 
-class ProfileListCreateView(APIView):
-    def get(self, request):
-        users = User.objects.all()
-        serializer = CombinedUserSerializer(users, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = CombinedUserSerializer(data=request.data)
-        if serializer.is_valid():
-            donnees = request.data
-            user = User.objects.create(
-                username=donnees["username"],
-                password=make_password(donnees["password"]),
-                email=donnees["email"],
-            )
-
-            copropriete_id = donnees["profile"]["id_prop"]
-            copropriete = get_object_or_404(Copropriete, id_cop=copropriete_id)
-            profile = Profile.objects.create(
-                user=user,
-                telephone=donnees["profile"]["telephone"],
-                role=donnees["profile"]["role"],
-                id_prop=copropriete,
-            )
-            profile.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class ProfileListCreateView(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = CombinedUserSerializer
 
 
 class ProfileRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):

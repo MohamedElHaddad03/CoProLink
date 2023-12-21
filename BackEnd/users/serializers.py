@@ -17,7 +17,13 @@ class CombinedUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'profile']
 
     def create(self, validated_data):
+        utilisateur=self.context['request'].user
         profile_data = validated_data.pop('profile')
+        if utilisateur.profile.role == "admin":
+            profile_data['role']="proprietaire"
+            profile_data['id_cop']=utilisateur.profile.id_cop
+        if utilisateur.profile.role == "gestion":
+            profile_data['role']="admin"
         user = User.objects.create(**validated_data)
         Profile.objects.create(user=user, **profile_data)
         return user
