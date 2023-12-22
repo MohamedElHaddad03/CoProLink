@@ -7,12 +7,15 @@ import  SettingsScreen from './SettingsScreen';
 import AddUserScreen from './usersTest';
 import ContactSupport from './ContactSupport';
 import ErrorBoundary from '../errorBoundry';
+import { Statistics } from './Statistics';
 const ControllerComponent = ({  selectedItem, setSelectedItem }) => {
 
 
     switch (selectedItem) {
     case 'Depenses' :
       return <Depense />
+      case 'Statistiques' :
+      return <Statistics/>
     case 'Profile':
       return <ProfileScreen />
     case 'Documents':
