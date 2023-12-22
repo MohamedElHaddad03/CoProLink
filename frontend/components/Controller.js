@@ -15,7 +15,7 @@ const ControllerComponent = ({  selectedItem, setSelectedItem }) => {
     case 'Depenses' :
       return <Depense />
       case 'Statistiques' :
-      return <Statistics/>
+      return <Statistics />
     case 'Profile':
       return <ProfileScreen />
     case 'Documents':

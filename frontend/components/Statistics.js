@@ -1,5 +1,5 @@
 import { Dimensions, View, StatusBar, StyleSheet } from "react-native";
-import { PieChart } from "./charts/pieChart";
+import {  PieChartComponent } from "./charts/pieChart";
 
 export const Statistics = () => {
   const data = [
@@ -43,7 +43,7 @@ export const Statistics = () => {
 
   return (
     <View style={[styles.container]}>
-      <PieChart/>
+      <PieChartComponent/>
     </View>
   );
 };
