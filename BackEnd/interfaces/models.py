@@ -30,6 +30,7 @@ CATEGORIE = [
     
 class Depense(models.Model):
     id_depense = models.AutoField(primary_key=True)
+    nomDep=models.CharField(max_length=50, null=True, blank=True)
     categorie = models.CharField(max_length=40, choices=CATEGORIE)
     description = models.CharField(max_length=255)
     montant = models.FloatField()
@@ -53,7 +54,7 @@ class Cotisation(models.Model):
 class Propriete(models.Model):
     id_prop = models.AutoField(primary_key=True)
     num = models.CharField(max_length=10)
-    CIN = models.ForeignKey(User, on_delete=models.CASCADE)  
+    id_user = models.ForeignKey(User, on_delete=models.CASCADE)  
     occupation = models.BooleanField(default=False)
     id_cot = models.ForeignKey(Cotisation, on_delete=models.CASCADE)
     id_cop = models.ForeignKey(Copropriete, on_delete=models.CASCADE)

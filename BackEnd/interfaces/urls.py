@@ -5,4 +5,5 @@ from . import views
 
 urlpatterns = [
     path("paiement/vrpay/<int:id_pay>", views.ValiderRejeterPay, name="ValiderRejeter"),
+    path("paiement/depenseList",views.DepenseList, name="DepenseList"),
 ]
