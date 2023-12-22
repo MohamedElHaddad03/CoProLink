@@ -1,5 +1,9 @@
-import { Dimensions, View, StatusBar, StyleSheet } from "react-native";
+import React from "react";
+import { Dimensions, View, StatusBar, StyleSheet , Text} from "react-native";
 import {  PieChartComponent } from "./charts/pieChart";
+import DoubleLineChart  from "./charts/DoubleLineChart";
+import OverviewTable from "./charts/OverviewTable";
+import BarsChart from "./charts/BarChart";
 
 export const Statistics = () => {
   const data = [
@@ -42,9 +46,13 @@ export const Statistics = () => {
 
 
   return (
-    <View style={[styles.container]}>
+    <View style={styles.container}>
       <PieChartComponent/>
+      <DoubleLineChart/>
+      <OverviewTable/>
+      <BarsChart/>
     </View>
+
   );
 };
 
@@ -53,7 +61,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent:'flex-start',
-    paddingTop: StatusBar.currentHeight +20 , 
     backgroundColor: "#fff",
   },
   title: {
