@@ -13,7 +13,7 @@ import schedule
 import threading
 
 @receiver(
-    post_save, sender=User
+    post_save, sender=Propriete
 )  # y3ni apres une instance du modele Propriete dyalna, le signal va etre declenché
 def PaiementMensuel(sender, instance, **kwargs):
     if kwargs.get('created'):

@@ -21,6 +21,9 @@ class ProfileListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = CombinedUserSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        return User.objects.filter(profile__id_cop=user.profile.id_cop)
 
 class ProfileRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
@@ -58,7 +61,7 @@ class LoginView(APIView):
                 return Response(response, status=status.HTTP_200_OK)
             else:
                 response = {
-                    "erreur": "E-mail ou mot de passe invalide",
+                    "erreur": "Username ou mot de passe invalide",
                 }
                 return Response(response, status=status.HTTP_401_UNAUTHORIZED)
         response = {"erreur": serializer.errors}
