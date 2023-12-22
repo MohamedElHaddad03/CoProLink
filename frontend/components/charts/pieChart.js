@@ -2,44 +2,8 @@ import React from "react";
 import { PieChart } from "react-native-chart-kit";
 import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, View } from "react-native";
 
-export const PieChartComponent = () => {
-    const data = [
-        {
-            name: "Seoul",
-            population: 21500000,
-            color: "#3498db", // Blue
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 15,
-        },
-        {
-            name: "Toronto",
-            population: 2800000,
-            color: "#e74c3c", // Red
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 15,
-        },
-        {
-            name: "Beijing",
-            population: 527612,
-            color: "#27ae60", // Green
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 15,
-        },
-        {
-            name: "New York",
-            population: 8538000,
-            color: "#f39c12", // Yellow
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 15,
-        },
-        {
-            name: "Moscow",
-            population: 11920000,
-            color: "#8e44ad", // Purple
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 15,
-        },
-    ];
+export const PieChartComponent = ({data}) => {
+    
 
     const chartConfig = {
         backgroundGradientFrom: "#1E2923", // Background gradient start color
@@ -94,7 +58,7 @@ export const PieChartComponent = () => {
                 backgroundColor={"transparent"}
                 paddingLeft={""}
                 center={[50, 10]}
-                absolute={true}
+                absolute={false}
             />
         </SafeAreaView>
     );
