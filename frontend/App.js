@@ -1,20 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// App.js
+import React , {useState} from 'react';
 
-export default function App() {
+import LoginScreen from './components/Login';
+import ProfileScreen from './components/Profile';
+import Sidebar from './components/sideBar'
+import { SafeAreaView, StatusBar, View } from 'react-native';
+import ControllerComponent from './components/Controller';
+
+
+const App = () => {
+
+  const [selectedItem, setSelectedItem] = useState('Statistiques'); 
+
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    
+    <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
+     
+        <Sidebar selectedItem={selectedItem} setSelectedItem={setSelectedItem}/>
+     
+        <ControllerComponent selectedItem={selectedItem} setSelectedItem={setSelectedItem}/>
+        
+    </SafeAreaView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;

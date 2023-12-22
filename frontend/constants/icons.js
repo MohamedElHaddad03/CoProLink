@@ -8,8 +8,16 @@ import share from "../assets/icons/share.png";
 import location from "../assets/icons/location.png";
 import chevronLeft from '../assets/icons/chevron-left.png'
 import chevronRight from '../assets/icons/chevron-right.png'
+import person from '../assets/icons/person.png'
+import statistic from '../assets/icons/statistic.png'
+import money from '../assets/icons/money.png'
+import card from '../assets/icons/credit.png'
+import document from '../assets/icons/document.png'
+import X from '../assets/icons/X.png'
 
 export default {
+  statistic, money, card, document, X,
+  person,
   heart,
   menu,
   search,
