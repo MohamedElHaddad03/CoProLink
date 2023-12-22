@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView  } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions  } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -105,9 +105,10 @@ const DocumentsManager = () => {
         data={documents}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderDocumentItem}
-        numColumns={2}
+        numColumns={1}
         onRefresh={refreshDocuments}
         refreshing={false}
+        showsVerticalScrollIndicator={false}
       />
       </View>
       
@@ -119,6 +120,7 @@ const DocumentsManager = () => {
 
 const styles = StyleSheet.create({
   container: {
+    position:'relative',
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
@@ -126,9 +128,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '80%',
     top: '10%',
+    left: '5%',
+    height:Dimensions.get('window'),
   },
   titleContainer: {
-    top: '2%',
+    top: '1%',
     alignSelf: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -163,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   documentItem: {
-    overflow: 'hidden',
+   // overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -180,7 +184,7 @@ const styles = StyleSheet.create({
   Flatlist:{
     alignSelf: 'center',
     width: '100%',
-    maxHeight: '80%',
+    maxHeight: '85%',
     marginTop: 20,
   }
 });
