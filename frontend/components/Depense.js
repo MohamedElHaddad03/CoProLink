@@ -57,7 +57,7 @@ export const Depense = () => {
   <Text style={styles.buttonText}> Depense</Text>
 </TouchableOpacity>
 
-<CategoryPopUp isModalVisible={isModalCategVisible} toggleModal={toggleCategModal} />
+      <CategoryPopUp isModalVisible={isModalCategVisible} toggleModal={toggleCategModal} />
 <DepensePopUp isModalVisible={isModalDepVisible} toggleModal={toggleDepgModal} />
 
     </View>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-    justifyContent:'space-around',
+    justifyContent:'space-between',
     marginTop: 10, // Adjusted marginTop for header alignment
   },
   searchInput: {

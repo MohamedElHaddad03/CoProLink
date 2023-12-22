@@ -77,15 +77,15 @@ const [price,setPrice]=useState(0);
 
 const styles = StyleSheet.create({
   container: {
-    borderColor:'#000',
-    borderWidth:1,
+   // 
     flex: 1,
     width:'100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContainer: {
-    
+    borderColor:'#000',
+   borderWidth:1,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
