@@ -4,9 +4,9 @@ import DocumentsManager from './DocumentsManager';
 import PaiementsManager from './PaiementsManager';
 import { Depense } from './Depense';
 import  SettingsScreen from './SettingsScreen';
-import AddUserScreen from './UsersManagement';
+import AddUserScreen from './usersTest';
 import ContactSupport from './ContactSupport';
-
+import ErrorBoundary from '../errorBoundry';
 const ControllerComponent = ({  selectedItem, setSelectedItem }) => {
 
 
@@ -20,7 +20,7 @@ const ControllerComponent = ({  selectedItem, setSelectedItem }) => {
     case 'Paiement':
       return <PaiementsManager />
       case 'AddUser':
-      return <AddUserScreen />
+      return (<ErrorBoundary><AddUserScreen /></ErrorBoundary>)
     case 'ContactSupport':
       return <ContactSupport />
     case 'Settings':
