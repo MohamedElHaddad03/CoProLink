@@ -7,14 +7,14 @@ from django.contrib.auth.models import User
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['telephone', 'role', 'id_cop']
+        fields = ['cin', 'telephone', 'role', 'id_cop']
 
 class CombinedUserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()
 
     class Meta:
         model = User
-        fields = ['id', 'username','password', 'email', 'profile']
+        fields = ['id', 'username','password', 'email', 'first_name', 'last_name', 'profile']
 
     def create(self, validated_data):
         utilisateur=self.context['request'].user
@@ -34,8 +34,14 @@ class CombinedUserSerializer(serializers.ModelSerializer):
 
         instance.username = validated_data.get('username', instance.username)
         instance.email = validated_data.get('email', instance.email)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.save()
 
+        profile.cin = profile_data.get(
+            'cin',
+            profile.cin
+        )
         profile.telephone = profile_data.get(
             'telephone',
             profile.telephone

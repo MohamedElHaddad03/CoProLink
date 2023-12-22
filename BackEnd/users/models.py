@@ -12,6 +12,7 @@ ROLE = [
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    cin = models.CharField(max_length=10, null=True)
     telephone = models.CharField(max_length=14)
     role = models.CharField(max_length=15,choices=ROLE)
     id_cop = models.ForeignKey(Copropriete, on_delete=models.CASCADE,null=True)
