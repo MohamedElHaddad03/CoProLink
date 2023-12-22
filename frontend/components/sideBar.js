@@ -32,10 +32,10 @@ const handleItemClick = (item) => {
 
     <Animated.View style={[styles.sidebar, { width: largeur, backgroundColor: bgColor }]}>
       
-      <View>
+      <View style={{marginLeft:5}}>
         <TouchableOpacity style={{marginBottom:50}} onPress={toggleSidebar}>
           {!isSidebarOpen && (
-            <Ionicons name="menu" size={30} color={iconColor} />
+            <Ionicons name="menu" size={40} color={iconColor} />
           )}
           {isSidebarOpen && (
             <Ionicons name="close" size={40} color={iconColor} />
@@ -83,9 +83,9 @@ const handleItemClick = (item) => {
       </TouchableOpacity>
       <TouchableOpacity style={[
     styles.sidebarItem,
-    selectedItem === 'Profile' && {backgroundColor:bgColorOpen},
-  ]} onPress={() => handleItemClick('Profile')}>
-      <Ionicons name={ selectedItem === "Profile"? "person":"person-outline"} size={26} color={iconColor} />
+    selectedItem === 'AddUser' && {backgroundColor:bgColorOpen},
+  ]} onPress={() => handleItemClick('AddUser')}>
+      <Ionicons name={ selectedItem === "AddUser"? "people":"people-outline"} size={26} color={iconColor} />
 
         {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Profil</Text>

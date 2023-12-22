@@ -22,9 +22,9 @@ export const Depense = () => {
     { id: '3', Categorie: 'Categorie 1', name: 'Plomberie', description: 'eskfdvbsfkdvjlbqsfvkbjq svddmkjsBMlSDNVmlSDJV', price: 1200, image: 'https://99designs-blog.imgix.net/blog/wp-content/uploads/2016/04/wwf.jpg?auto=format&q=60&fit=max&w=930' },
     { id: '4', Categorie: 'Categorie 2', name: 'Plomberie', description: 'eskfdvbsfkdvjlbqsfvkbjq svddmkjsBMlSDNVmlSDJV', price: 1200, image: 'https://99designs-blog.imgix.net/blog/wp-content/uploads/2016/04/wwf.jpg?auto=format&q=60&fit=max&w=930' }
     , { id: '5', Categorie: 'Categorie 2', name: 'hhhhhhh', description: 'eskfdvbsfkdvjlbqsfvkbjq svddmkjsBMlSDNVmlSDJV', price: 1200, image: 'https://99designs-blog.imgix.net/blog/wp-content/uploads/2016/04/wwf.jpg?auto=format&q=60&fit=max&w=930' }
-    , { id: '5', Categorie: 'Categorie 2', name: 'hhhhhhh', description: 'eskfdvbsfkdvjlbqsfvkbjq svddmkjsBMlSDNVmlSDJV', price: 1200, image: 'https://99designs-blog.imgix.net/blog/wp-content/uploads/2016/04/wwf.jpg?auto=format&q=60&fit=max&w=930' }
-    , { id: '5', Categorie: 'Categorie 2', name: 'hhhhhhh', description: 'eskfdvbsfkdvjlbqsfvkbjq svddmkjsBMlSDNVmlSDJV', price: 1200, image: 'https://99designs-blog.imgix.net/blog/wp-content/uploads/2016/04/wwf.jpg?auto=format&q=60&fit=max&w=930' }
-    , { id: '5', Categorie: 'Categorie 2', name: 'hhhhhhh', description: 'eskfdvbsfkdvjlbqsfvkbjq svddmkjsBMlSDNVmlSDJV', price: 1200, image: 'https://99designs-blog.imgix.net/blog/wp-content/uploads/2016/04/wwf.jpg?auto=format&q=60&fit=max&w=930' }
+    , { id: '6', Categorie: 'Categorie 2', name: 'hhhhhhh', description: 'eskfdvbsfkdvjlbqsfvkbjq svddmkjsBMlSDNVmlSDJV', price: 1200, image: 'https://99designs-blog.imgix.net/blog/wp-content/uploads/2016/04/wwf.jpg?auto=format&q=60&fit=max&w=930' }
+    , { id: '7', Categorie: 'Categorie 2', name: 'hhhhhhh', description: 'eskfdvbsfkdvjlbqsfvkbjq svddmkjsBMlSDNVmlSDJV', price: 1200, image: 'https://99designs-blog.imgix.net/blog/wp-content/uploads/2016/04/wwf.jpg?auto=format&q=60&fit=max&w=930' }
+    , { id: '8', Categorie: 'Categorie 2', name: 'hhhhhhh', description: 'eskfdvbsfkdvjlbqsfvkbjq svddmkjsBMlSDNVmlSDJV', price: 1200, image: 'https://99designs-blog.imgix.net/blog/wp-content/uploads/2016/04/wwf.jpg?auto=format&q=60&fit=max&w=930' }
 
     // Add more property data as needed
   ]);

@@ -108,6 +108,7 @@ const DocumentsManager = () => {
         numColumns={1}
         onRefresh={refreshDocuments}
         refreshing={false}
+        showsVerticalScrollIndicator={false}
       />
       </View>
       

@@ -79,6 +79,7 @@ const PaiementsManager = () => {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           style={styles.Flatlist}
+          showsVerticalScrollIndicator={false}
         />
       </KeyboardAvoidingView>
     </View>
