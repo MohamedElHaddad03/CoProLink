@@ -52,6 +52,20 @@ def DepenseList(request):
 
     return Response(serialized_depenses_par_categorie)
 
+@api_view(["POST"])
+def CreateDepense(request):
+    serializer = DepenseSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    else:
+        return Response({"message": "Données saisies erronées"})
+
+@api_view(["Delete"])
+def DeleteDepense(request,id_dep):
+    depense = get_object_or_404(Depense, pk=id_dep)
+    depense.delete()
+    return Response({"message": "Dépense supprimée avec succès !"})
 
 @api_view(["GET"])
 def ListProp(request):
@@ -63,7 +77,7 @@ def ListProp(request):
 def DeleteProp(request, id_prop):
     prop = get_object_or_404(Propriete,id_prop=id_prop)
     prop.delete()
-    return Response({"message":"Propriété supprimé avec succès"})
+    return Response({"message": "Propriété supprimé avec succès"})
 
 @api_view(["POST"])
 def CreateProp(request):
@@ -80,13 +94,13 @@ def CreateCopro(request):
     if serializer.is_valid():
         copro= serializer.save()
         nbpro = serializer.validated_data.get('nb_props')
-        cot = get_object_or_404(Cotisation, type_cot="Normale")
         for i in range(nbpro):
             Propriete.objects.create(
                 num = 'prop'+str(i),
-                occupation = True,
-                id_cot = cot,
-                id_cop = copro
+                id_user = None,
+                occupation = False,
+                id_cop = copro,
+                id_cot = None
             )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
@@ -106,3 +120,4 @@ def DeleteCopro(request,id_cop):
         Propriete.objects.filter(id_cop=copro.id_cop).delete()
         copro.delete()
     return Response({"message":"Copropriété supprimé avec succès","Copropriete":serializer.data})
+

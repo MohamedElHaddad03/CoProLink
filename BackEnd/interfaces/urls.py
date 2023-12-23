@@ -5,7 +5,9 @@ from . import views
 
 urlpatterns = [
     path("paiement/vrpay/<int:id_pay>", views.ValiderRejeterPay, name="ValiderRejeter"),
-    path("paiement/depenseList",views.DepenseList, name="DepenseList"),
+    path("depense",views.DepenseList, name="DepenseList"),
+    path("depense/create/",views.CreateDepense, name="DepenseCreate"),
+    path("depense/delete/<int:id_dep>",views.DeleteDepense, name="Depensedelete"),
     path("prop",views.ListProp,name="ListProp"),
     path("prop/create/",views.CreateProp,name="CreateProp"),
     path("prop/delete/<int:id_prop>",views.DeleteProp,name="DeleteProp"),
