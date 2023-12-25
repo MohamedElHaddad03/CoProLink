@@ -1,6 +1,6 @@
 from . import models
 from rest_framework import serializers
-from interfaces.models import Copropriete, Propriete
+from interfaces.models import Copropriete, Document, Propriete
 
 
 class DepenseSerializer(serializers.ModelSerializer):
@@ -18,3 +18,8 @@ class CoproprieteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Copropriete
         fields = '__all__'
+
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document
+        fields = '_all_'

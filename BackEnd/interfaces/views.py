@@ -2,9 +2,9 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Copropriete, Cotisation, Paiement, Depense, Propriete
+from .models import Copropriete, Cotisation, Document, Paiement, Depense, Propriete
 from rest_framework.decorators import api_view
-from .serializers import CoproprieteSerializer, DepenseSerializer, ProprieteSerializer
+from .serializers import CoproprieteSerializer, DepenseSerializer, DocumentSerializer, ProprieteSerializer
 from django.db.models import Sum
 
 
@@ -133,7 +133,7 @@ def CreateCopro(request):
             )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
-        return Response({"message": "Erreur données saisies invalides !"})
+        return Response({"message": "Erreur, données saisies invalides !"})
 
 
 @api_view(["GET"])
@@ -172,3 +172,27 @@ def UpdateCopro(request, id_cop):
         return Response(serializer.errors, status=400)
 
     return Response({"error": "Invalid request method"}, status=400)
+
+@api_view(["GET"])
+def ListerDocument(request):
+    Docs = Document.objects.all()
+    serializer = DocumentSerializer(Docs, many=True)
+    return Response(serializer.data)
+
+@api_view(["POST"])
+def CreateDocument(request):
+    Docs = DocumentSerializer(data=request.data)
+    if Docs.is_valid():
+        Docs.save()
+        return Response(Docs.data)
+    else:
+        return Response({"message":"Erreur, données saisies invalides !"})
+    
+@api_view(["DELETE"])
+def DeleteDocument(request, id_doc):
+    Doc = get_object_or_404(Document,pk=id_doc)
+    if Doc :
+        Doc.delete()
+        return Response({"message":"Document supprimé avec succès !"})
+    else :
+        return Response({"message":"Document introuvable !"})
