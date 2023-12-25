@@ -14,6 +14,7 @@ export const Depense = () => {
   }
   const toggleDepgModal = () => {
     setModalDepVisible(!isModalDepVisible);
+    
   }
 
   const [data, setData] = useState([

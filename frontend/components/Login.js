@@ -1,12 +1,23 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {View,Text,TextInput,TouchableOpacity,StyleSheet,Image,Animated,Easing,ImageBackground} from 'react-native';
 import { Svg, Path } from 'react-native-svg';
+import { useAuth } from '../Context/AuthContext';
 const LoginScreen = () => {
 
   const [loginTop, setLoginTop] = useState(0);
+  const [username,setUserName] =useState('');
+  const [password,setPassword] =useState('');
+
 
   const loginRef = useRef(null);
-
+  const {login} =useAuth();
+  const handleLogin =  () => {
+    try {
+       login(username, password);
+    } catch (error) {
+      console.error('Login failed', error);
+    }
+  };
   const onLoginLayout = () => {
     if (loginRef.current) {
       loginRef.current.measure((x, y, width, height, pageX, pageY) => {
@@ -61,11 +72,22 @@ const LoginScreen = () => {
 
 
       <View style={styles.login} ref={loginRef} onLayout={onLoginLayout}>
-        <TextInput style={styles.input} placeholder="Username" />
-        <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} />
-        <TouchableOpacity style={styles.LoginButton} >
-          <Text style={styles.LoginButtonText}>Login</Text>
-        </TouchableOpacity>
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={(value) => setUserName(value)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry={true}
+        value={password}
+        onChangeText={(value) => setPassword(value)}
+      />
+      <TouchableOpacity style={styles.LoginButton} onPress={handleLogin}>
+        <Text style={styles.LoginButtonText}>Login</Text>
+      </TouchableOpacity>
 
         <View>
 

@@ -11,7 +11,7 @@ const CardDepense = ({ item }) => (
         </View>
      
         <View style={styles.textContainer}>
-          <Text style={styles.cardTitle}>{item.name}</Text>
+          <Text style={styles.cardTitle}>{item.nomDep}</Text>
           <Text style={styles.cardSubtitle}> {item.description}</Text>
         </View>
         {/* <View style={styles.cardImage}> */}
@@ -21,7 +21,7 @@ const CardDepense = ({ item }) => (
       </View>
       <View style={styles.divider} />
       <View style={styles.amountSection}>
-        <Text style={styles.amountText}>Montant: <Text style={styles.amountValue}>{item.price+'$'}</Text></Text>
+        <Text style={styles.amountText}>Montant: <Text style={styles.amountValue}>{item.montant+'MAD'}</Text></Text>
       </View>
     </View>
   );

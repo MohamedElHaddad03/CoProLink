@@ -55,9 +55,9 @@ export const Statistics = () => {
 
   return (
     <View style={styles.container}>
-      <DoubleLineChart/>
+      {/* <DoubleLineChart/>
       <OverviewTable/>
-      <BarsChart/>
+      <BarsChart/> */}
       
     </View>
 

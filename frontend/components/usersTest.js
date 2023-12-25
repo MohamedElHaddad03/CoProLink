@@ -40,7 +40,7 @@ const UsersManagement = () => {
 
 
 
-  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetch('api/users/hh');
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetch('api/users/9/');
 
   useEffect(() => {
     setError(fetchedError)
@@ -49,7 +49,7 @@ const UsersManagement = () => {
 
    
   }, [fetchedData, isLoadingData]);
-  console.log(data)
+ // console.log(data)
   // Call fetchData on component mount
   // useEffect(()=>{
   // // fetchData();

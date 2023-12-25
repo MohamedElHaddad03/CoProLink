@@ -63,6 +63,15 @@ const handleItemClick = (item) => {
       </TouchableOpacity>
       <TouchableOpacity style={[
     styles.sidebarItem,
+    selectedItem === 'Login' && {backgroundColor:bgColorOpen},
+  ]} onPress={() => handleItemClick('Login')}>
+      <Ionicons name={ selectedItem === "Login"? "documents":"documents-outline"} size={26} color={iconColor} />
+        {isSidebarOpen && (
+          <Text style={[styles.sidebarText, { color: iconColor }]}>Documents</Text>
+        )}
+      </TouchableOpacity>
+      <TouchableOpacity style={[
+    styles.sidebarItem,
     selectedItem === 'Depenses' && {backgroundColor:bgColorOpen},
   ]} onPress={() => handleItemClick('Depenses')}>
       <Ionicons name={ selectedItem === "Depenses"? "cash":"cash-outline"} size={26} color={iconColor} />
