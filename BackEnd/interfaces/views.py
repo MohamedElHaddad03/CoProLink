@@ -155,7 +155,7 @@ def DeleteCopro(request, id_cop):
     )
 
 @api_view(["PATCH"])
-def UpdateCopro(request, id_dep):
+def UpdateCopro(request, id_cop):
     if request.method == "PATCH":
         new_data = {
             "name": request.data.get("name"),
@@ -163,7 +163,7 @@ def UpdateCopro(request, id_dep):
             "nb_props": request.data.get("nb_props"),
         }
 
-        coprop = get_object_or_404(Depense, id_depense=id_dep)
+        coprop = get_object_or_404(Copropriete, id_cop=id_cop)
 
         serializer = CoproprieteSerializer(coprop, data=new_data, partial=True)
         if serializer.is_valid():
