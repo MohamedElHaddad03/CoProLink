@@ -55,6 +55,8 @@ def DepenseList(request):
 
 @api_view(["POST"])
 def CreateDepense(request):
+    cop = request.user.profile.id_cop
+    request.data['id_cop']=cop.id_cop
     serializer = DepenseSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -117,7 +119,6 @@ def CreateProp(request):
 
 @api_view(["POST"])
 def CreateCopro(request):
-    user = request.user
     serializer = CoproprieteSerializer(data=request.data)
     if serializer.is_valid():
         copro = serializer.save()
