@@ -4,9 +4,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Copropriete, Cotisation, Document, Paiement, Depense, Propriete
 from rest_framework.decorators import api_view
-from .serializers import CoproprieteSerializer, DepenseSerializer, DocumentSerializer, ProprieteSerializer
+from .serializers import CoproprieteSerializer, DepenseSerializer, DocumentSerializer, PaiementSerializer, ProprieteSerializer
 from django.db.models import Sum
 
+@api_view(["GET"])
+def ListerPaiement(request):
+    pay = Paiement.objects.all()
+    serializer = PaiementSerializer(pay, many=True)
+    return Response(serializer.data)
 
 @api_view(["GET"])
 def ValiderRejeterPay(request, id_pay):
