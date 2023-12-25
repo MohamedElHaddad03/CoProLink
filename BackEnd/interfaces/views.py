@@ -4,14 +4,22 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Copropriete, Cotisation, Document, Paiement, Depense, Propriete
 from rest_framework.decorators import api_view
-from .serializers import CoproprieteSerializer, DepenseSerializer, DocumentSerializer, PaiementSerializer, ProprieteSerializer
+from .serializers import (
+    CoproprieteSerializer,
+    DepenseSerializer,
+    DocumentSerializer,
+    PaiementSerializer,
+    ProprieteSerializer,
+)
 from django.db.models import Sum
+
 
 @api_view(["GET"])
 def ListerPaiement(request):
     pay = Paiement.objects.all()
     serializer = PaiementSerializer(pay, many=True)
     return Response(serializer.data)
+
 
 @api_view(["GET"])
 def ValiderRejeterPay(request, id_pay):
@@ -37,31 +45,34 @@ def ValiderRejeterPay(request, id_pay):
 
 @api_view(["GET"])
 def DepenseList(request):
-    depenses_par_categorie = {
-        "Assainissement": Depense.objects.filter(categorie="Assainissement"),
-        "Maintenance et reparation": Depense.objects.filter(
-            categorie="Maintenance et reparation"
-        ),
-        "Matériel": Depense.objects.filter(categorie="Matériel"),
-        "Gardiennage": Depense.objects.filter(categorie="Gardiennage"),
-        "Autre": Depense.objects.filter(categorie="Autre"),
-    }
+    # depenses_par_categorie = {
+    #     "Assainissement": Depense.objects.filter(categorie="Assainissement"),
+    #     "Maintenance et reparation": Depense.objects.filter(
+    #         categorie="Maintenance et reparation"
+    #     ),
+    #     "Matériel": Depense.objects.filter(categorie="Matériel"),
+    #     "Gardiennage": Depense.objects.filter(categorie="Gardiennage"),
+    #     "Autre": Depense.objects.filter(categorie="Autre"),
+    # }
 
-    serialized_depenses_par_categorie = {
-        categorie: {
-            "depenses": DepenseSerializer(depenses, many=True).data,
-            "montant_total": depenses.aggregate(Sum("montant"))["montant__sum"] or 0,
-        }
-        for categorie, depenses in depenses_par_categorie.items()
-    }
+    # serialized_depenses_par_categorie = {
+    #     categorie: {
+    #         "depenses": DepenseSerializer(depenses, many=True).data,
+    #         "montant_total": depenses.aggregate(Sum("montant"))["montant__sum"] or 0,
+    #     }
+    #     for categorie, depenses in depenses_par_categorie.items()
+    # }
 
-    return Response(serialized_depenses_par_categorie)
+    # return Response(serialized_depenses_par_categorie)
+    dep = Depense.Objects.all()
+    serializer = DepenseSerializer(dep, many=True)
+    return Response(serializer.data)
 
 
 @api_view(["POST"])
 def CreateDepense(request):
     cop = request.user.profile.id_cop
-    request.data['id_cop']=cop.id_cop
+    request.data["id_cop"] = cop.id_cop
     serializer = DepenseSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -159,6 +170,7 @@ def DeleteCopro(request, id_cop):
         {"message": "Copropriété supprimé avec succès", "Copropriete": serializer.data}
     )
 
+
 @api_view(["PATCH"])
 def UpdateCopro(request, id_cop):
     if request.method == "PATCH":
@@ -178,11 +190,13 @@ def UpdateCopro(request, id_cop):
 
     return Response({"error": "Invalid request method"}, status=400)
 
+
 @api_view(["GET"])
 def ListerDocument(request):
     Docs = Document.objects.all()
     serializer = DocumentSerializer(Docs, many=True)
     return Response(serializer.data)
+
 
 @api_view(["POST"])
 def CreateDocument(request):
@@ -191,13 +205,14 @@ def CreateDocument(request):
         Docs.save()
         return Response(Docs.data)
     else:
-        return Response({"message":"Erreur, données saisies invalides !"})
-    
+        return Response({"message": "Erreur, données saisies invalides !"})
+
+
 @api_view(["DELETE"])
 def DeleteDocument(request, id_doc):
-    Doc = get_object_or_404(Document,pk=id_doc)
-    if Doc :
+    Doc = get_object_or_404(Document, pk=id_doc)
+    if Doc:
         Doc.delete()
-        return Response({"message":"Document supprimé avec succès !"})
-    else :
-        return Response({"message":"Document introuvable !"})
+        return Response({"message": "Document supprimé avec succès !"})
+    else:
+        return Response({"message": "Document introuvable !"})

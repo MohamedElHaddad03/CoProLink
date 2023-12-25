@@ -16,8 +16,8 @@ urlpatterns = [
     path("copro", views.ListCopro, name="ListCopro"),
     path("copro/create/", views.CreateCopro, name="CreateCopro"),
     path("copro/delete/<int:id_cop>", views.DeleteCopro, name="DeleteCopro"),
-    path("copro/update/<int:id_cop>/",views.UpdateCopro, name="UpdateCopro"),
-    path("Docs",views.ListerDocument, name="ListerDoc"),
-    path("Docs/create/",views.CreateDocument, name="CreateDoc"),  
-    path("Docs/delete/<int:id_doc>/",views.DeleteDocument,name="DeleteDoc"),
+    path("copro/update/<int:id_cop>/", views.UpdateCopro, name="UpdateCopro"),
+    path("Docs", views.ListerDocument, name="ListerDoc"),
+    path("Docs/create/", views.CreateDocument, name="CreateDoc"),
+    path("Docs/delete/<int:id_doc>/", views.DeleteDocument, name="DeleteDoc"),
 ]
