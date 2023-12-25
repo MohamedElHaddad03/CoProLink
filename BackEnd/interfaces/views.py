@@ -52,6 +52,7 @@ def DepenseList(request):
 
     return Response(serialized_depenses_par_categorie)
 
+
 @api_view(["POST"])
 def CreateDepense(request):
     serializer = DepenseSerializer(data=request.data)
@@ -61,23 +62,49 @@ def CreateDepense(request):
     else:
         return Response({"message": "Données saisies erronées"})
 
+
 @api_view(["Delete"])
-def DeleteDepense(request,id_dep):
+def DeleteDepense(request, id_dep):
     depense = get_object_or_404(Depense, pk=id_dep)
     depense.delete()
     return Response({"message": "Dépense supprimée avec succès !"})
 
+
+@api_view(["PATCH"])
+def DepenseUpdate(request, id_dep):
+    if request.method == "PATCH":
+        new_data = {
+            "nomDep": request.data.get("nomDep"),
+            "categorie": request.data.get("categorie"),
+            "description": request.data.get("description"),
+            "montant": request.data.get("montant"),
+            "date_dep": request.data.get("date_dep"),
+        }
+
+        depense = get_object_or_404(Depense, id_depense=id_dep)
+
+        serializer = DepenseSerializer(depense, data=new_data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "depense modifiée avec succès"})
+        return Response(serializer.errors, status=400)
+
+    return Response({"error": "Invalid request method"}, status=400)
+
+
 @api_view(["GET"])
 def ListProp(request):
     props = Propriete.objects.all()
-    serializer = ProprieteSerializer(props,many=True)
+    serializer = ProprieteSerializer(props, many=True)
     return Response(serializer.data)
+
 
 @api_view(["DELETE"])
 def DeleteProp(request, id_prop):
-    prop = get_object_or_404(Propriete,id_prop=id_prop)
+    prop = get_object_or_404(Propriete, id_prop=id_prop)
     prop.delete()
     return Response({"message": "Propriété supprimé avec succès"})
+
 
 @api_view(["POST"])
 def CreateProp(request):
@@ -87,37 +114,60 @@ def CreateProp(request):
     prop = serializer.data
     return Response(prop)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 def CreateCopro(request):
-    user=request.user
+    user = request.user
     serializer = CoproprieteSerializer(data=request.data)
     if serializer.is_valid():
-        copro= serializer.save()
-        nbpro = serializer.validated_data.get('nb_props')
+        copro = serializer.save()
+        nbpro = serializer.validated_data.get("nb_props")
         for i in range(nbpro):
             Propriete.objects.create(
-                num = 'prop'+str(i),
-                id_user = None,
-                occupation = False,
-                id_cop = copro,
-                id_cot = None
+                num="prop" + str(i),
+                id_user=None,
+                occupation=False,
+                id_cop=copro,
+                id_cot=None,
             )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
-        return Response({"message":"Erreur données saisies invalides !"})
+        return Response({"message": "Erreur données saisies invalides !"})
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 def ListCopro(request):
     Copro = Copropriete.objects.all()
     serializer = CoproprieteSerializer(Copro, many=True)
     return Response(serializer.data)
 
-@api_view(['DELETE'])
-def DeleteCopro(request,id_cop):
+
+@api_view(["DELETE"])
+def DeleteCopro(request, id_cop):
     copro = get_object_or_404(Copropriete, pk=id_cop)
-    serializer=CoproprieteSerializer(copro)
+    serializer = CoproprieteSerializer(copro)
     if copro:
         Propriete.objects.filter(id_cop=copro.id_cop).delete()
         copro.delete()
-    return Response({"message":"Copropriété supprimé avec succès","Copropriete":serializer.data})
+    return Response(
+        {"message": "Copropriété supprimé avec succès", "Copropriete": serializer.data}
+    )
 
+@api_view(["PATCH"])
+def UpdateCopro(request, id_dep):
+    if request.method == "PATCH":
+        new_data = {
+            "name": request.data.get("name"),
+            "adresse": request.data.get("adresse"),
+            "nb_props": request.data.get("nb_props"),
+        }
+
+        coprop = get_object_or_404(Depense, id_depense=id_dep)
+
+        serializer = CoproprieteSerializer(coprop, data=new_data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "copropriété modifiée avec succès"})
+        return Response(serializer.errors, status=400)
+
+    return Response({"error": "Invalid request method"}, status=400)
