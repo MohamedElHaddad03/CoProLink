@@ -1,4 +1,6 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from interfaces.models import Cotisation,Propriete
 from users.models import Profile
 from django.contrib.auth.models import User
 
@@ -22,9 +24,17 @@ class CombinedUserSerializer(serializers.ModelSerializer):
         if utilisateur.profile.role == "admin":
             profile_data['role']="proprietaire"
             profile_data['id_cop']=utilisateur.profile.id_cop
+            cot = self.context['request'].data['id_cot']
+            id_prop = self.context['request'].data['id_prop']
+            prop = get_object_or_404(Propriete,pk=id_prop)
+            cot = get_object_or_404(Cotisation,pk=cot)
         if utilisateur.profile.role == "gestion":
             profile_data['role']="admin"
         user = User.objects.create(**validated_data)
+        if utilisateur.profile.role == "admin":
+            prop.id_user = user
+            prop.id_cot = cot
+            prop.save()
         Profile.objects.create(user=user, **profile_data)
         return user
     

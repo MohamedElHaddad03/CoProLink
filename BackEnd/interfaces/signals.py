@@ -28,7 +28,7 @@ def CreerPaiement(instance):
             date_creation__month=current_month,
             date_creation__year=current_year,
         ).exists()
-    if not existing_payment:
+    if not existing_payment and instance.id_cot is not None :
         coti=instance.id_cot
         cotisation = Cotisation.objects.get(id_cot=coti.id_cot)
         new_payment = Paiement.objects.create(
