@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Copropriete, Cotisation, Document, Paiement, Depense, Propriete
 from rest_framework.decorators import api_view
+
 from .serializers import (
     CoproprieteSerializer,
     DepenseSerializer,
@@ -76,6 +77,7 @@ def DepenseList(request):
 def CreateDepense(request):
     cop = request.user.profile.id_cop
     request.data["id_cop"] = cop.id_cop
+    request.data["date_dep"] = datetime.today().date()
     serializer = DepenseSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -220,25 +222,28 @@ def DeleteDocument(request, id_doc):
     else:
         return Response({"message": "Document introuvable !"})
 
+
 @api_view(["GET"])
-def ListerPaiementStatsMens(request,mois):
+def ListerPaiementStatsMens(request, mois):
     paiement = Paiement.objects.filter(date_creation__month=mois)
-    serializer = PaiementStatSerializer(paiement,many=True)
+    serializer = PaiementStatSerializer(paiement, many=True)
     print(serializer)
     return Response(serializer.data)
 
+
 @api_view(["GET"])
-def ListerPaiementStatsAnn(request,annee):
+def ListerPaiementStatsAnn(request, annee):
     paiement = Paiement.objects.filter(date_creation__year=annee)
-    serializer = PaiementStatSerializer(paiement,many=True)
+    serializer = PaiementStatSerializer(paiement, many=True)
     print(serializer)
     return Response(serializer.data)
 
+
 @api_view(["GET"])
-def ListerPaiementStatsPer(request,prem,sec):
-    start_date = datetime.strptime(prem, '%Y-%m-%d')
-    end_date = datetime.strptime(sec, '%Y-%m-%d')
+def ListerPaiementStatsPer(request, prem, sec):
+    start_date = datetime.strptime(prem, "%Y-%m-%d")
+    end_date = datetime.strptime(sec, "%Y-%m-%d")
     paiement = Paiement.objects.filter(date_creation__range=[start_date, end_date])
-    serializer = PaiementStatSerializer(paiement,many=True)
+    serializer = PaiementStatSerializer(paiement, many=True)
     print(serializer)
     return Response(serializer.data)

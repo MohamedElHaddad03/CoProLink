@@ -25,6 +25,7 @@ class ProfileListCreateView(generics.ListCreateAPIView):
         user = self.request.user
         return User.objects.filter(profile__id_cop=user.profile.id_cop)
 
+
 class ProfileRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = CombinedUserSerializer
@@ -92,4 +93,11 @@ class LogoutView(APIView):
             )
 
 
+""" from django.shortcuts import render
+from django.contrib.auth.forms import SetPasswordForm
 
+
+def reset_password(request, uidb64, token):
+    form = SetPasswordForm(uidb64)
+    return render(request, "password_reset.html", {"form": form})
+ """

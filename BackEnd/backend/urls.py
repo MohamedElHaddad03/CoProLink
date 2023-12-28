@@ -21,14 +21,12 @@ from django.urls import include
 from users import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/users/',include('users.urls')),
-    path('api/interfaces/',include('interfaces.urls')),
+    path("admin/", admin.site.urls),
+    path("api/users/", include("users.urls")),
+    path("api/interfaces/", include("interfaces.urls")),
     path("login/", views.LoginView.as_view(), name="Login"),
     path("logout/", views.LogoutView.as_view(), name="Logout"),
-     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    
+    path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(template_name="password_reset.html"),name="password_reset"),
+    path("reset/done/",auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_done.html"),name="password_reset_complete",
+    ),
 ]

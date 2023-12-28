@@ -15,7 +15,7 @@ def send_password_reset_link(sender, instance, created, **kwargs):
     if created:
         uid = urlsafe_base64_encode(force_bytes(instance.pk))
         token = default_token_generator.make_token(instance)
-        reset_url = f"http://192.168.1.207:8000/reset/{uid}/{token}/"
+        reset_url = f"http://192.168.1.213:8000/reset/{uid}/{token}/"
         subject = 'CoProLink-Changement de mot de passe'
         message = f"Bonjour,\n\nBienvenu à notre application ! \n\n Voici votre Username ou Nom d'utilisateur : {instance.username} \n\n Il est nécessaire de changer votre mot de passe lors de votre première visite, veuillez cliquer sur le lien affiché au niveau du Login 'Mot de passe oublié ?'.\n\n {reset_url}"
         send_mail(subject, message, 'elbaghdadinada5@gmail.com', [instance.email])
