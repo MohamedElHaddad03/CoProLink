@@ -33,10 +33,18 @@ class PaiementSerializer(serializers.ModelSerializer):
     num = serializers.ReadOnlyField(source='id_prop.num')
     class Meta:
         model = Paiement
-        fields = '__all__'
+        fields = '_all_'
 
 class PaiementStatSerializer(serializers.ModelSerializer):
     num = serializers.ReadOnlyField(source='id_prop.num')
     class Meta:
         model = Paiement
         fields = ['id_pay','etat','num','date_creation','date_paiement']
+
+
+class MontantTotMoisSerializer(serializers.Serializer):
+    mois = serializers.IntegerField()
+    montant_total = serializers.DecimalField(max_digits=10, decimal_places=2)
+    class Meta:
+        fields =['mois','montant_total']
+

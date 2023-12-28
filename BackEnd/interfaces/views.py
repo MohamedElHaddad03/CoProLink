@@ -6,11 +6,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Copropriete, Cotisation, Document, Paiement, Depense, Propriete
 from rest_framework.decorators import api_view
-
+from django.db.models.functions import ExtractMonth
 from .serializers import (
     CoproprieteSerializer,
     DepenseSerializer,
     DocumentSerializer,
+    MontantTotMoisSerializer,
     PaiementSerializer,
     PaiementStatSerializer,
     ProprieteSerializer,
@@ -222,28 +223,40 @@ def DeleteDocument(request, id_doc):
     else:
         return Response({"message": "Document introuvable !"})
 
-
 @api_view(["GET"])
-def ListerPaiementStatsMens(request, mois):
+def ListerPaiementStatsMens(request):
+    mois = datetime.now().month
     paiement = Paiement.objects.filter(date_creation__month=mois)
-    serializer = PaiementStatSerializer(paiement, many=True)
-    print(serializer)
+    serializer = PaiementStatSerializer(paiement,many=True)
     return Response(serializer.data)
 
-
 @api_view(["GET"])
-def ListerPaiementStatsAnn(request, annee):
+def ListerPaiementStatsAnn(request):
+    annee = datetime.now().year
     paiement = Paiement.objects.filter(date_creation__year=annee)
-    serializer = PaiementStatSerializer(paiement, many=True)
-    print(serializer)
+    serializer = PaiementStatSerializer(paiement,many=True)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+def ListerPaiementStatsPer(request,prem,sec):
+    start_date = datetime.strptime(prem, '%Y-%m-%d')
+    end_date = datetime.strptime(sec, '%Y-%m-%d')
+    paiement = Paiement.objects.filter(date_creation__range=[start_date, end_date])
+    serializer = PaiementStatSerializer(paiement,many=True)
     return Response(serializer.data)
 
 
+
+
 @api_view(["GET"])
-def ListerPaiementStatsPer(request, prem, sec):
-    start_date = datetime.strptime(prem, "%Y-%m-%d")
-    end_date = datetime.strptime(sec, "%Y-%m-%d")
-    paiement = Paiement.objects.filter(date_creation__range=[start_date, end_date])
-    serializer = PaiementStatSerializer(paiement, many=True)
-    print(serializer)
+def ChartPaiement(request):
+    annee = datetime.now().year
+    montant_per_month = (
+        Paiement.objects
+        .annotate(mois=ExtractMonth('date_creation'))
+        .values("mois")
+        .annotate(montant_total=Sum('montant'))
+        .order_by('mois').filter(date_creation__year=annee)
+    )
+    serializer = MontantTotMoisSerializer(montant_per_month,many=True)
     return Response(serializer.data)
