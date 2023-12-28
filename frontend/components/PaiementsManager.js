@@ -1,25 +1,41 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Dimensions, Alert } from 'react-native';import { MaterialIcons } from '@expo/vector-icons';
+import React, { useState , useEffect} from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Dimensions, Alert } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import useFetch from '../hook/useFetch';
 
 const PaiementsManager = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [data, setData] = useState([
-    { id: '1', property: 'Propriété 1', date: 'Janvier 2024' , price: '1000 DH'},
-    { id: '2', property: 'Propriété 2', date: 'Février 2024' , price: '1000 DH'},
-    { id: '3', property: 'Propriété 3', date: 'Mars 2024' , price: '1000 DH'},
-    { id: '4', property: 'Propriété 4', date: 'Avril 2024' , price: '1000 DH'},
-    { id: '5', property: 'Propriété 5', date: 'Mai 2024' , price: '1000 DH'},
-    { id: '6', property: 'Propriété 6', date: 'Juin 2024' , price: '1000 DH'},
-    { id: '7', property: 'Propriété 7', date: 'Juillet 2024' , price: '1000 DH'},
+  const [data, setData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  //   { id: '1', property: 'Propriété 1', date: 'Janvier 2024' , price: '1000 DH'},
+  //   { id: '2', property: 'Propriété 2', date: 'Février 2024' , price: '1000 DH'},
+  //   { id: '3', property: 'Propriété 3', date: 'Mars 2024' , price: '1000 DH'},
+  //   { id: '4', property: 'Propriété 4', date: 'Avril 2024' , price: '1000 DH'},
+  //   { id: '5', property: 'Propriété 5', date: 'Mai 2024' , price: '1000 DH'},
+  //   { id: '6', property: 'Propriété 6', date: 'Juin 2024' , price: '1000 DH'},
+  //   { id: '7', property: 'Propriété 7', date: 'Juillet 2024' , price: '1000 DH'},
 
-    // Add more property data as needed
-  ]);
+  //   // Add more property data as needed
+  // ]);
     
 
-  const confirmPayment = (property) => {
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetch('api/interfaces/paiement');
+
+  useEffect(() => {
+    setError(fetchedError)
+    setData(fetchedData);
+    setIsLoading(isLoadingData);
+
+   
+  }, [fetchedData, isLoadingData]);
+  console.log(data);
+
+
+  const confirmPayment = (id_pay) => {
     Alert.alert(
       'Confirmation',
-      `Confirmer le paiement pour ${property}?`,
+      `Confirmer le paiement pour ${id_pay}?`,
       [
         {
           text: 'Annuler',
@@ -27,35 +43,73 @@ const PaiementsManager = () => {
         },
         {
           text: 'Confirmer',
-          onPress: () => {handlePaymentConfirmation(property), alert('Paiement confirmé')},
+          onPress: () => {handlePaymentConfirmation(id_pay), alert('Paiement confirmé')},
         },
       ],
       { cancelable: true }
     );
   };
 
-  const handlePaymentConfirmation = () => {
+  const handlePaymentConfirmation = async(id_pay) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/interfaces/paiement/vrpay/' + id_pay, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json', // Set appropriate headers
+      },
+    });
+
+      if (response.ok) {
+        console.log(response);
+
+        refetch();
+      } else {
+        throw new Error('Failed to validate/unvalidate pay');
+      }
+    } catch (error) {
+      console.error('Error validate/unvalidate pay:', error.message);
+
+    }
   };
 
-  const renderItem = ({ item }) => (
+
+
+
+  const getMonthName = (dateString) => {
+    const date = new Date(dateString);
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June', 'July',
+      'August', 'September', 'October', 'November', 'December'
+    ];
+    return monthNames[date.getMonth()];
+  };
+
+  const renderItem = ({ item }) => 
+  {
+    const buttonLabel = item.etat ? 'Unvalidate' : 'Valider';
+    const buttonColor = item.etat ? '#FF6347' : '#65B741';
+  
+  return(
+
+    
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <View>
-          <Text style={styles.cardTitle}>{item.property}</Text>
-          <Text style={styles.cardSubtitle}>Date: {item.date}</Text>
+          <Text style={styles.cardTitle}>Proprieté : {item.id_prop}</Text>
+          <Text style={styles.cardSubtitle}>Date: {getMonthName(item.date_creation)}</Text>
         </View>
-        <TouchableOpacity onPress={() => confirmPayment(item.property)} style={styles.confirmButton}>
-          <Text style={styles.buttonText}>Valider</Text>
+        <TouchableOpacity onPress={() => handlePaymentConfirmation(item.id_pay)} style={[styles.confirmButton, { backgroundColor: buttonColor }]}>
+          <Text style={styles.buttonText}>{buttonLabel}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.divider} />
       <View style={styles.amountSection}>
-        <Text style={styles.amountText}>Montant: <Text style={styles.amountValue}>{item.price}</Text></Text>
+        <Text style={styles.amountText}>Montant: <Text style={styles.amountValue}>{item.montant}</Text></Text>
       </View>
     </View>
   );
 
-
+  };
   const searchPaiement = () => {
     
   };
@@ -63,7 +117,7 @@ const PaiementsManager = () => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Paiement</Text>
+        <Text style={styles.title}>Paiements</Text>
       </View>
       <View style={styles.header}>
         <TextInput
@@ -77,7 +131,7 @@ const PaiementsManager = () => {
         <FlatList
           data={data}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id_pay}
           style={styles.Flatlist}
           showsVerticalScrollIndicator={false}
         />
@@ -156,7 +210,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   confirmButton: {
-    backgroundColor: '#65B741',
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 5,
