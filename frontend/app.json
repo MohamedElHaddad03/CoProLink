@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "CoProLink",
-    "slug": "CoProLink",
+    "slug": "coprolink",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "",
@@ -29,6 +29,15 @@
     "plugins": [
       "expo-router",
       "expo-document-picker"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "1a3604a7-63ec-4dda-8ae3-3a1fc9eee817"
+      }
+    },
+    "owner": "coprolink"
   }
 }

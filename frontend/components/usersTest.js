@@ -13,7 +13,6 @@ import {
   ActivityIndicator, // Import ActivityIndicator for the loading spinner
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios'; // Import axios for API requests
 import useFetch from '../hook/useFetch';
 
 const UsersManagement = () => {
@@ -26,21 +25,24 @@ const UsersManagement = () => {
   const [error, setError] = useState(null);
 
   const [newUserData, setNewUserData] = useState({
-    name: '',
-    lastname: '',
-    cin: '',
-    email: '',
-    phone: '',
-    username: '',
-    password: '',
-    confirmPassword: '',
+    first_name: '',
+      last_name: '',
+      email: '',
+      username: '',
+      password: '',
+      profile: {
+        telephone: '',
+        cin: '',
+        id_cop: 1,
+        role: 'proprietaire',
+      },
   });
 
   // Replace the axios.request options with the useFetch hook
 
 
 
-  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetch('api/users/9/');
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetch('api/users/');
 
   useEffect(() => {
     setError(fetchedError)
@@ -58,6 +60,7 @@ const UsersManagement = () => {
   // }, [data]);
 
   const renderUserItem = ({ item }) => {
+    console.log(item)
     return (
       <View style={styles.userItem}>
         <View style={styles.userInfo}>
@@ -67,7 +70,7 @@ const UsersManagement = () => {
         </View>
         <TouchableOpacity
           style={styles.removeIconContainer}
-          onPress={() => handleDeleteUser(item.id)}
+          onPress= {()=>handleDeleteUser(item.id)}
         >
           <Ionicons name="person-remove" size={20} color="red" />
         </TouchableOpacity>
@@ -84,48 +87,100 @@ const UsersManagement = () => {
     setUsers(filteredUsers);
   };
 
-  const addUser = () => {
-    // Logic to add a new user
-    const newUser = { ...newUserData, id: data.length + 1 };
-    setData([...data, newUser]); // Update 'data' with the new user
-    setShowModal(false);
-    setNewUserData({
-      name: '',
-      lastname: '',
-      cin: '',
-      email: '',
-      phone: '',
-      username: '',
-      password: '',
-      confirmPassword: '',
+  const addUser  = async () => {
+    const newUser = {...newUserData  };
+    //setData([...data, newUser]); // Update 'data' with the new user
+    // setShowModal(false);
+    
+    console.log(newUser)
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/users/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // Set appropriate headers
+      },
+      body: JSON.stringify(newUser), // Convert new user data to JSON string for the request body
     });
+    console.log(newUser)
+
+      if (response.ok) {
+        
+        refetch();
+      } else {
+        throw new Error('Failed to ADD user');
+      }
+    } catch (error) {
+      console.error('Error ADDING user:', error.message);
+
+    }
+
+   
   };
 
-  const handleDeleteUser = (id) => {
-    Alert.alert(
-      'Confirm',
-      'Are you sure you want to delete this user?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          onPress: () => {
-            const updatedUsers = data.filter((user) => user.id !== id);
-            setData(updatedUsers); // Update 'data' after deleting the user
-          },
-          style: 'destructive',
-        },
-      ],
-      { cancelable: true }
-    );
+  const handleDeleteUser = async (id) => {
+// Custom hook for deleting a user
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/users/${id}/`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        Alert.alert(
+            'Success',
+            'User deleted successfully',
+            [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+              },
+            ],
+            { cancelable: true }
+          );
+      } else {
+        throw new Error('Failed to delete user');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error.message);
+    }
+
+   refetch();
+
+    // Alert.alert(
+    //   'Confirm',
+    //   'Are you sure you want to delete this user?',
+    //   [
+    //     {
+    //       text: 'Cancel',
+    //       style: 'cancel',
+    //     },
+    //     {
+    //       text: 'Delete',
+    //       onPress: () => {
+    //         const updatedUsers = data.filter((user) => user.id !== id);
+    //         setData(updatedUsers); // Update 'data' after deleting the user
+    //       },
+    //       style: 'destructive',
+    //     },
+    //   ],
+    //   { cancelable: true }
+    // );
   };
 
   const handleInputChange = (field, value) => {
-    setNewUserData({ ...newUserData, [field]: value });
-  };
+    if (field.startsWith('profile')) {
+      // Handle profile nested fields
+      const profileField = field.split('.')[1]; // Extract the profile field name
+      setNewUserData({
+        ...newUserData,
+        profile: {
+          ...newUserData.profile,
+          [profileField]: value, // Update the specific profile field
+        },
+      });
+    } else {
+      // For non-profile fields
+      setNewUserData({ ...newUserData, [field]: value });
+    }  };
 
   return (
     <View style={styles.container}>
@@ -174,19 +229,19 @@ const UsersManagement = () => {
               style={styles.modalInput}
               placeholder="CIN"
               value={newUserData.cin}
-              onChangeText={(text) => handleInputChange('cin', text)}
+              onChangeText={(text) => handleInputChange('profile.cin', text)}
             />
              <TextInput
               style={styles.modalInput}
               placeholder="First Name"
               value={newUserData.name}
-              onChangeText={(text) => handleInputChange('name', text)}
+              onChangeText={(text) => handleInputChange('first_name', text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Last Name"
               value={newUserData.lastname}
-              onChangeText={(text) => handleInputChange('lastname', text)}
+              onChangeText={(text) => handleInputChange('last_name', text)}
             />
             <TextInput
               style={styles.modalInput}
@@ -198,7 +253,7 @@ const UsersManagement = () => {
               style={styles.modalInput}
               placeholder="Phone"
               value={newUserData.phone}
-              onChangeText={(text) => handleInputChange('phone', text)}
+              onChangeText={(text) => handleInputChange('profile.telephone', text)}
             />
             <TextInput
               style={styles.modalInput}
@@ -213,13 +268,13 @@ const UsersManagement = () => {
               value={newUserData.password}
               onChangeText={(text) => handleInputChange('password', text)}
             />
-            <TextInput
+            {/* <TextInput
               style={styles.modalInput}
               placeholder="Confirm Password"
               secureTextEntry={true}
               value={newUserData.confirmPassword}
               onChangeText={(text) => handleInputChange('confirmPassword', text)}
-            />
+            /> */}
             <TouchableOpacity style={styles.modalButton} onPress={addUser}>
               <Text style={styles.modalButtonText}>Add User</Text>
             </TouchableOpacity>
