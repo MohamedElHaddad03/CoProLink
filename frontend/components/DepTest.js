@@ -55,21 +55,23 @@ export const DepenseTest = () => {
     const renderCategory = (category) => {
       const expensesInCategory = data.filter((item) => item.categorie === category);
   
+      
+
       return (
         <View key={category}>
           <Text style={styles.categoryTitle}>{category}</Text>
           <FlatList
             data={expensesInCategory}
-            renderItem={({ item: expense }) => {
-              return <CardDepense key={expense.id_depense} item={expense} />;
-            }}
+            renderItem={({ item: expense }) => (
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <CardDepense key={expense.id_depense} item={expense} refetch={refetch} />
+              </View>
+            )}
             keyExtractor={(expense) => expense.id_depense.toString()}
           />
           <View style={styles.totalContainer}>
             <Text style={{ padding: 7, color: '#339df2' }}>
-              <Text style={{ color: 'black', fontWeight: 'bold' }}>
-                Prix total:
-              </Text>
+              <Text style={{ color: 'black', fontWeight: 'bold' }}>Prix total:</Text>
               {` ${calculateTotal(data, category)} MAD`}
             </Text>
           </View>
@@ -85,11 +87,11 @@ export const DepenseTest = () => {
     </View>
     <View style={styles.header}>
       
-      <TouchableOpacity onPress={() => setModalCategVisible(true)} style={styles.categoryButton}>
+      {/* <TouchableOpacity onPress={() => setModalCategVisible(true)} style={styles.categoryButton}>
         <Ionicons name="add-circle-outline" size={30} color='white' />
         <Text style={styles.buttonText}>
           Categorie</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>  */}
       <TouchableOpacity
         onPress={() => setModalDepVisible(true)}
       style={styles.expenseButton}>
@@ -103,7 +105,7 @@ export const DepenseTest = () => {
   <Text style={styles.buttonText}> Depense</Text>
 </TouchableOpacity>
 
-      <CategoryPopUp isModalVisible={isModalCategVisible} toggleModal={toggleCategModal} />
+      {/* <CategoryPopUp isModalVisible={isModalCategVisible} toggleModal={toggleCategModal} /> */}
 <DepensePopUp isModalVisible={isModalDepVisible} toggleModal={toggleDepgModal} />
 
     </View >

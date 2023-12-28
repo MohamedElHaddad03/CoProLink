@@ -1,8 +1,59 @@
 import { Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
 
 
-const CardDepense = ({ item }) => (
-    
+const CardDepense = ({ item,refetch }) => {
+console.log(item)
+const handleDeleteDepense = async (id) => {
+// Custom hook for deleting a user
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/interfaces/depense/delete/'+ id, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        Alert.alert(
+            'Success',
+            'User deleted successfully',
+            [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+              },
+            ],
+            { cancelable: true }
+          );
+      } else {
+        throw new Error('Failed to delete user');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error.message);
+    }
+
+   refetch();
+
+    // Alert.alert(
+    //   'Confirm',
+    //   'Are you sure you want to delete this user?',
+    //   [
+    //     {
+    //       text: 'Cancel',
+    //       style: 'cancel',
+    //     },
+    //     {
+    //       text: 'Delete',
+    //       onPress: () => {
+    //         const updatedUsers = data.filter((user) => user.id !== id);
+    //         setData(updatedUsers); // Update 'data' after deleting the user
+    //       },
+    //       style: 'destructive',
+    //     },
+    //   ],
+    //   { cancelable: true }
+    // );
+  };
+
+    return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={styles.imageContainer} >
@@ -17,6 +68,9 @@ const CardDepense = ({ item }) => (
         {/* <View style={styles.cardImage}> */}
             
             {/* </View> */}
+            <TouchableOpacity onPress={() => handleDeleteDepense(item.id_depense)}>
+                  <Ionicons name="trash-bin" size={24} color="red" />
+                </TouchableOpacity>
         
       </View>
       <View style={styles.divider} />
@@ -25,7 +79,7 @@ const CardDepense = ({ item }) => (
       </View>
     </View>
   );
-
+};
 
 
 export default CardDepense;

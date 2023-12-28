@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, StyleSheet, TextInput  } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 
-export  const  DepensePopUp = ({isModalVisible,toggleModal}) => {
+export  const  DepensePopUp = ({isModalVisible,toggleModal,refetch}) => {
 //   const [isModalVisible, setModalVisible] = useState(false);
 
 //   const toggleModal = () => {
@@ -11,6 +12,64 @@ export  const  DepensePopUp = ({isModalVisible,toggleModal}) => {
 const [name,setName]=useState('');
 const [desc,setDesc]=useState('');
 const [price,setPrice]=useState(0);
+const [selectedCategory, setSelectedCategory] = useState('');
+
+  const categories = [
+    'Assainissement',
+    'Matériel',
+    'Gardiennage',
+    'Maintenance et réparation',
+    'Autre',
+  ];
+
+  const HandleAddDepense = async() => {
+    const formattedDate = new Date().toISOString().slice(0, 10);
+    console.log(formattedDate);
+    const newDepense = {
+      nomDep: name,
+      montant: price,
+      categorie: selectedCategory,
+      description: desc,
+      date_dep: formattedDate,
+      id_cop: 1,
+    };
+    console.log(newDepense);
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/interfaces/depense/create/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newDepense),
+      });
+
+      if (response.ok) {
+        // Alert.alert(
+        //     'Success',
+        //     'User deleted successfully',
+        //     [
+        //       {
+        //         text: 'Cancel',
+        //         style: 'cancel',
+        //       },
+        //     ],
+        //     { cancelable: true }
+        //   );
+      } else {
+        throw new Error('Failed to delete user');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error.message);
+    }
+
+
+
+     toggleModal();
+    refetch();
+  };
+
+
 
   return (
     <View style={styles.container}>
@@ -21,53 +80,56 @@ const [price,setPrice]=useState(0);
         onRequestClose={toggleModal}
       >
         <View style={styles.modalContainer}>
-        
           <View style={styles.modalContent}>
-            
-          <TouchableOpacity onPress={toggleModal} style={styles.close}>
-              <Ionicons name="close" size={30} color='red'  />
+            <TouchableOpacity onPress={toggleModal} style={styles.close}>
+              <Ionicons name="close" size={30} color="red" />
             </TouchableOpacity>
-            <Text style={{marginTop:20,fontSize:21,fontWeight:'bold'}}>Depense :</Text>
+            <Text style={{ marginTop: 20, fontSize: 21, fontWeight: 'bold' }}>Depense :</Text>
             <TextInput
-              id='Name'
+              id="Name"
               value={name}
-              onChange={(value) => setName(value)}
-              placeholder='Saisir la nouvelle depense'
+              onChangeText={(value) => setName(value)}
+              placeholder="Saisir la nouvelle depense"
               style={styles.input}
             />
-            <Text style={{marginTop:20,fontSize:21,fontWeight:'bold'}}>Montant :</Text>
+            <Text style={{ marginTop: 20, fontSize: 21, fontWeight: 'bold' }}>Montant :</Text>
             <TextInput
-              id='Price'
+              id="Price"
               value={price}
-              onChange={(value) => setPrice(value)}
-                placeholder="Saisir le montant"
-                 keyboardType="numeric"
+              onChangeText={(value) => setPrice(value)}
+              placeholder="Saisir le montant"
+              keyboardType="numeric"
               style={styles.input}
             />
-             <Text style={{marginTop:20,fontSize:21,fontWeight:'bold'}}>Description :</Text>
+            <Text style={{ marginTop: 20, fontSize: 21, fontWeight: 'bold' }}>Categorie :</Text>
+            <Picker
+              selectedValue={selectedCategory}
+              onValueChange={(itemValue, itemIndex) => setSelectedCategory(itemValue)}
+              style={styles.input}
+            >
+              {categories.map((category, index) => (
+                <Picker.Item key={index} label={category} value={category} />
+              ))}
+            </Picker>
+            <Text style={{ marginTop: 20, fontSize: 21, fontWeight: 'bold' }}>Description :</Text>
             <TextInput
-              id='Description'
+              id="Description"
               value={desc}
-              onChange={(value) => setDesc(value)}
-              placeholder='Saisir la nouvelle Categorie'
-                         textAlignVertical="top"
-        multiline
-        numberOfLines={4}
-        maxLength={150}
-              style={[styles.input,{maxWidth:'100%'}]}
+              onChangeText={(value) => setDesc(value)}
+              placeholder="Saisir la nouvelle description"
+              textAlignVertical="top"
+              multiline
+              numberOfLines={4}
+              maxLength={150}
+              style={[styles.input, { maxWidth: '100%' }]}
             />
-             
+            <Text style={{ marginTop: 20, fontSize: 21, fontWeight: 'bold' }}>Catégorie :</Text>
             <View style={styles.btnContainer}>
-  {/* <TouchableOpacity onPress={toggleModal} style={[styles.buttons,{backgroundColor:'#800020',}]}>
-    <Text style={styles.buttonText}>Annuler</Text>
-    <Ionicons name="close" size={30} color='white' />
-  </TouchableOpacity> */}
-  <TouchableOpacity onPress={()=>{}} style={[styles.buttons,{backgroundColor:'#65B741',}]}>
-    <Text style={styles.buttonText}>Ajouter</Text>
-    <Ionicons name="checkmark" size={30} color='white' />
-  </TouchableOpacity>
-</View>
-
+              <TouchableOpacity onPress={HandleAddDepense} style={[styles.buttons, { backgroundColor: '#65B741' }]}>
+                <Text style={styles.buttonText}>Ajouter</Text>
+                <Ionicons name="checkmark" size={30} color="white" />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
