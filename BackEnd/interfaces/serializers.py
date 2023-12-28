@@ -1,6 +1,6 @@
 from . import models
 from rest_framework import serializers
-from interfaces.models import Copropriete, Document, Paiement, Propriete
+from interfaces.models import Copropriete, Cotisation, Document, Paiement, Propriete
 
 
 class DepenseSerializer(serializers.ModelSerializer):
@@ -24,7 +24,19 @@ class DocumentSerializer(serializers.ModelSerializer):
         model = Document
         fields = '__all__'
 
+class CotisationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cotisation
+        fields = '__all__'
+
 class PaiementSerializer(serializers.ModelSerializer):
+    num = serializers.ReadOnlyField(source='id_prop.num')
     class Meta:
         model = Paiement
         fields = '__all__'
+
+class PaiementStatSerializer(serializers.ModelSerializer):
+    num = serializers.ReadOnlyField(source='id_prop.num')
+    class Meta:
+        model = Paiement
+        fields = ['id_pay','etat','num','date_creation','date_paiement']

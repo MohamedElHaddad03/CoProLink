@@ -1,3 +1,5 @@
+from datetime import timezone
+from datetime import datetime
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +11,7 @@ from .serializers import (
     DepenseSerializer,
     DocumentSerializer,
     PaiementSerializer,
+    PaiementStatSerializer,
     ProprieteSerializer,
 )
 from django.db.models import Sum
@@ -64,7 +67,7 @@ def DepenseList(request):
     # }
 
     # return Response(serialized_depenses_par_categorie)
-    dep = Depense.Objects.all()
+    dep = Depense.objects.all()
     serializer = DepenseSerializer(dep, many=True)
     return Response(serializer.data)
 
@@ -216,3 +219,26 @@ def DeleteDocument(request, id_doc):
         return Response({"message": "Document supprimé avec succès !"})
     else:
         return Response({"message": "Document introuvable !"})
+
+@api_view(["GET"])
+def ListerPaiementStatsMens(request,mois):
+    paiement = Paiement.objects.filter(date_creation__month=mois)
+    serializer = PaiementStatSerializer(paiement,many=True)
+    print(serializer)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+def ListerPaiementStatsAnn(request,annee):
+    paiement = Paiement.objects.filter(date_creation__year=annee)
+    serializer = PaiementStatSerializer(paiement,many=True)
+    print(serializer)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+def ListerPaiementStatsPer(request,prem,sec):
+    start_date = datetime.strptime(prem, '%Y-%m-%d')
+    end_date = datetime.strptime(sec, '%Y-%m-%d')
+    paiement = Paiement.objects.filter(date_creation__range=[start_date, end_date])
+    serializer = PaiementStatSerializer(paiement,many=True)
+    print(serializer)
+    return Response(serializer.data)

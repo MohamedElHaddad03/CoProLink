@@ -6,6 +6,9 @@ from . import views
 urlpatterns = [
     path("paiement/vrpay/<int:id_pay>", views.ValiderRejeterPay, name="ValiderRejeter"),
     path("paiement", views.ListerPaiement, name="ListerPaiement"),
+    path("stats/paiementmens/<int:mois>",views.ListerPaiementStatsMens,name="ListerPaiementStatsMens"),
+    path("stats/paiementann/<int:annee>",views.ListerPaiementStatsAnn,name="ListerPaiementStatsAnn"),
+    path("stats/paiementper/<str:prem>/<str:sec>",views.ListerPaiementStatsPer,name="ListerPaiementStatsPer"),
     path("depense", views.DepenseList, name="DepenseList"),
     path("depense/create/", views.CreateDepense, name="DepenseCreate"),
     path("depense/delete/<int:id_dep>", views.DeleteDepense, name="Depensedelete"),
