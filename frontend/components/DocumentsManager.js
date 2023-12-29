@@ -3,31 +3,134 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, Keyboard
 import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { app } from '../firebase'; // Import the firebase app instance
+import * as Permissions from 'expo-permissions';
+
+const checkPermissions = async () => {
+  // Check if permission is granted
+  const { status } = await Permissions.getAsync(Permissions.MEDIA_LIBRARY);
+
+  if (status !== 'granted') {
+    // If permission is not granted, request it
+    const { status: newStatus } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+
+    if (newStatus !== 'granted') {
+      console.log('Permission denied');
+      return false;
+    }
+  }
+
+  return true;
+};
+
+const storage = getStorage(app);
+const getBlobFroUri = async (uri) => {
+  const blob = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function (e) {
+      reject(new TypeError("Network request failed"));
+    };
+    xhr.responseType = "blob";
+    xhr.open("GET", uri, true);
+    xhr.send(null);
+  });
+
+  return blob;
+};
+
+//const documentBlob = await getBlobFroUri(image)
 
 const DocumentsManager = () => {
   const [documents, setDocuments] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [documentUrl, setDocumentUrl] = useState('');
+  const [searchQuery,setSearchQuery]=useState('');
+  const getFileTypeIcon = (filename) => {
+    if (filename && filename.endsWith) {
+      if (filename.endsWith('.pdf')) {
+        return 'picture-as-pdf';
+      } else if (filename.endsWith('.doc') || filename.endsWith('.docx')) {
+        return 'description';
+      } else if (filename.endsWith('.xls') || filename.endsWith('.xlsx')) {
+        return 'insert-chart';
+      } else {
+        return 'insert-drive-file';
+      }
+    }
+    return 'insert-drive-file'; // Default icon if filename is undefined
+  };
 
+  const handleUpload = async (document, filename) => {
+    try {
+      const storageRef = ref(storage, `documents/${filename}`);
+      const uploadTask = uploadBytesResumable(storageRef, document);
+  
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+        },
+        (error) => {
+          console.error('Error uploading document:', error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log('Document uploaded successfully. Download URL:', downloadURL);
+          setDocumentUrl(downloadURL);
+        }
+      );
+    } catch (error) {
+      console.error('Error handling upload:', error);
+    }
+  };
+  
+  
   const importDocument = async () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: [ 'application/pdf' ,
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-        copyToCacheDirectory: true,
-      });
-
-      if (result.assets != null) {
-        const newDocument = { name: result.assets[0].name, uri: result.uri };
-        setDocuments([...documents, newDocument]);
+      const hasPermissions = await checkPermissions();
+  
+      if (hasPermissions || !hasPermissions) {
+        const result = await DocumentPicker.getDocumentAsync({
+          type: [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          ],
+          copyToCacheDirectory: true,
+        });
+  
+        console.log('Document Picker Result:', result);
+  
+        if (!result.cancelled) {
+          const newDocument = { name: result.assets[0].name, uri: result.assets[0].uri };
+          setDocuments([...documents, newDocument]);
+          console.log("UUUUUUUUURRRRRRRRRRIIIIIIII",result.assets[0].uri)
+  
+          const blob = await getBlobFroUri(result.assets[0].uri);
+  
+          handleUpload(blob,result.assets[0].name);
+        } else {
+          console.log('Document picking cancelled by the user');
+        }
       } else {
-        console.log('Document picking cancelled or failed');
+        console.log('Permission denied. Unable to access documents.');
       }
     } catch (error) {
       console.error('Error picking a document', error);
     }
   };
+  
+  
+  
+  
+  
+
+
 
   // const openDocument = async (uri) => {
   //   try {
@@ -58,17 +161,7 @@ const DocumentsManager = () => {
     );
   };
 
-  const getFileTypeIcon = (filename) => {
-    if (filename.endsWith('.pdf')) {
-      return 'picture-as-pdf'; 
-    } else if (filename.endsWith('.doc') || filename.endsWith('.docx')) {
-      return 'description'; 
-    } else if (filename.endsWith('.xls') || filename.endsWith('.xlsx')) {
-      return 'insert-chart'; 
-    } else {
-      return 'insert-drive-file'; 
-    }
-  };
+  
   
 
   const refreshDocuments = () => {

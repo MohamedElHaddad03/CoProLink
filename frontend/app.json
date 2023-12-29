@@ -30,14 +30,21 @@
       "expo-router",
       "expo-document-picker"
     ],
+    "android":{
+      "permissions":[
+        "READ_EXTERNAL_STORAGE",
+    "WRITE_EXTERNAL_STORAGE"
+      ]
+    }
+    ,
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "1a3604a7-63ec-4dda-8ae3-3a1fc9eee817"
+        "projectId": "109e79f0-6be8-4c3d-a79e-a2ba4bdf4d0f"
       }
     },
-    "owner": "coprolink"
+    "owner": "anon123"
   }
 }
