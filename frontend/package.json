@@ -15,8 +15,12 @@
     "@firebase/firestore": "^4.4.0",
     "@firebase/storage": "^0.12.0",
     "@react-native-community/masked-view": "^0.1.11",
+<<<<<<< HEAD
     "@react-native-firebase/app": "^18.7.3",
     "@react-native-firebase/storage": "^18.7.3",
+=======
+    "@react-native-picker/picker": "2.4.10",
+>>>>>>> f9fafb9320334cc18eb7be6e82d53686f997cfef
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
     "axios": "^1.6.2",
