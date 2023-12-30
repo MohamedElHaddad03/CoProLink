@@ -15,12 +15,9 @@
     "@firebase/firestore": "^4.4.0",
     "@firebase/storage": "^0.12.0",
     "@react-native-community/masked-view": "^0.1.11",
-<<<<<<< HEAD
     "@react-native-firebase/app": "^18.7.3",
     "@react-native-firebase/storage": "^18.7.3",
-=======
-    "@react-native-picker/picker": "2.4.10",
->>>>>>> f9fafb9320334cc18eb7be6e82d53686f997cfef
+    "@react-native-picker/picker": "^2.6.1",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
     "axios": "^1.6.2",
@@ -31,6 +28,7 @@
     "expo-firebase": "^0.0.0-alpha.0",
     "expo-intent-launcher": "~10.7.0",
     "expo-linking": "~5.0.2",
+    "expo-permissions": "~14.2.1",
     "expo-router": "^2.0.0",
     "expo-status-bar": "~1.6.0",
     "firebase": "^10.7.1",
@@ -46,8 +44,7 @@
     "react-native-svg": "13.9.0",
     "react-native-waves": "^1.2.5",
     "react-native-web": "~0.19.6",
-    "react-wavify": "^1.9.0",
-    "expo-permissions": "~14.2.1"
+    "react-wavify": "^1.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
