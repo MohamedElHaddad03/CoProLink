@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import ProfileScreen from './Profile';
 import DocumentsManager from './DocumentsManager';
 import PaiementsManager from './PaiementsManager';
@@ -9,8 +9,24 @@ import ContactSupport from './ContactSupport';
 import ErrorBoundary from '../errorBoundry';
 import { Statistics } from './Statistics';
 import LoginScreen from './Login';
+import { useAuth } from '../Context/AuthContext';
 const ControllerComponent = ({ selectedItem, setSelectedItem }) => {
 
+  // const { user } = useAuth();
+
+  // // Check if the user is authenticated
+  // const isAuthenticated = !!user;
+
+  // // Function to render the appropriate screen based on authentication status
+
+  //   if (selectedItem === 'Login') {
+  //     return <LoginScreen />;
+  //   }
+
+  //   // Check if the user is authenticated before rendering certain screens
+  //   if (!isAuthenticated) {
+  //     return <LoginScreen />;
+  //   }
 
   switch (selectedItem) {
     case 'Login':

@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
  // const [cryptedUser,setCryptedUser] =useState()
   const login = async (username, password) => {
     const userProps = {
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 
       setUser(response.data); // Assuming that the server returns user data including token and role
       setAuthenticated(true);
-      console.log(user)
+      console.log("context :",user)
     } catch (error) {
       setError(error);
     } finally {

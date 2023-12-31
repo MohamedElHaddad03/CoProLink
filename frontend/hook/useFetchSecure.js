@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useAuth } from "../Context/AuthContext";
 
-const useFetchSecure = (endpoint, query, token, method = "GET") => {
+const useFetchSecure = (endpoint, query,  method = "GET") => {
     const baseUrl = "http://127.0.0.1:8000/";
+    const {user} =useAuth();
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -13,7 +15,7 @@ const useFetchSecure = (endpoint, query, token, method = "GET") => {
         params: { ...query },
         // Add other options as needed (headers, data for POST/PUT, etc.)
         headers: { 
-            Authorization:"Token"+token },
+            Authorization:"Token"+user.Token },
     };
 
     const fetchData = async () => {
