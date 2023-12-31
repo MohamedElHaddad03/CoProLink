@@ -5,6 +5,7 @@ import { useAuth } from "../Context/AuthContext";
 const useFetchSecure = (endpoint, query,  method = "GET") => {
     const baseUrl = "http://127.0.0.1:8000/";
     const {user} =useAuth();
+    console.log("Tokeeeeeeeen : ",user.Token)
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -15,32 +16,37 @@ const useFetchSecure = (endpoint, query,  method = "GET") => {
         params: { ...query },
         // Add other options as needed (headers, data for POST/PUT, etc.)
         headers: { 
-            Authorization:"Token"+user.Token },
+            Authorization:"Token "+user.Token },
     };
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const response = await axios.request(options);
-            setData(response.data.data);
+          const response = await axios.request(options);
+          // Check if response.data is already an object, and set it accordingly
+          setData(typeof response.data === 'object' ? response.data : JSON.stringify(response.data));
+          console.log(response.data);
         } catch (error) {
-            console.error("API Request Error:", error);
-            setError(error);
+          setError(error);
+          alert('Error');
         } finally {
-            setIsLoading(false);
+          setIsLoading(false);
         }
-    };
-
-    useEffect(() => {
+      };
+    
+      useEffect(() => {
         fetchData();
-    }, []);
-
-    const refetch = () => {
-        setIsLoading(true);
+      }, []);
+    
+      const refetch = () => {
         fetchData();
-    };
+      };
+    console.log("hook", data)
 
     return { data, isLoading, error, refetch };
 };
 
 export default useFetchSecure;
+
+
+

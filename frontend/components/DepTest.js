@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { CategoryPopUp } from "./Modals/CategoryPopUp";
 import { DepensePopUp } from "./Modals/DepensePopUp";
-import useFetch from "../hook/useFetch";
+//import useFetch from "../hook/useFetch";
+import useFetchSecure from "../hook/useFetchSecure";
 
 export const DepenseTest = () => {
     const [isModalCategVisible, setModalCategVisible] = useState(false);
@@ -16,7 +17,7 @@ export const DepenseTest = () => {
     const [error, setError] = useState(null);
 
     // Replace the axios.request options with the useFetch hook
-    const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetch('api/interfaces/depense');
+    const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/depense');
 
     useEffect(() => {
         setError(fetchedError)
