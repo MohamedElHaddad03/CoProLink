@@ -69,7 +69,8 @@ def DepenseList(request):
     # }
 
     # return Response(serialized_depenses_par_categorie)
-    dep = Depense.objects.all()
+    user = request.user
+    dep = Depense.objects.filter(id_cop=user.profile.id_cop)
     serializer = DepenseSerializer(dep, many=True)
     return Response(serializer.data)
 

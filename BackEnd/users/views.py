@@ -16,6 +16,18 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+@api_view(["POST"])
+def signup(request):
+    request.data['profile']['role']="admin"
+    utilisateur=CombinedUserSerializer(data=request.data)
+    if utilisateur.is_valid():
+        profile = utilisateur.validated_data.pop('profile')
+        user = User.objects.create(**utilisateur.validated_data)
+        Profile.objects.create(user=user, **profile)
+        return Response("Utilisateur créé avec succès !", status=status.HTTP_201_CREATED)
+    else:
+        return Response(utilisateur.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ProfileListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()
