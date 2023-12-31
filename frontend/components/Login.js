@@ -1,28 +1,28 @@
 import React, { useRef, useState, useEffect } from 'react';
-import {View,Text,TextInput,TouchableOpacity,StyleSheet,Image,Animated,Easing,ImageBackground} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated, Easing, ImageBackground } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
 import { useAuth } from '../Context/AuthContext';
 const LoginScreen = () => {
 
   // const [loginTop, setLoginTop] = useState(0);
-  const [username,setUserName] =useState('');
-  const [password,setPassword] =useState('');
-  const [firstname,setFirstName] =useState('');
-  const [lastname,setLastName] =useState('');
-  const [email,setEmail] =useState('');
-  const [phone,setPhone] =useState('');
-  const [cin,setCin] =useState('');
-  const [usernameSU,setUserNameSU] =useState('');
-  const [passwordSU,setPasswordSU] =useState('');
-  const [confirmPass,setconfirmPass] =useState('');
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstname, setFirstName] = useState('');
+  const [lastname, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [cin, setCin] = useState('');
+  const [usernameSU, setUserNameSU] = useState('');
+  const [passwordSU, setPasswordSU] = useState('');
+  const [confirmPass, setconfirmPass] = useState('');
 
   const [showSignUp, setShowSignUp] = useState(false); // State to manage SignUp form visibility
 
   // const loginRef = useRef(null);
-  const {login} =useAuth();
-  const handleLogin =  () => {
+  const { login } = useAuth();
+  const handleLogin = () => {
     try {
-       login(username, password);
+      login(username, password);
     } catch (error) {
       console.error('Login failed', error);
     }
@@ -38,7 +38,7 @@ const LoginScreen = () => {
   useEffect(() => {
     // startAnimation();
   }, []);
-  
+
   let translateX1 = new Animated.Value(-160);
 
   // const startAnimation = () => {
@@ -65,131 +65,132 @@ const LoginScreen = () => {
   };
 
 
-const handleSignup = () => {
-  
-alert('signup Successfull')
-toggleSignUp();
-};
+  const handleSignup = () => {
+
+    alert('signup Successfull')
+    toggleSignUp();
+  };
 
 
   return (
 
-    
+
     <View style={styles.container} >
-<ImageBackground
+      <ImageBackground
         source={require('../assets/images/LoginBG.jpg')} // Replace with your image path
         style={styles.backgroundImage}
         blurRadius={5} // Adjust the blur radius as needed
       >
-      <View style={styles.backgroundTint} />
-      <Image
-        source={require('../assets/images/Logo_White_text.png')}
-        style={[
-          styles.image,
-          {
-            width: 300,
-            height: 150,
-            marginTop: '-10%',
-            zIndex: 1,
-          },
-        ]}
-      />
+        <View style={styles.backgroundTint} />
+        <Image
+          source={require('../assets/images/Logo_White_text.png')}
+          style={[
+            styles.image,
+            {
+              width: 300,
+              height: 150,
+              marginTop: '-10%',
+              zIndex: 1,
+            },
+          ]}
+        />
 
-{/* onLayout={onLoginLayout} */}
-{!showSignUp && (
-  <View style={{
-  width: '100%',
-  height: 'auto',
-  alignSelf: 'center',
-  alignItems: 'center',
-  }}>
-  <View style={styles.login}>
-  <TextInput
-    style={styles.input}
-    placeholder="Username"
-    value={username}
-    onChangeText={(value) => setUserName(value)}
-  />
-  <TextInput
-    style={styles.input}
-    placeholder="Password"
-    secureTextEntry={true}
-    value={password}
-    onChangeText={(value) => setPassword(value)}
-  />
-  
-  <TouchableOpacity style={styles.LoginButton} onPress={handleLogin}>
-    <Text style={styles.LoginButtonText}>Login</Text>
-  </TouchableOpacity>
-
-  <TouchableOpacity style={styles.SignUpButton} onPress={toggleSignUp}>
-    <Text style={styles.SignUpButtonText}>Sign Up</Text>
-  </TouchableOpacity>
-  
-      <Animated.View style={{transform: [{ translateX: translateX1 }] }}>
-        <Svg height="70" width="1000%" style={StyleSheet.absoluteFill}>
-        <Path
-          d="M0 30
-            C 100 10, 200 50, 300 30
-            S 500 10, 600 30
-            S 800 50, 900 30
-            S 1000 10, 1100 30
-            L1000 60 
-            L0 60 
-            Z"
-          fill="#3b67bb"
-          />
-        </Svg>
-      </Animated.View>
-      
-  </View>
-  <View style={styles.choiceText}>
-  <TouchableOpacity>
-    <Text style={styles.ForgotButton} >Forgot password?</Text>
-  </TouchableOpacity>
-</View>
-</View>
-)}
-      {showSignUp && (
-            <View style={styles.login}  >
+        {/* onLayout={onLoginLayout} */}
+        {!showSignUp && (
+          <View style={{
+            width: '100%',
+            height: 'auto',
+            alignSelf: 'center',
+            alignItems: 'center',
+          }}>
+            <View style={styles.login}>
               <TextInput
+                style={styles.input}
+                placeholderTextColor={"#607D8B"}
+                placeholder="Username"
+                value={username}
+                onChangeText={(value) => setUserName(value)}
+              />
+              <TextInput
+                style={styles.input}
+                placeholderTextColor={"#607D8B"}
+                placeholder="Password"
+                secureTextEntry={true}
+                value={password}
+                onChangeText={(value) => setPassword(value)}
+              />
+
+              <TouchableOpacity style={styles.LoginButton} onPress={handleLogin}>
+                <Text style={styles.LoginButtonText}>Login</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.SignUpButton} onPress={toggleSignUp}>
+                <Text style={styles.SignUpButtonText}>Sign Up</Text>
+              </TouchableOpacity>
+              <View style={{ transform: [{ translateX: -180 }] }}>
+  <Image
+    source={require('../assets/images/t4W8Bb1dBH.gif')} // Replace with the actual path to your GIF
+    style={[StyleSheet.absoluteFill, { width: '150%', height: 110, marginTop: 10, bottom: 0 }]}
+  />
+</View>
+
+
+
+            </View>
+            <View style={styles.choiceText}>
+              <TouchableOpacity>
+                <Text style={styles.ForgotButton} >Forgot password?</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        {showSignUp && (
+          <View style={styles.login}  >
+            <TextInput
               style={styles.inputS}
+              placeholderTextColor={"#607D8B"}
               placeholder="cin"
               value={cin}
               onChangeText={(value) => setCin(value)}
             />
             <TextInput
               style={styles.inputS}
+              placeholderTextColor={"#607D8B"}
               placeholder="firstname"
               value={firstname}
               onChangeText={(value) => setFirstName(value)}
             />
             <TextInput
               style={styles.inputS}
+              placeholderTextColor={"#607D8B"}
               placeholder="lastname"
               value={lastname}
               onChangeText={(value) => setLastName(value)}
             />
             <TextInput
               style={styles.inputS}
+              placeholderTextColor={"#607D8B"}
               placeholder="email"
               value={email}
               onChangeText={(value) => setEmail(value)}
             />
             <TextInput
               style={styles.inputS}
+              placeholderTextColor={"#607D8B"}
               placeholder="phone"
               value={phone}
               onChangeText={(value) => setPhone(value)}
             />
             <TextInput
               style={styles.inputS}
+              placeholderTextColor={"#607D8B"}
               placeholder="username"
               value={usernameSU}
               onChangeText={(value) => setUserNameSU(value)}
             />
             <TextInput
               style={styles.inputS}
+              placeholderTextColor={"#607D8B"}
               placeholder="password"
               secureTextEntry={true}
               value={passwordSU}
@@ -197,38 +198,31 @@ toggleSignUp();
             />
             <TextInput
               style={styles.inputS}
+              placeholderTextColor={"#607D8B"}
               placeholder="confirm password"
+
               secureTextEntry={true}
               value={confirmPass}
               onChangeText={(value) => setconfirmPass(value)}
             />
-            
+
             <TouchableOpacity style={styles.LoginButton} onPress={handleSignup}>
               <Text style={styles.LoginButtonText}>Sign Up</Text>
             </TouchableOpacity>
-          
+
             <TouchableOpacity style={styles.SignUpButton} onPress={toggleSignUp}>
               <Text style={styles.SignUpButtonText}>Login</Text>
             </TouchableOpacity>
-            
-                <Animated.View style={{transform: [{ translateX: translateX1 }] }}>
-                  <Svg height="70" width="1000%" style={StyleSheet.absoluteFill}>
-                  <Path
-                    d="M0 30
-                      C 100 10, 200 50, 300 30
-                      S 500 10, 600 30
-                      S 800 50, 900 30
-                      S 1000 10, 1100 30
-                      L1000 60 
-                      L0 60 
-                      Z"
-                    fill="#3b67bb"
-                    />
-                  </Svg>
-                </Animated.View>
-            </View>
-          )}
-      
+
+            <View style={{ transform: [{ translateX: -180 }] }}>
+  <Image
+    source={require('../assets/images/t4W8Bb1dBH.gif')} // Replace with the actual path to your GIF
+    style={[StyleSheet.absoluteFill, { width: '150%', height: 110, marginTop: 10, bottom: 0 }]}
+  />
+</View>
+          </View>
+        )}
+
       </ImageBackground>
     </View>
   );
@@ -240,7 +234,7 @@ const styles = StyleSheet.create({
 
   container: {
     //i want to use a blurred image as a background
-    
+
     flex: 1,
     backgroundColor: '#ffffff',
     alignItems: 'center',
@@ -354,7 +348,7 @@ const styles = StyleSheet.create({
 
     },
   },
-  inputS:{
+  inputS: {
     borderRadius: 5,
     fontSize: 16,
     backgroundColor: '#3b67bb20',
