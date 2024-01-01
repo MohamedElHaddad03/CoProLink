@@ -16,7 +16,7 @@ import threading
     post_save, sender=Paiement
 )  
 def GenerationRecu(sender, instance, **kwargs):
-    if kwargs.get('updated'):
+    if kwargs.get('update_fields'):
         if instance.etat == 1 and 'etat' in kwargs['update_fields']:
             generer_pdf(instance)
             
