@@ -36,7 +36,7 @@ def signup(request):
         token = default_token_generator.make_token(user)
         activation_link = f"http://127.0.0.1:8000/activation/{uid}/{token}/"
         subject = 'CoProLink-Activation de votre Compte'
-        message = f"Bonjour,\n\nBienvenu à notre application ! \n\n Voici votre Username ou Nom d'utilisateur : {user.username} \n\n Il est nécessaire d'activer votre compte, veuillez cliquer sur le lien affiché pour y procéder'.\n\n {activation_link}"
+        message = f"Bonjour,\n\nBienvenu à notre application ! \n\n Voici votre Username ou Nom d'utilisateur : {user.username} \n\n Il est nécessaire d'activer votre compte, veuillez cliquer sur le lien affiché pour y procéder.\n\n {activation_link}"
         send_mail(subject, message, 'elbaghdadinada5@gmail.com', [user.email])
 
         return Response("Utilisateur créé avec succès !", status=status.HTTP_201_CREATED)
