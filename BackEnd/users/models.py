@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 ROLE = [
     ('admin', 'admin'),
     ('proprietaire', 'proprietaire'),
-    ('gestion', 'gestion'),
+    ('syndic', 'syndic'),
 ]
 
 class Profile(models.Model):
