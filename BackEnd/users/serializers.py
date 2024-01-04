@@ -19,22 +19,22 @@ class CombinedUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username','password', 'email', 'first_name', 'last_name', 'profile']
 
     def create(self, validated_data):
-        # utilisateur=self.context['request'].user
+        utilisateur=self.context['request'].user
         profile_data = validated_data.pop('profile')
-        # if utilisateur.profile.role == "admin":
-        #     profile_data['role']="proprietaire"
-        #     profile_data['id_cop']=utilisateur.profile.id_cop
-        #     cot = self.context['request'].data['id_cot']
-        #     id_prop = self.context['request'].data['id_prop']
-        #     prop = get_object_or_404(Propriete,pk=id_prop)
-        #     cot = get_object_or_404(Cotisation,pk=cot)
-        # if utilisateur.profile.role == "gestion":
-        #     profile_data['role']="admin"
+        if utilisateur.profile.role == "syndic":
+            profile_data['role']="proprietaire"
+            profile_data['id_cop']=utilisateur.profile.id_cop
+            cot = self.context['request'].data['id_cot']
+            id_prop = self.context['request'].data['id_prop']
+            prop = get_object_or_404(Propriete,pk=id_prop)
+            cot = get_object_or_404(Cotisation,pk=cot)
+        if utilisateur.profile.role == "admin":
+            profile_data['role']="syndic"
         user = User.objects.create(**validated_data)
-        # if utilisateur.profile.role == "admin":
-        #     prop.id_user = user
-        #     prop.id_cot = cot
-        #     prop.save()
+        if utilisateur.profile.role == "syndic":
+            prop.id_user = user
+            prop.id_cot = cot
+            prop.save()
         Profile.objects.create(user=user, **profile_data)
         return user
     

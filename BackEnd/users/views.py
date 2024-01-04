@@ -2,6 +2,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from users.serializers import CombinedUserSerializer, LoginSerializer
@@ -15,6 +16,49 @@ from django.contrib.auth import authenticate, logout
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+
+@api_view(["POST"])
+def signup(request):
+    request.data['profile']['role']="admin"
+    utilisateur=CombinedUserSerializer(data=request.data)
+    if utilisateur.is_valid():
+        utilisateur.validated_data['is_active'] = False
+        profile = utilisateur.validated_data.pop('profile')
+        user = User.objects.create(**utilisateur.validated_data)
+        Profile.objects.create(user=user, **profile)
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        activation_link = f"http://127.0.0.1:8000/activation/{uid}/{token}/"
+        subject = 'CoProLink-Activation de votre Compte'
+        message = f"Bonjour,\n\nBienvenu à notre application ! \n\n Voici votre Username ou Nom d'utilisateur : {user.username} \n\n Il est nécessaire d'activer votre compte, veuillez cliquer sur le lien affiché pour y procéder.\n\n {activation_link}"
+        send_mail(subject, message, 'elbaghdadinada5@gmail.com', [user.email])
+
+        return Response("Utilisateur créé avec succès !", status=status.HTTP_201_CREATED)
+    else:
+        return Response(utilisateur.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(["GET"])
+def activation_compte(request, uidb64, token):
+    uid = urlsafe_base64_decode(uidb64).decode('utf-8')
+    user = User.objects.get(pk=uid)
+
+    if default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+
+        message = f"Compte activé avec succès ! Vous pouvez désormais retourner à l'application"
+        return render(request, 'activation_message.html', {'message': message})
+    else:
+        message = "Lien d'activation invalide."
+        return render(request, 'templates/activation_message.html', {'message': message})
+
 
 
 class ProfileListCreateView(generics.ListCreateAPIView):
@@ -24,6 +68,7 @@ class ProfileListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         user = self.request.user
         return User.objects.filter(profile__id_cop=user.profile.id_cop)
+
 
 class ProfileRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
@@ -92,4 +137,11 @@ class LogoutView(APIView):
             )
 
 
+""" from django.shortcuts import render
+from django.contrib.auth.forms import SetPasswordForm
 
+
+def reset_password(request, uidb64, token):
+    form = SetPasswordForm(uidb64)
+    return render(request, "password_reset.html", {"form": form})
+ """

@@ -13,6 +13,19 @@ import schedule
 import threading
 
 @receiver(
+    post_save, sender=Paiement
+)  
+def GenerationRecu(sender, instance, **kwargs):
+    if kwargs.get('update_fields'):
+        if instance.etat == 1 and 'etat' in kwargs['update_fields']:
+            generer_pdf(instance)
+            
+
+def generer_pdf(hh):
+    pass
+
+
+@receiver(
     post_save, sender=Propriete
 )  # y3ni apres une instance du modele Propriete dyalna, le signal va etre declenché
 def PaiementMensuel(sender, instance, **kwargs):
