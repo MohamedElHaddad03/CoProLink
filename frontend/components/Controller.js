@@ -1,40 +1,34 @@
-import React, { useContext } from 'react';
+import React, { Suspense, lazy, useContext } from 'react';
 import ProfileScreen from './Profile';
 import DocumentsManager from './DocumentsManager';
 import PaiementsManager from './PaiementsManager';
 import { DepenseTest } from './DepTest';
+import Statistics from './Statistics';  // Updated line
 import SettingsScreen from './SettingsScreen';
 import AddUserScreen from './usersTest';
 import ContactSupport from './ContactSupport';
 import ErrorBoundary from '../errorBoundry';
-import { Statistics } from './Statistics';
+// import { Statistics } from './Statistics';
 import LoginScreen from './Login';
 import { useAuth } from '../Context/AuthContext';
+import { Text, View } from 'react-native';
+
+const LazyStatistics = () => {
+  return (
+    <Suspense fallback={<View><Text>Loading Statistics...</Text></View>}>
+      <Statistics />
+    </Suspense>
+  );
+};
+
 const ControllerComponent = ({ selectedItem, setSelectedItem }) => {
-
-  // const { user } = useAuth();
-
-  // // Check if the user is authenticated
-  // const isAuthenticated = !!user;
-
-  // // Function to render the appropriate screen based on authentication status
-
-  //   if (selectedItem === 'Login') {
-  //     return <LoginScreen />;
-  //   }
-
-  //   // Check if the user is authenticated before rendering certain screens
-  //   if (!isAuthenticated) {
-  //     return <LoginScreen />;
-  //   }
-
   switch (selectedItem) {
     case 'Login':
-      return<LoginScreen/>
+      return <LoginScreen />
     case 'Depenses':
       return <DepenseTest />
     case 'Statistiques':
-      return <Statistics />
+      return <LazyStatistics />;
     case 'Profile':
       return <ProfileScreen />
     case 'Documents':

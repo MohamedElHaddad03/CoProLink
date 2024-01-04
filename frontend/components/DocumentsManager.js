@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions, Alert, Linking } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -7,6 +7,9 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/
 import { app } from '../firebase'; // Import the firebase app instance
 import * as Permissions from 'expo-permissions';
 import useFetchSecure from '../hook/useFetchSecure';
+import BASEURL from '../config';
+import { useAuth } from '../Context/AuthContext';
+import axios from 'axios';
 
 const checkPermissions = async () => {
   // Check if permission is granted
@@ -47,12 +50,15 @@ const getBlobFroUri = async (uri) => {
 
 const DocumentsManager = () => {
   const [documents, setDocuments] = useState([]);
+  const [documentsFilter, setDocumentsfilter] = useState([]);
   const [documentName, setDocumentName] = useState('');
   const [documentUrl, setDocumentUrl] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState(null); // Initialize 'data' state
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+
 
   // Replace the axios.request options with the useFetch hook
   const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/Docs');
@@ -86,7 +92,7 @@ const DocumentsManager = () => {
 
   const handleUpload = async (document, filename) => {
     try {
-      const storageRef = ref(storage, `documents/${filename}`);
+      const storageRef = ref(storage, `documents/${user.User.profile.id_cop}/${filename}`);
       setDocumentName(filename);
       const uploadTask = uploadBytesResumable(storageRef, document);
 
@@ -110,24 +116,26 @@ const DocumentsManager = () => {
     }
   };
   useEffect(() => {
-    async () => {
+    const fetchData = async () => {
       try {
+        console.log(documentName, documentUrl, user.User.profile.id_cop);
         const options = {
           method: 'POST',
-          url: `http://192.168.1.154:8001/api/interfaces/Docs/create/`,
+          url: `${BASEURL}/api/interfaces/Docs/create/`,
           data: {
             "nomdoc": documentName,
             "url": documentUrl,
             "id_cop": user.User.profile.id_cop,
           },
           headers: {
-            Authorization: "Token " + user.Token
+            Authorization: "Token " + user.Token,
           },
         };
 
         const response = await axios.request(options);
-        console.log("data",response.data);
-        saveChanges();
+        console.log("data", response.data);
+
+        refetch();
       } catch (error) {
         if (error.response) {
           // The request was made, but the server responded with a status code
@@ -135,7 +143,7 @@ const DocumentsManager = () => {
           console.error('Response status:', error.response.status);
           console.error('Response headers:', error.response.headers);
 
-          alert('Error Updating: ' + error.response.data.detail || 'Unknown error');
+          alert('Error Updating: ' + (error.response.data.detail || 'Unknown error'));
         } else if (error.request) {
           // The request was made but no response was received
           console.error('No response received:', error.request);
@@ -143,16 +151,19 @@ const DocumentsManager = () => {
         } else {
           // Something happened in setting up the request that triggered an Error
           console.error('Error setting up request:', error.message);
-          alert('Error Updating: ' + error.message || 'Unknown error');
+          alert('Error Updating: ' + (error.message || 'Unknown error'));
         }
 
         setError(error);
       }
-    }
+    };
+    saveChanges();
+    fetchData(); // Call the async function
   }, [documentUrl]);
 
+
   const saveChanges = () => {
-    Alert.alert('Success', 'File Downloaded !!');
+    Alert.alert('Success', 'File Uploaded !!');
   };
 
   const importDocument = async () => {
@@ -174,7 +185,7 @@ const DocumentsManager = () => {
 
         if (!result.cancelled) {
           const newDocument = { name: result.assets[0].name, url: documentUrl };
-          setDocuments([...documents, newDocument]);
+          //   setDocuments([...documents, newDocument]);
           console.log("UUUUUUUUURRRRRRRRRRIIIIIIII", result.assets[0].uri)
 
           const blob = await getBlobFroUri(result.assets[0].uri);
@@ -215,14 +226,17 @@ const DocumentsManager = () => {
 
   const renderDocumentItem = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.documentItem}>
+      <TouchableOpacity style={styles.documentItem} onPress={() => {
+        Linking.openURL(item.url);
+      }}
+      >
         <MaterialIcons
           name={getFileTypeIcon(item.name)}
           size={24}
           color="#3b67bb"
           style={styles.fileIcon}
         />
-        <Text>{item.name}</Text>
+        <Text>{item.nomdoc}</Text>
       </TouchableOpacity>
     );
   };
@@ -237,6 +251,16 @@ const DocumentsManager = () => {
 
 
   const searchDocument = () => {
+    const filteredUsers = documents.filter(
+      (doc) =>
+        doc.nomdoc.toLowerCase().includes(searchQuery.toLowerCase())
+      //||
+      //  doc.lastname.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setDocuments(filteredUsers);
+    if(!searchQuery){
+      refetch();
+    }
 
   };
 
@@ -251,6 +275,8 @@ const DocumentsManager = () => {
           placeholder="Search..."
           value={searchQuery}
           onChangeText={setSearchQuery}
+          onSubmitEditing={searchDocument}
+          onPointerLeave={()=>refetch()}
         />
         <TouchableOpacity style={styles.importButton} onPress={importDocument}>
           <MaterialIcons name="cloud-upload" size={24} color="#fff" />

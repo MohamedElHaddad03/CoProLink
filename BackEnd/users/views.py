@@ -21,6 +21,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
+from django.template.loader import render_to_string
 
 @api_view(["POST"])
 def signup(request):
@@ -34,14 +35,35 @@ def signup(request):
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        activation_link = f"http://127.0.0.1:8000/activation/{uid}/{token}/"
-        subject = 'CoProLink-Activation de votre Compte'
-        message = f"Bonjour,\n\nBienvenu à notre application ! \n\n Voici votre Username ou Nom d'utilisateur : {user.username} \n\n Il est nécessaire d'activer votre compte, veuillez cliquer sur le lien affiché pour y procéder.\n\n {activation_link}"
-        send_mail(subject, message, 'elbaghdadinada5@gmail.com', [user.email])
+        lien = f"http://192.168.1.156:8000/activation/{uid}/{token}/"
+        subject = 'CoProLink-Activation de Compte'
+        message1 = "Bienvenue à notre application !"
+        message2 = "Voici votre Username ou Nom d'utilisateur :" + str(
+            user.username
+        )
+        message3 = "Il est nécessaire d'activer votre compte, veuillez cliquer sur le bouton affiché au dessous pour y procéder."
+        message4 = "ACTIVER"
+        
+        html_message = render_to_string(
+            "email.html",
+            {
+                "message1": message1,
+                "message2": message2,
+                "message3": message3,
+                "message4": message4,
+                "lien": lien,
+            },
+        )
+        send_mail(
+            subject,
+            "",
+            "elbaghdadinada5@gmail.com",
+            [user.email],
+            html_message=html_message,
+        )
+        return Response({"message": "Utilisateur créé avec succès. Vérifiez votre e-mail pour l'activation."})
 
-        return Response("Utilisateur créé avec succès !", status=status.HTTP_201_CREATED)
-    else:
-        return Response(utilisateur.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"errors": utilisateur.errors}, status=400)
     
 
 @api_view(["GET"])

@@ -33,7 +33,7 @@ class PaiementSerializer(serializers.ModelSerializer):
     num = serializers.ReadOnlyField(source='id_prop.num')
     class Meta:
         model = Paiement
-        fields = '_all_'
+        fields = '__all__'
 
 class PaiementStatSerializer(serializers.ModelSerializer):
     num = serializers.ReadOnlyField(source='id_prop.num')
