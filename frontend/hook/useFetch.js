@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import BASEURL from "../config";
 
 const useFetch = (endpoint, query) => {
   const [data, setData] = useState(null);
@@ -8,7 +9,7 @@ const useFetch = (endpoint, query) => {
 
   const options = {
     method: 'GET',
-    url: `http://127.0.0.1:8000/${endpoint}`,
+    url: `${BASEURL}/${endpoint}`,
     params: { ...query },
   };
 

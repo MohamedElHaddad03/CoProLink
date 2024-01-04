@@ -18,14 +18,14 @@ export const AuthProvider = ({ children }) => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post('http://127.0.0.1:8000/login/', {
+      const response = await axios.post('http://192.168.1.154:8001/login/', {
         username: username,
         password: password
       });
 
       setUser(response.data); // Assuming that the server returns user data including token and role
       setAuthenticated(true);
-      console.log("context :",user)
+      console.log("context :",user.User)
     } catch (error) {
       setError(error);
     } finally {

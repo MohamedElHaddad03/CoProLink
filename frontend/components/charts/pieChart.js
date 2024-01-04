@@ -1,80 +1,120 @@
-import React from "react";
-import { PieChart } from "react-native-chart-kit";
-import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, View } from "react-native";
-
-export const PieChartComponent = ({data}) => {
-    
-
-    const chartConfig = {
-        backgroundGradientFrom: "#1E2923", // Background gradient start color
-        backgroundGradientFromOpacity: 0, // Opacity of the background gradient start
-        backgroundGradientTo: "#08130D", // Background gradient end color
-        backgroundGradientToOpacity: 0.5, // Opacity of the background gradient end
-        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`, // Color function for data elements
-        strokeWidth: 2, // Width of the chart line
-        barPercentage: 0.5, // Percentage of available width each bar should be
-        useShadowColorFromDataset: false, // Use shadow color from the dataset
-        propsForLabels: {
-            fontSize: 14,
+import { PieChart } from "react-native-gifted-charts";
+import { View ,Text } from "react-native";
+const DonutChart = () => {
+    const pieData = [
+        {
+            value: 47,
+            color: '#009FFF',
+            gradientCenterColor: '#006DFF',
+            focused: true,
         },
-        propsForDots: {
-            r: "6",
-            strokeWidth: "2",
-            stroke: "#ffa726",
-        },
-        decimalPlaces: 2, // Number of decimal places for Y-axis values
-        propsForVerticalLabels: {
-            fontSize: 12,
-        },
-        propsForHorizontalLabels: {
-            fontSize: 12,
-        },
-        propsForBackgroundLines: {
-            strokeWidth: 0.5,
-            stroke: "rgba(0, 0, 0, 0.2)",
-        },
-        propsForVerticalBaseLine: {
-            strokeWidth: 1,
-            stroke: "rgba(0, 0, 0, 0.2)",
-        },
-        style: {
-            borderRadius: 16,
-        },
+        { value: 40, color: '#93FCF8', gradientCenterColor: '#3BE9DE' },
+        { value: 16, color: '#BDB2FA', gradientCenterColor: '#8F80F3' },
+        { value: 3, color: '#FFA5BA', gradientCenterColor: '#FF7F97' },
+    ];
+    // adb install c:/OMIN/desktop/test.apk
+    const renderDot = color => {
+        return (
+            <View
+                style={{
+                    height: 10,
+                    width: 10,
+                    borderRadius: 5,
+                    backgroundColor: color,
+                    marginRight: 10,
+                }}
+            />
+        );
     };
 
-
-
-    const screenWidth = Dimensions.get("window").width;
+    const renderLegendComponent = () => {
+        return (
+            <>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        marginBottom: 10,
+                    }}>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            width: 120,
+                            marginRight: 20,
+                        }}>
+                        {renderDot('#006DFF')}
+                        <Text style={{ color: 'white' }}>Excellent: 47%</Text>
+                    </View>
+                    <View
+                        style={{ flexDirection: 'row', alignItems: 'center', width: 120 }}>
+                        {renderDot('#8F80F3')}
+                        <Text style={{ color: 'white' }}>Okay: 16%</Text>
+                    </View>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            width: 120,
+                            marginRight: 20,
+                        }}>
+                        {renderDot('#3BE9DE')}
+                        <Text style={{ color: 'white' }}>Good: 40%</Text>
+                    </View>
+                    <View
+                        style={{ flexDirection: 'row', alignItems: 'center', width: 120 }}>
+                        {renderDot('#FF7F97')}
+                        <Text style={{ color: 'white' }}>Poor: 3%</Text>
+                    </View>
+                </View>
+            </>
+        );
+    };
 
     return (
-        <SafeAreaView style={[styles.container, { height: screenWidth * 2 }]}>
-            <Text style={styles.title}>City Population Distribution</Text>
-            <PieChart
-                data={data}
-                width={screenWidth}
-                height={220}
-                chartConfig={chartConfig}
-                accessor={"population"}
-                backgroundColor={"transparent"}
-                paddingLeft={""}
-                center={[50, 10]}
-                absolute={false}
-            />
-        </SafeAreaView>
-    );
-};
+        <View
+            style={{
+                paddingVertical: 100,
+                backgroundColor: '#34448B',
+                flex: 1,
+            }}>
+            <View
+                style={{
+                    margin: 20,
+                    padding: 16,
+                    borderRadius: 20,
+                    backgroundColor: '#232B5D',
+                }}>
+                <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
+                    Performance
+                </Text>
+                <View style={{ padding: 20, alignItems: 'center' }}>
+                    <PieChart
+                        data={pieData}
+                        donut
+                        showGradient
+                        sectionAutoFocus
+                        radius={90}
+                        innerRadius={60}
+                        innerCircleColor={'#232B5D'}
+                        centerLabelComponent={() => {
+                            return (
+                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text
+                                        style={{ fontSize: 22, color: 'white', fontWeight: 'bold' }}>
+                                        47%
+                                    </Text>
+                                    <Text style={{ fontSize: 14, color: 'white' }}>Excellent</Text>
+                                </View>
+                            );
+                        }}
+                    />
+                </View>
+                {renderLegendComponent()}
+            </View>
+        </View>);
+}
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: 'flex-start',
-        paddingTop: StatusBar.currentHeight + 20,
-        backgroundColor: "#fff",
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 10,
-    },
-});
+export default DonutChart;

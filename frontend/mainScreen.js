@@ -20,7 +20,7 @@ console.log(user)
     
       <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
 
-        {user ? (
+        {user   ? (
           <>
 
             <Sidebar selectedItem={selectedItem} setSelectedItem={setSelectedItem} />

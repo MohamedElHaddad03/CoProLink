@@ -1,64 +1,65 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { BarChart } from 'react-native-chart-kit';
+import { BarChart, LineChart, PieChart } from "react-native-gifted-charts";
+
+// ...
 
 const BarsChart = () => {
-  
-
-  const data = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'],
-    datasets: [
-      {
-        data: [550, 700, 650, 800, 950, 500],
-        color: (opacity = 1) => `rgba(0, 128, 0, ${opacity})`, // Green color for cotisations
-      },
-    ],
-  };
-  
-  const chartConfig1 = {
-    backgroundColor: '#fff',
-    backgroundGradientFrom: '#fff',
-    backgroundGradientTo: '#fff',
-    decimalPlaces: 0,
-    color: (opacity = 1) => `rgba(59, 103, 187, ${opacity})`,
-  };
 
 
-  return (
-    <View style={styles.container}>
+  const data = [{value: 250, label: 'M'},
+  {value: 500, label: 'T', frontColor: '#177AD5'},
+  {value: 745, label: 'W', frontColor: '#177AD5'},
+  {value: 320, label: 'T'},
+  {value: 600, label: 'F', frontColor: '#177AD5'},
+  {value: 256, label: 'S'},
+  {value: 300, label: 'S'},]
+  return (<BarChart data={data}
+    barWidth={22}
+    noOfSections={3}
+    barBorderRadius={4}
+    frontColor="lightgray"
 
-     <View>
-        <Text style={styles.title}>Cotisations Total per Month</Text>
-        <BarChart
-        data={data}
-        width={325}
-        height={200}
-        chartConfig={chartConfig1}
-        style={styles.chart}
-        />
-     </View>
-    </View>
-  );
+    yAxisThickness={0}
+    xAxisThickness={0} />)
+};
+const LinesChart = () => {
+
+
+  const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }]
+  return (<LineChart data={data} />)
+};
+const DonutChart = () => {
+
+
+  const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }]
+  return (<PieChart data={data}
+ 
+      showText
+      textColor="black"
+      radius={150}
+      textSize={20}
+      focusOnPress
+      showValuesAsLabels
+      showTextBackground
+      textBackgroundRadius={26}
+       />)
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  chart: {
-    marginVertical: 8,
-    borderRadius: 16,
-  },
-});
+// <LineChart data = {data} />
+// <PieChart data = {data} />
 
-export default BarsChart;
+// // For Horizontal Bar chart, just add the prop horizontal to the <BarChart/> component
+
+// <BarChart data = {data} horizontal />
+
+// // For Area chart, just add the prop areaChart to the <LineChart/> component
+
+// <LineChart data = {data} areaChart />
+
+// // For Donut chart, just add the prop donut to the <PieChart/> component
+
+// <PieChart data = {data} donut />
+
+
+export { BarsChart, LinesChart, DonutChart };

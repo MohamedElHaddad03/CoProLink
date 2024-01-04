@@ -48,6 +48,24 @@ const DocumentsManager = () => {
   const [documents, setDocuments] = useState([]);
   const [documentUrl, setDocumentUrl] = useState('');
   const [searchQuery,setSearchQuery]=useState('');
+  const [data, setData] = useState(null); // Initialize 'data' state
+  const [error, setError] = useState(null);
+
+  // Replace the axios.request options with the useFetch hook
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/Docs');
+
+  useEffect(() => {
+    setError(fetchedError)
+    setData(fetchedData);
+    setIsLoading(isLoadingData);
+
+
+  }, [fetchedData, isLoadingData]);
+
+  useEffect(() => {
+    refetch();
+  }, [])
+  console.log(data)
   const getFileTypeIcon = (filename) => {
     if (filename && filename.endsWith) {
       if (filename.endsWith('.pdf')) {

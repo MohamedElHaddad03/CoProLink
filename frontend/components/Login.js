@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated, Easing, ImageBackground } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
 import { useAuth } from '../Context/AuthContext';
+import BASEURL from '../config';
 const LoginScreen = () => {
 
   // const [loginTop, setLoginTop] = useState(0);
@@ -130,7 +131,7 @@ const LoginScreen = () => {
               <View style={{ transform: [{ translateX: -180 }] }}>
   <Image
     source={require('../assets/images/wave.gif')} // Replace with the actual path to your GIF
-    style={[StyleSheet.absoluteFill, { tintColor: '#3b67bb',width: '150%', height: 50, marginTop: 10, bottom: 0 }]}
+    style={[StyleSheet.absoluteFill, { width: '150%', height: 100, marginTop: 20, bottom: 0 }]}
   />
 </View>
 
