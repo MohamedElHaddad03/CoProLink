@@ -8,6 +8,7 @@ const LoginScreen = () => {
   // const [loginTop, setLoginTop] = useState(0);
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  //--------------------SignUp--------------------
   const [firstname, setFirstName] = useState('');
   const [lastname, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -15,6 +16,8 @@ const LoginScreen = () => {
   const [cin, setCin] = useState('');
   const [usernameSU, setUserNameSU] = useState('');
   const [passwordSU, setPasswordSU] = useState('');
+  const [profile, setProfile] = useState('');
+  
   const [confirmPass, setconfirmPass] = useState('');
 
   const [showSignUp, setShowSignUp] = useState(false); // State to manage SignUp form visibility
@@ -66,11 +69,38 @@ const LoginScreen = () => {
   };
 
 
-  const handleSignup = () => {
+  const handleSignup = async() => {
+    const newUser = {
+      username: usernameSU,
+      password: passwordSU,
+      email: email,
+      firstname: firstname,
+      lastname: lastname,
+      profile: {
+        cin: cin,
+        telephone: phone,
+        role : "xcfvgj" ,
+        id_cop: 3,
+      },
+    };
 
-    alert('signup Successfull')
+    try {
+      const response = await fetch(`${BASEURL}/api/users/signup/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newUser),
+      });} catch (error) {
+      console.error('Error deleting user:', error.message);
+      alert(error.message)
+
+      }
+
+    alert('User created successfully, check your email to activate your account')
     toggleSignUp();
   };
+
 
 
   return (
@@ -131,7 +161,7 @@ const LoginScreen = () => {
               <View style={{ transform: [{ translateX: -180 }] }}>
   <Image
     source={require('../assets/images/wave.gif')} // Replace with the actual path to your GIF
-    style={[StyleSheet.absoluteFill, { width: '150%', height: 100, marginTop: 20, bottom: 0 }]}
+    style={[StyleSheet.absoluteFill, { tintColor: '#3b67bb',width: '150%', height: 50, marginTop: 10, bottom: 0 }]}
   />
 </View>
 

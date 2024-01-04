@@ -2,6 +2,8 @@ import React, { useState , useEffect} from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Dimensions, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import useFetch from '../hook/useFetch';
+import useFetchSecure from '../hook/useFetchSecure';
+import BASEURL from '../config';
 
 const PaiementsManager = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,7 +22,7 @@ const PaiementsManager = () => {
   // ]);
     
 
-  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetch('api/interfaces/paiement');
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/paiement');
 
   useEffect(() => {
     setError(fetchedError)
@@ -52,7 +54,7 @@ const PaiementsManager = () => {
 
   const handlePaymentConfirmation = async(id_pay) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/interfaces/paiement/vrpay/' + id_pay, {
+      const response = await fetch(BASEURL+'/api/interfaces/paiement/vrpay/' + id_pay, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json', // Set appropriate headers
