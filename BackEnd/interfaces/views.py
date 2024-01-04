@@ -7,6 +7,9 @@ from rest_framework import status
 from .models import Copropriete, Cotisation, Document, Paiement, Depense, Propriete
 from rest_framework.decorators import api_view
 from django.db.models.functions import ExtractMonth
+from interfaces.signals import generer_pdf
+from django.views import View
+from django.http import HttpResponse
 from .serializers import (
     CoproprieteSerializer,
     DepenseSerializer,
@@ -21,7 +24,8 @@ from django.db.models import Sum
 
 @api_view(["GET"])
 def ListerPaiement(request):
-    pay = Paiement.objects.all()
+    user = request.user
+    pay = Paiement.objects.filter(id_prop_id_cop_id_cop=user.profile.id_cop.id_cop)
     serializer = PaiementSerializer(pay, many=True)
     return Response(serializer.data)
 
@@ -261,3 +265,16 @@ def ChartPaiement(request):
     )
     serializer = MontantTotMoisSerializer(montant_per_month,many=True)
     return Response(serializer.data)
+
+class GeneratePDFView(View):
+    def get(self, request, paiement_id):
+        paiement = Paiement.objects.get(id_pay=paiement_id)
+        pdf_buffer = generer_pdf(paiement)
+
+        # Créez une réponse HTTP avec le contenu du PDF
+        response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
+
+        # Nommez le fichier PDF généré
+        response['Content-Disposition'] = f'filename=paiement_{paiement.id_pay}.pdf'
+
+        return response
