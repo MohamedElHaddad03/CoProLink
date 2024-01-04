@@ -28,6 +28,7 @@ urlpatterns = [
     path("logout/", views.LogoutView.as_view(), name="Logout"),
     path("activation/<uidb64>/<token>/",views.activation_compte,name="activation"),
     path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(template_name="password_reset.html"),name="password_reset"),
-    path("reset/done/",auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_done.html"),name="password_reset_complete",
-    ),
+    path("reset/done/",auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_done.html"),name="password_reset_complete"),
+    path("forgot/<str:email>/",views.mdp_oublie,name="ChangerMdp"),
+
 ]

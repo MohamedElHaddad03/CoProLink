@@ -159,11 +159,34 @@ class LogoutView(APIView):
             )
 
 
-""" from django.shortcuts import render
-from django.contrib.auth.forms import SetPasswordForm
-
-
-def reset_password(request, uidb64, token):
-    form = SetPasswordForm(uidb64)
-    return render(request, "password_reset.html", {"form": form})
- """
+@api_view(["GET"])
+def mdp_oublie(request,email):
+        user= get_object_or_404(User,email=email)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        lien = f"http://192.168.1.156:8000/reset/{uid}/{token}/"
+        message1 = "Bienvenue à notre application !"
+        message2 = "Voici votre Username ou Nom d'utilisateur :" + str(
+            user.username
+        )
+        message3 = "Vous avez initié une demande de modification de mot de passe, veuillez cliquer sur le bouton au dessous :"
+        message4 = "Réinitialiser MDP"
+        subject = "CoProLink-Changement de mot de passe"
+        html_message = render_to_string(
+            "email.html",
+            {
+                "message1": message1,
+                "message2": message2,
+                "message3": message3,
+                "message4": message4,
+                "lien": lien,
+            },
+        )
+        send_mail(
+            subject,
+            "",
+            "elbaghdadinada5@gmail.com",
+            [user.email],
+            html_message=html_message,
+        )
+        return Response({"message":"email sent successfully"})
