@@ -10,6 +10,11 @@ from django.db.models.functions import ExtractMonth
 from interfaces.signals import generer_pdf
 from django.views import View
 from django.http import HttpResponse
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+from users.models import User
 from .serializers import (
     CoproprieteSerializer,
     DepenseSerializer,
@@ -267,14 +272,18 @@ def ChartPaiement(request):
     return Response(serializer.data)
 
 class GeneratePDFView(View):
-    def get(self, request, paiement_id):
-        paiement = Paiement.objects.get(id_pay=paiement_id)
-        pdf_buffer = generer_pdf(paiement)
+    def get(self, request,paiement_id,uidb64,token):
+        uid = urlsafe_base64_decode(uidb64).decode('utf-8')
+        user = User.objects.get(pk=uid)
 
-        # Créez une réponse HTTP avec le contenu du PDF
-        response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
+        if default_token_generator.check_token(user, token):
+            paiement = Paiement.objects.get(id_pay=paiement_id)
+            pdf_buffer = generer_pdf(paiement)
 
-        # Nommez le fichier PDF généré
-        response['Content-Disposition'] = f'filename=paiement_{paiement.id_pay}.pdf'
+            # Créez une réponse HTTP avec le contenu du PDF
+            response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
 
-        return response
+            # Nommez le fichier PDF généré
+            response['Content-Disposition'] = f'filename=paiement_{paiement.id_pay}.pdf'
+
+            return response

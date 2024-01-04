@@ -24,6 +24,6 @@ urlpatterns = [
     path("Docs", views.ListerDocument, name="ListerDoc"),
     path("Docs/create/", views.CreateDocument, name="CreateDoc"),
     path("Docs/delete/<int:id_doc>/", views.DeleteDocument, name="DeleteDoc"),
-    path('generate_pdf/<int:paiement_id>/', views.GeneratePDFView.as_view(), name='generate_pdf'),
+    path('generate_pdf/<int:paiement_id>/<uidb64>/<token>/', views.GeneratePDFView.as_view(), name='generate_pdf'),
 
 ]

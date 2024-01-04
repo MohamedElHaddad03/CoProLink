@@ -20,8 +20,48 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 from io import BytesIO
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.template.loader import render_to_string
 
 
+@receiver(
+    post_save, sender=Paiement
+)  
+def GenerationRecu(sender, instance, **kwargs):
+    
+    if instance.etat == 1 :
+        print(instance.id_prop.id_user.id)
+        pdf_buffer = generer_pdf(instance) 
+        uid = urlsafe_base64_encode(force_bytes(instance.id_prop.id_user.id))
+        token = default_token_generator.make_token(instance.id_prop.id_user)
+        lien = f"http://192.168.1.156:8000/api/interfaces/generate_pdf/{instance.id_pay}/{uid}/{token}/"
+        subject = 'Reçu de paiement'
+        message1 = "Bienvenue à notre application !"
+        message2 = "Votre paiement a bien été validé !"
+        message3 = "Vous pouvez voir votre reçu de facture concernant votre cotisation mensuelle en cliquant sur le bouton en dessous :"
+        message4 = "CONSULTER"
+        
+        html_message = render_to_string(
+            "email.html",
+            {
+                "message1": message1,
+                "message2": message2,
+                "message3": message3,
+                "message4": message4,
+                "lien": lien,
+            },
+        )
+        send_mail(
+            subject,
+            "",
+            "elbaghdadinada5@gmail.com",
+            [instance.id_prop.id_user.email],
+            html_message=html_message,
+        )
+            
 def generer_pdf(paiement):
     buffer = BytesIO()
 
@@ -100,15 +140,6 @@ def generer_pdf(paiement):
     buffer.seek(0)
 
     return buffer
-
-@receiver(
-    post_save, sender=Paiement
-)  
-def GenerationRecu(sender, instance, **kwargs):
-    if kwargs.get('update_fields'):
-        if instance.etat == 1 and 'etat' in kwargs['update_fields']:
-           pdf_buffer = generer_pdf(instance) 
-            
 
 
 @receiver(
