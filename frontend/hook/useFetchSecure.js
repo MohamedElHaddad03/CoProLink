@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
-
+import BASEURL from "../config";
 const useFetchSecure = (endpoint, query,  method = "GET") => {
-    const baseUrl = "http://127.0.0.1:8000/";
+    const baseUrl = BASEURL;
     const {user} =useAuth();
     console.log("Tokeeeeeeeen : ",user.Token)
     const [data, setData] = useState([]);
@@ -12,7 +12,7 @@ const useFetchSecure = (endpoint, query,  method = "GET") => {
 
     const options = {
         method,
-        url: `http://127.0.0.1:8000/${endpoint}`,
+        url: `${baseUrl}/${endpoint}`,
         params: { ...query },
         // Add other options as needed (headers, data for POST/PUT, etc.)
         headers: { 
