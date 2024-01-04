@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions  } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { app } from '../firebase'; // Import the firebase app instance
 import * as Permissions from 'expo-permissions';
+import useFetchSecure from '../hook/useFetchSecure';
 
 const checkPermissions = async () => {
   // Check if permission is granted
@@ -46,17 +47,19 @@ const getBlobFroUri = async (uri) => {
 
 const DocumentsManager = () => {
   const [documents, setDocuments] = useState([]);
+  const [documentName, setDocumentName] = useState('');
   const [documentUrl, setDocumentUrl] = useState('');
-  const [searchQuery,setSearchQuery]=useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState(null); // Initialize 'data' state
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Replace the axios.request options with the useFetch hook
   const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/Docs');
 
   useEffect(() => {
     setError(fetchedError)
-    setData(fetchedData);
+    setDocuments(fetchedData);
     setIsLoading(isLoadingData);
 
 
@@ -65,7 +68,7 @@ const DocumentsManager = () => {
   useEffect(() => {
     refetch();
   }, [])
-  console.log(data)
+  console.log("docs : ", documents)
   const getFileTypeIcon = (filename) => {
     if (filename && filename.endsWith) {
       if (filename.endsWith('.pdf')) {
@@ -84,8 +87,9 @@ const DocumentsManager = () => {
   const handleUpload = async (document, filename) => {
     try {
       const storageRef = ref(storage, `documents/${filename}`);
+      setDocumentName(filename);
       const uploadTask = uploadBytesResumable(storageRef, document);
-  
+
       uploadTask.on(
         'state_changed',
         (snapshot) => {
@@ -105,12 +109,56 @@ const DocumentsManager = () => {
       console.error('Error handling upload:', error);
     }
   };
-  
-  
+  useEffect(() => {
+    async () => {
+      try {
+        const options = {
+          method: 'POST',
+          url: `http://192.168.1.154:8001/api/interfaces/Docs/create/`,
+          data: {
+            "nomdoc": documentName,
+            "url": documentUrl,
+            "id_cop": user.User.profile.id_cop,
+          },
+          headers: {
+            Authorization: "Token " + user.Token
+          },
+        };
+
+        const response = await axios.request(options);
+        console.log("data",response.data);
+        saveChanges();
+      } catch (error) {
+        if (error.response) {
+          // The request was made, but the server responded with a status code
+          console.error('Response data:', error.response.data);
+          console.error('Response status:', error.response.status);
+          console.error('Response headers:', error.response.headers);
+
+          alert('Error Updating: ' + error.response.data.detail || 'Unknown error');
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('No response received:', error.request);
+          alert('Error Updating: No response received');
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error setting up request:', error.message);
+          alert('Error Updating: ' + error.message || 'Unknown error');
+        }
+
+        setError(error);
+      }
+    }
+  }, [documentUrl]);
+
+  const saveChanges = () => {
+    Alert.alert('Success', 'File Downloaded !!');
+  };
+
   const importDocument = async () => {
     try {
       const hasPermissions = await checkPermissions();
-  
+
       if (hasPermissions || !hasPermissions) {
         const result = await DocumentPicker.getDocumentAsync({
           type: [
@@ -121,17 +169,17 @@ const DocumentsManager = () => {
           ],
           copyToCacheDirectory: true,
         });
-  
+
         console.log('Document Picker Result:', result);
-  
+
         if (!result.cancelled) {
-          const newDocument = { name: result.assets[0].name, uri: result.assets[0].uri };
+          const newDocument = { name: result.assets[0].name, url: documentUrl };
           setDocuments([...documents, newDocument]);
-          console.log("UUUUUUUUURRRRRRRRRRIIIIIIII",result.assets[0].uri)
-  
+          console.log("UUUUUUUUURRRRRRRRRRIIIIIIII", result.assets[0].uri)
+
           const blob = await getBlobFroUri(result.assets[0].uri);
-  
-          handleUpload(blob,result.assets[0].name);
+
+          handleUpload(blob, result.assets[0].name);
         } else {
           console.log('Document picking cancelled by the user');
         }
@@ -142,11 +190,11 @@ const DocumentsManager = () => {
       console.error('Error picking a document', error);
     }
   };
-  
-  
-  
-  
-  
+
+
+
+
+
 
 
 
@@ -179,17 +227,17 @@ const DocumentsManager = () => {
     );
   };
 
-  
-  
+
+
 
   const refreshDocuments = () => {
-    
+
   };
 
 
 
   const searchDocument = () => {
-    
+
   };
 
   return (
@@ -210,28 +258,28 @@ const DocumentsManager = () => {
         </TouchableOpacity>
       </View>
       <KeyboardAvoidingView behavior='height'>
-      
-      <View style={styles.Flatlist} >
-      <FlatList
-        data={documents}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderDocumentItem}
-        numColumns={1}
-        onRefresh={refreshDocuments}
-        refreshing={false}
-        showsVerticalScrollIndicator={false}
-      />
-      </View>
-      
+
+        <View style={styles.Flatlist} >
+          <FlatList
+            data={documents}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderDocumentItem}
+            numColumns={1}
+            onRefresh={refreshDocuments}
+            refreshing={false}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+
       </KeyboardAvoidingView>
-      
+
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    position:'relative',
+    position: 'relative',
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
@@ -240,7 +288,7 @@ const styles = StyleSheet.create({
     width: '80%',
     top: '10%',
     left: '5%',
-    height:Dimensions.get('window'),
+    height: Dimensions.get('window'),
   },
   titleContainer: {
     top: '1%',
@@ -250,7 +298,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '300', 
+    fontWeight: '300',
   },
   header: {
     flexDirection: 'row',
@@ -278,7 +326,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   documentItem: {
-   // overflow: 'hidden',
+    // overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -292,7 +340,7 @@ const styles = StyleSheet.create({
   fileIcon: {
     marginRight: 10,
   },
-  Flatlist:{
+  Flatlist: {
     alignSelf: 'center',
     width: '100%',
     maxHeight: '85%',
