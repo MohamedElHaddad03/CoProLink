@@ -4,10 +4,10 @@
     "slug": "coprolink",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "",
+    "icon": "https://firebasestorage.googleapis.com/v0/b/coprolink-5035f.appspot.com/o/assets%2FLogo_CoProLink_Text.png?alt=media&token=929069af-3c85-4002-8453-70e96af4d2c6",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "",
+      "image": "https://firebasestorage.googleapis.com/v0/b/coprolink-5035f.appspot.com/o/assets%2FLogo_CoProLink_Text.png?alt=media&token=929069af-3c85-4002-8453-70e96af4d2c6",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anon123.coprolink"
     },
     "android": {
       "permissions": [
@@ -29,7 +30,20 @@
     },
     "plugins": [
       "expo-router",
-      "expo-document-picker"
+      "expo-document-picker",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 31,
+            "targetSdkVersion": 31,
+            "buildToolsVersion": "31.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "13.0"
+          }
+        }
+      ]
     ],
     "extra": {
       "router": {
