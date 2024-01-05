@@ -152,7 +152,8 @@ def CreateProp(request):
 @api_view(["POST"])
 def CreateCopro(request):
     serializer = CoproprieteSerializer(data=request.data)
-    if serializer.is_valid():
+    utilisateur=request.user
+    if serializer.is_valid() and utilisateur.profile.role == "admin":
         copro = serializer.save()
         nbpro = serializer.validated_data.get("nb_props")
         for i in range(nbpro):
@@ -307,12 +308,10 @@ class GeneratePDFView(View):
             paiement = Paiement.objects.get(id_pay=paiement_id)
             pdf_buffer = generer_pdf(paiement)
 
-            # Créez une réponse HTTP avec le contenu du PDF
             response = HttpResponse(
                 pdf_buffer.getvalue(), content_type="application/pdf"
             )
 
-            # Nommez le fichier PDF généré
             response["Content-Disposition"] = f"filename=paiement_{paiement.id_pay}.pdf"
 
             return response
