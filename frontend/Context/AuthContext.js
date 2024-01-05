@@ -1,6 +1,7 @@
 // AuthContext.js
 import React, { createContext, useContext, useState } from 'react';
 import axios from 'axios';
+import BASEURL from '../config';
 
 const AuthContext = createContext();
 
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post('http://192.168.1.154:8001/login/', {
+      const response = await axios.post(BASEURL+'/login/', {
         username: username,
         password: password
       });

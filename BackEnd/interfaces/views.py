@@ -266,7 +266,7 @@ def ChartPaiement(request):
         .annotate(mois=ExtractMonth('date_creation'))
         .values("mois")
         .annotate(montant_total=Sum('montant'))
-        .order_by('mois').filter(date_creation__year=annee)
+        .order_by('mois').filter(date_creation__year=annee,id_prop__id_cop=request.user.profile.id_cop)
     )
     serializer = MontantTotMoisSerializer(montant_per_month,many=True)
     return Response(serializer.data)

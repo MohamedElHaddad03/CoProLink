@@ -1,17 +1,34 @@
 import { PieChart } from "react-native-gifted-charts";
-import { View ,Text } from "react-native";
+import { View, Text } from "react-native";
+import { useEffect, useState } from "react";
+import useFetchSecure from "../../hook/useFetchSecure";
 const DonutChart = () => {
-    const pieData = [
-        {
-            value: 47,
-            color: '#009FFF',
-            gradientCenterColor: '#006DFF',
-            focused: true,
-        },
-        { value: 40, color: '#93FCF8', gradientCenterColor: '#3BE9DE' },
-        { value: 16, color: '#BDB2FA', gradientCenterColor: '#8F80F3' },
-        { value: 3, color: '#FFA5BA', gradientCenterColor: '#FF7F97' },
-    ];
+    //api/interfaces/stats/paiement/PieChart/2023
+    const [data3, setData3] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    //http://192.168.1.154:8001/api/interfaces/stats/paiementper/2023-01-01/2024-01-01
+    const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/stats/paiement/PieChart/2023');
+
+    useEffect(() => {
+        setError(fetchedError)
+        setData3(fetchedData);
+        setIsLoading(isLoadingData);
+
+
+    }, [fetchedData, isLoadingData]);
+
+    useEffect(() => {
+        refetch();
+    }, [])
+
+    const pieData = data3;
+    // data3.map(({ mois, montant_total }) => ({
+    //     value: parseFloat(montant_total),
+    //     label: getMonthLabel(mois), // Assuming you have a function to get the label for the month
+    //     frontColor: mois%2===0 ? '#177AD590' : "#607D8B90",
+    //   }));;
+    console.log(data3)
     // adb install c:/OMIN/desktop/test.apk
     const renderDot = color => {
         return (
@@ -77,7 +94,7 @@ const DonutChart = () => {
         <View
             style={{
                 paddingVertical: 100,
-                backgroundColor: '#34448B',
+                //   backgroundColor: '#34448B',
                 flex: 1,
             }}>
             <View

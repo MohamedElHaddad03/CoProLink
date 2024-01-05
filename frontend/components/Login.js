@@ -161,7 +161,7 @@ const LoginScreen = () => {
               <View style={{ transform: [{ translateX: -180 }] }}>
   <Image
     source={require('../assets/images/wave.gif')} // Replace with the actual path to your GIF
-    style={[StyleSheet.absoluteFill, { tintColor: '#3b67bb',width: '150%', height: 50, marginTop: 10, bottom: 0 }]}
+    style={[StyleSheet.absoluteFill, { width: '150%', height: 100, marginTop: 10, bottom: 0 }]}
   />
 </View>
 
