@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
 import axios from 'axios';
+import BASEURL from '../config';
 const ProfileScreen = () => {
   const [prenom, setPrenom] = useState('');
   const [CIN, setCIN] = useState('');
@@ -78,7 +79,7 @@ const ProfileScreen = () => {
           try {
             const options = {
               method: 'PUT',
-              url: `http://192.168.1.154:8001/api/users/${user.User.id}/`,
+              url: `${BASEURL}/api/users/${user.User.id}/`,
               data: {
                 "id": user.User.id,
                 "username": username,

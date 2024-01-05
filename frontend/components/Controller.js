@@ -12,6 +12,8 @@ import ErrorBoundary from '../errorBoundry';
 import LoginScreen from './Login';
 import { useAuth } from '../Context/AuthContext';
 import { Text, View } from 'react-native';
+import CopropCreate from './CopropCreate';
+import CreateSyndic from './CreateSyndic';
 
 const LazyStatistics = () => {
   return (
@@ -40,7 +42,8 @@ const ControllerComponent = ({ selectedItem, setSelectedItem }) => {
     case 'ContactSupport':
       return <ContactSupport />
     case 'Settings':
-      return <SettingsScreen selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
+     // return <SettingsScreen selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
+     return <CreateSyndic/>
     default:
       return <LoginScreen />;
   }

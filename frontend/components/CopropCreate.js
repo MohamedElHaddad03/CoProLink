@@ -4,10 +4,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
 import axios from 'axios';
+import BASEURL from '../config';
 const CopropCreate = () => {
   const [nom, setNom] = useState('');
   const [adresse, setadresse] = useState('');
-  const [nbProps, setnbProps] = useState(0);
+  const [nbProps, setnbProps] = useState('');
 
   const [activeInput, setActiveInput] = useState('');
   const [data, setData] = useState(null); // Initialize 'data' state
@@ -61,7 +62,7 @@ const CopropCreate = () => {
           try {
             const options = {
               method: 'POST',
-              url: `http://192.168.1.154:8001/api/users/${user.User.id}/`,
+              url: `${BASEURL}/api/interfaces/copro/create/`,
               data: {
                 "adresse": adresse,
                 "name": nom,
@@ -117,7 +118,7 @@ const CopropCreate = () => {
   };
 
   return ((
-    user.User.profile.role==="admin" && <View style={styles.container}>
+    user.User.profile.role==="syndic" && <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Copropriété</Text>
       </View>
@@ -130,11 +131,27 @@ const CopropCreate = () => {
         onFocus={() => handleFocus('Nom')}
         onBlur={handleBlur}
       />
+      <TextInput
+        style={[styles.input, { borderBottomWidth: activeInput === 'Adresse' ? 1 : 0 }]} placeholder="Adresse*"
+        value={adresse}
+        onChangeText={(text) => setadresse(text)}
+        backgroundColor="#3b67bb20"
+        onFocus={() => handleFocus('Adresse')}
+        onBlur={handleBlur}
+      />
  
       <TextInput
         style={[styles.input, { borderBottomWidth: activeInput === 'nbProps' ? 1 : 0 }]} placeholder="nbProps*"
         value={nbProps}
-        onChangeText={(text) => setnbProps(text)}
+        onChangeText={(text) => {
+            // Vérifier si le texte est un nombre entier naturel
+            const integerValue = parseInt(text, 10);
+            if (!isNaN(integerValue) && integerValue >= 0 && Number.isInteger(integerValue)) {
+              // Si c'est un nombre entier naturel, mettre à jour le state
+              setnbProps(text);
+            }
+            // Sinon, ignorer le changement
+          }}
         backgroundColor="#3b67bb20"
         onFocus={() => handleFocus('nbProps')}
         onBlur={handleBlur}
