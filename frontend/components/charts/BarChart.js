@@ -48,7 +48,7 @@ const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetc
     showFractionalValues
     showYAxisIndices
     noOfSections={4}
-    maxValue={400}
+    maxValue={1000}
     data={data}
     isAnimated
   />)

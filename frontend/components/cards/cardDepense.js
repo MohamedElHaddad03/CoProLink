@@ -1,5 +1,6 @@
 import { Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
+import BASEURL from "../../config";
 
 
 const CardDepense = ({ item,refetch }) => {
@@ -7,7 +8,7 @@ console.log(item)
 const handleDeleteDepense = async (id) => {
 // Custom hook for deleting a user
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/interfaces/depense/delete/'+ id, {
+      const response = await fetch(BASEURL+'/api/interfaces/depense/delete/'+ id, {
         method: 'DELETE',
       });
 

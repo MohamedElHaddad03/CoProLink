@@ -42,8 +42,8 @@ const ControllerComponent = ({ selectedItem, setSelectedItem }) => {
     case 'ContactSupport':
       return <ContactSupport />
     case 'Settings':
-     // return <SettingsScreen selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
-     return <CreateSyndic/>
+      return <SettingsScreen selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
+    // return <CreateSyndic/>
     default:
       return <LoginScreen />;
   }

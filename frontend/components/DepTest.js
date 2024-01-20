@@ -92,7 +92,7 @@ export const DepenseTest = () => {
         <Text style={styles.buttonText}>
           Categorie</Text>
       </TouchableOpacity>  */}
-        <TouchableOpacity
+        {<TouchableOpacity
           onPress={() => setModalDepVisible(true)}
           style={styles.expenseButton}>
           <Ionicons
@@ -103,7 +103,7 @@ export const DepenseTest = () => {
           // Change 'true' to {true}
           />
           <Text style={styles.buttonText}> Depense</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
 
         {/* <CategoryPopUp isModalVisible={isModalCategVisible} toggleModal={toggleCategModal} /> */}
         <DepensePopUp isModalVisible={isModalDepVisible} toggleModal={toggleDepgModal} />

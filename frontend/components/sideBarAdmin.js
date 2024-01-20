@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Image, Animated, Easing,SafeAreaView, StatusBar } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Image, Animated, Easing, SafeAreaView, StatusBar } from 'react-native';
 import icons from '../constants/icons';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -24,16 +24,16 @@ const SidebarAdmin = ({ selectedItem, setSelectedItem }) => {
 
 
 
-const handleItemClick = (item) => {
-    setSelectedItem(item); 
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
   };
 
   return (
 
     <Animated.View style={[styles.sidebar, { width: largeur, backgroundColor: bgColor }]}>
-      
-      <View style={{marginLeft:5}}>
-        <TouchableOpacity style={{marginBottom:50}} onPress={toggleSidebar}>
+
+      <View style={{ marginLeft: 5 }}>
+        <TouchableOpacity style={{ marginBottom: 50 }} onPress={toggleSidebar}>
           {!isSidebarOpen && (
             <Ionicons name="menu" size={40} color={iconColor} />
           )}
@@ -43,60 +43,34 @@ const handleItemClick = (item) => {
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={[
-    styles.sidebarItem,
-    selectedItem === 'Statistiques' && {backgroundColor:bgColorOpen},
-  ]}  onPress={() => handleItemClick('Statistiques')}>
-      <Ionicons name={ selectedItem === "Statistiques"? "stats-chart":"stats-chart-outline"} size={26} color={iconColor} />
+        styles.sidebarItem,
+        selectedItem === 'Statistiques' && { backgroundColor: bgColorOpen },
+      ]} onPress={() => handleItemClick('Statistiques')}>
+        <Ionicons name={selectedItem === "Statistiques" ? "home" : "home-outline"} size={26} color={iconColor} />
         {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Statistiques</Text>
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity style={[
-    styles.sidebarItem,
-    selectedItem === 'Documents' && {backgroundColor:bgColorOpen},
-  ]} onPress={() => handleItemClick('Documents')}>
-      <Ionicons name={ selectedItem === "Documents"? "documents":"documents-outline"} size={26} color={iconColor} />
-        {isSidebarOpen && (
-          <Text style={[styles.sidebarText, { color: iconColor }]}>Documents</Text>
-        )}
-      </TouchableOpacity>
-      
-      <TouchableOpacity style={[
-    styles.sidebarItem,
-    selectedItem === 'Depenses' && {backgroundColor:bgColorOpen},
-  ]} onPress={() => handleItemClick('Depenses')}>
-      <Ionicons name={ selectedItem === "Depenses"? "cash":"cash-outline"} size={26} color={iconColor} />
 
-        {isSidebarOpen && (
-          <Text style={[styles.sidebarText, { color: iconColor }]}>Dépenses</Text>
-        )}
-      </TouchableOpacity>
-      <TouchableOpacity style={[
-    styles.sidebarItem,
-    selectedItem === 'Paiement' && {backgroundColor:bgColorOpen},
-  ]} onPress={() => handleItemClick('Paiement')}>
-      <Ionicons name={ selectedItem === "Paiement"? "card":"card-outline"} size={26} color={iconColor} />
 
-        {isSidebarOpen && (
-          <Text style={[styles.sidebarText, { color: iconColor }]}>Paiments</Text>
-        )}
-      </TouchableOpacity>
+
+
       <TouchableOpacity style={[
-    styles.sidebarItem,
-    selectedItem === 'AddUser' && {backgroundColor:bgColorOpen},
-  ]} onPress={() => handleItemClick('AddUser')}>
-      <Ionicons name={ selectedItem === "AddUser"? "people":"people-outline"} size={26} color={iconColor} />
+        styles.sidebarItem,
+        selectedItem === 'AddUser' && { backgroundColor: bgColorOpen },
+      ]} onPress={() => handleItemClick('AddUser')}>
+        <Ionicons name={selectedItem === "AddUser" ? "people" : "people-outline"} size={26} color={iconColor} />
 
         {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Profil</Text>
         )}
       </TouchableOpacity>
       <TouchableOpacity style={[
-    styles.sidebarItem,
-    selectedItem === 'Settings' && {backgroundColor:bgColorOpen},
-  ]} onPress={() => handleItemClick('Settings')}>
-      <Ionicons name={ selectedItem === "Settings"? "settings":"settings-outline"} size={26} color={iconColor} />
+        styles.sidebarItem,
+        selectedItem === 'Settings' && { backgroundColor: bgColorOpen },
+      ]} onPress={() => handleItemClick('Settings')}>
+        <Ionicons name={selectedItem === "Settings" ? "settings" : "settings-outline"} size={26} color={iconColor} />
 
         {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Settings</Text>
@@ -109,11 +83,11 @@ const handleItemClick = (item) => {
 
 const styles = StyleSheet.create({
   sidebar: {
-    zIndex:1,
-  //  padding: 10,
+    zIndex: 1,
+    //  padding: 10,
     position: 'absolute', // Use absolute positioning for overlay
-   // top: 0,
-   paddingTop:StatusBar.currentHeight +10 ,
+    // top: 0,
+    paddingTop: StatusBar.currentHeight + 10,
     left: 0,
     flexDirection: 'column',
     alignItems: 'flex-start',
@@ -135,15 +109,15 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     paddingHorizontal: 5,
   },
-  
+
   sidebarText: {
     color: '#F0F8FF',
     marginLeft: 10,
   },
   sideBarbtn: {
-    
+
   },
-  
+
 });
 
 export default SidebarAdmin;

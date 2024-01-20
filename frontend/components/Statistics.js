@@ -75,9 +75,9 @@ const Statistics = () => {
         <LinesChart />
       </View>
 
-      <View style={{marginVertical:10}}>
+      {/* <View style={{marginVertical:10}}>
         <DonutChart />
-      </View>
+      </View> */}
       </ScrollView>
             {/* <CardsChart data={data2} /> */}
         </View>
