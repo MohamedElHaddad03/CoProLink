@@ -195,6 +195,6 @@ def mdp_oublie(request,email):
 @api_view(["GET"])
 def valider_email_unique(request,email):
     if User.objects.filter(email=email).exists():
-       return Response({"message":"Il existe déjà un utilisateur associé à cette adresse mail."})
+       return Response({"message":-1})
     else:
-        return Response({"message":"C'est bon :)"})
+        return Response({"message":1})
