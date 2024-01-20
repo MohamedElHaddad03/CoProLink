@@ -1,13 +1,20 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../Context/AuthContext';
 
 const SettingsScreen = ({selectedItem, setSelectedItem}) => {
+  const { logout } = useAuth();
+
+  const Logout = ()=>{
+    logout();
+    //setSelectedItem('Logout');
+  }
   const options = [
     { title: 'Profile', icon: 'person-outline', action: () => setSelectedItem('Profile') },
     { title: 'Language', icon: 'language-outline', action: () => setSelectedItem('Language') },
     { title: 'Contact Support', icon: 'chatbubble-ellipses-outline', action: () => setSelectedItem('ContactSupport') },
-
+    { title: 'Logout', icon: 'exit-outline', action: () => Logout()  },
   ];
 
 

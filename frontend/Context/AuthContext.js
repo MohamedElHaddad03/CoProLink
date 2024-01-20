@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useState } from 'react';
 import axios from 'axios';
 import BASEURL from '../config';
+import useFetchSecure from '../hook/useFetchSecure';
+import { err } from 'react-native-svg';
 
 const AuthContext = createContext();
 
@@ -28,15 +30,26 @@ export const AuthProvider = ({ children }) => {
       setAuthenticated(true);
       console.log("context :",user.User)
     } catch (error) {
+      console.log(error)
       setError(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    // Your logout logic
+  const logout = async() => {
+    const options = {
+      method :'GET',
+      url: BASEURL+'/logout/',
+      params: {},
+      // Add other options as needed (headers, data for POST/PUT, etc.)
+      headers: { 
+          Authorization:"Token "+user.Token },
+  };
+    const response = await axios.request(options);
     setAuthenticated(false);
+    setUser(null);
+    console.log('logout:',isAuthenticated,user)
   };
 
   return (

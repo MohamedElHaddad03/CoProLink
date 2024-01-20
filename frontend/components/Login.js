@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated, E
 import { Svg, Path } from 'react-native-svg';
 import { useAuth } from '../Context/AuthContext';
 import BASEURL from '../config';
+import { Ionicons } from '@expo/vector-icons';
+
 const LoginScreen = () => {
 
   // const [loginTop, setLoginTop] = useState(0);
@@ -17,18 +19,25 @@ const LoginScreen = () => {
   const [usernameSU, setUserNameSU] = useState('');
   const [passwordSU, setPasswordSU] = useState('');
   const [profile, setProfile] = useState('');
-  
+  const [error2, setError2] = useState('');
+
   const [confirmPass, setconfirmPass] = useState('');
 
   const [showSignUp, setShowSignUp] = useState(false); // State to manage SignUp form visibility
 
   // const loginRef = useRef(null);
-  const { login } = useAuth();
+  const { login, error } = useAuth();
   const handleLogin = () => {
     try {
       login(username, password);
-    } catch (error) {
-      console.error('Login failed', error);
+      if (error) {
+        setError2('Login failed !');
+      }
+      else setError2('');
+
+    } catch (error2) {
+
+      console.log('Login failed', error);
     }
   };
   // const onLoginLayout = () => {
@@ -69,7 +78,7 @@ const LoginScreen = () => {
   };
 
 
-  const handleSignup = async() => {
+  const handleSignup = async () => {
     const newUser = {
       username: usernameSU,
       password: passwordSU,
@@ -79,7 +88,7 @@ const LoginScreen = () => {
       profile: {
         cin: cin,
         telephone: phone,
-        role : "xcfvgj" ,
+        role: "xcfvgj",
         id_cop: 3,
       },
     };
@@ -91,11 +100,12 @@ const LoginScreen = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newUser),
-      });} catch (error) {
-      console.error('Error deleting user:', error.message);
-      alert(error.message)
+      });
+    } catch (error2) {
+      console.error2('Error2 deleting user:', error2.message);
+      alert(error2.message)
 
-      }
+    }
 
     alert('User created successfully, check your email to activate your account')
     toggleSignUp();
@@ -150,6 +160,12 @@ const LoginScreen = () => {
                 value={password}
                 onChangeText={(value) => setPassword(value)}
               />
+              {error2 !== '' && (
+                <View style={styles.errorContainer}>
+                  <Ionicons name={'warning-outline'} size={24} color="red" />
+                  <Text style={styles.errorText}>{error2}</Text>
+                </View>
+              )}
 
               <TouchableOpacity style={styles.LoginButton} onPress={handleLogin}>
                 <Text style={styles.LoginButtonText}>Login</Text>
@@ -159,11 +175,11 @@ const LoginScreen = () => {
                 <Text style={styles.SignUpButtonText}>Sign Up</Text>
               </TouchableOpacity>
               <View style={{ transform: [{ translateX: -180 }] }}>
-  <Image
-    source={require('../assets/images/wave.gif')} // Replace with the actual path to your GIF
-    style={[StyleSheet.absoluteFill, { width: '150%', height: 100, marginTop: 10, bottom: 0 }]}
-  />
-</View>
+                <Image
+                  source={require('../assets/images/wave.gif')} // Replace with the actual path to your GIF
+                  style={[StyleSheet.absoluteFill, { width: '150%', height: 100, marginTop: 10, bottom: 0 }]}
+                />
+              </View>
 
 
 
@@ -246,11 +262,11 @@ const LoginScreen = () => {
             </TouchableOpacity>
 
             <View style={{ transform: [{ translateX: -180 }] }}>
-  <Image
-    source={require('../assets/images/wave.gif')} // Replace with the actual path to your GIF
-    style={[StyleSheet.absoluteFill, {tintColor: '#3b67bb', width: '150%', height: 50, marginTop: 10, bottom: 0 }]}
-  />
-</View>
+              <Image
+                source={require('../assets/images/wave.gif')} // Replace with the actual path to your GIF
+                style={[StyleSheet.absoluteFill, { tintColor: '#3b67bb', width: '150%', height: 50, marginTop: 10, bottom: 0 }]}
+              />
+            </View>
           </View>
         )}
 
@@ -319,6 +335,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 15,
   },
+  Error: {
+    color: 'red',
+    marginBottom: 10
+  },
   LoginButton: {
     color: '#fff',
     fontSize: 16,
@@ -350,6 +370,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#3b67bb10', //3b67bb
     transition: 'backgroundColor 300ms, transform 300ms',
+  },
+  errorContainer: {
+    flexDirection: 'row', // Horizontal layout
+    alignItems: 'center', // Center items vertically
+    marginBottom: 10, // Adjust spacing as needed
+  },
+
+  errorText: {
+    color: 'red',
+    marginLeft: 5, // Adjust spacing between icon and text
   },
 
   SignUpButtonText: {

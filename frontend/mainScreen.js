@@ -13,16 +13,16 @@ import SidebarUser from './components/sideBarUser';
 const MainScreen = () => {
   const [selectedItem, setSelectedItem] = useState('Profile');
  // const [user1,setUser]=useState(null)
-  const { user } = useAuth();
+  const { isAuthenticated , user } = useAuth();
  
   
-console.log("main",user)
+console.log("main",isAuthenticated)
 
   return (
     
       <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
 
-        {user   ? (
+        {isAuthenticated   ? (
           <>
               {user.User?.profile?.role=="syndic" &&
             <Sidebar selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
