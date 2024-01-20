@@ -23,6 +23,7 @@ from .serializers import (
     PaiementSerializer,
     PaiementStatSerializer,
     ProprieteSerializer,
+    ProprieteSerializerUsers,
 )
 from django.db.models import Sum
 
@@ -130,6 +131,12 @@ def DepenseUpdate(request, id_dep):
 def ListProp(request):
     props = Propriete.objects.all()
     serializer = ProprieteSerializer(props, many=True)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+def ListPropUsers(request):
+    props = Propriete.objects.all()
+    serializer = ProprieteSerializerUsers(props, many=True)
     return Response(serializer.data)
 
 

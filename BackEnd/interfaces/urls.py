@@ -17,6 +17,7 @@ urlpatterns = [
     path("depense/delete/<int:id_dep>", views.DeleteDepense, name="Depensedelete"),
     path("depense/update/<int:id_dep>/", views.DepenseUpdate, name="UpdateDep"),
     path("prop", views.ListProp, name="ListProp"),
+    path("propusers", views.ListPropUsers, name="ListPropUsers"),
     path("prop/create/", views.CreateProp, name="CreateProp"),
     path("prop/delete/<int:id_prop>", views.DeleteProp, name="DeleteProp"),
     path("copro", views.ListCopro, name="ListCopro"),

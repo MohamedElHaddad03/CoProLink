@@ -1,3 +1,4 @@
+from users.serializers import CombinedUserSerializer
 from . import models
 from rest_framework import serializers
 from interfaces.models import Copropriete, Cotisation, Document, Paiement, Propriete
@@ -10,6 +11,12 @@ class DepenseSerializer(serializers.ModelSerializer):
 
 class ProprieteSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Propriete
+        fields = '__all__'
+
+class ProprieteSerializerUsers(serializers.ModelSerializer):
+    user =  CombinedUserSerializer(source='id_user', read_only=True)
     class Meta:
         model = Propriete
         fields = '__all__'

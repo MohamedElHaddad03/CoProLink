@@ -22,6 +22,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from django.template.loader import render_to_string
+from rest_framework.exceptions import ValidationError
 
 @api_view(["POST"])
 def signup(request):
@@ -190,3 +191,10 @@ def mdp_oublie(request,email):
             html_message=html_message,
         )
         return Response({"message":"email sent successfully"})
+
+@api_view(["GET"])
+def valider_email_unique(request,email):
+    if User.objects.filter(email=email).exists():
+       return Response({"message":"Il existe déjà un utilisateur associé à cette adresse mail."})
+    else:
+        return Response({"message":"C'est bon :)"})
