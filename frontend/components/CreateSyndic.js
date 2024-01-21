@@ -82,7 +82,7 @@ const CreateSyndic = () => {
                                     "role": 'syndic',
                                     "id_cop": 1,
                                 },
-                                
+
                             },
                             headers: {
                                 Authorization: "Token " + user.Token
@@ -163,68 +163,68 @@ const CreateSyndic = () => {
                 //  editable={false}
                 // Disabled CIN input
                 />
-            
-            <TextInput
-                style={[styles.input, { borderBottomWidth: activeInput === 'Prenom' ? 1 : 0 }]}
-                placeholder="Prenom*"
-                value={prenom}
-                onChangeText={(text) => setPrenom(text)}
-                backgroundColor="#3b67bb20"
-                onFocus={() => handleFocus('Prenom')}
-                onBlur={handleBlur}
 
-            />
-            <TextInput
-                style={[styles.input, { borderBottomWidth: activeInput === 'Nom' ? 1 : 0 }]} placeholder="Nom*"
-                value={nom}
-                onChangeText={(text) => setNom(text)}
-                backgroundColor="#3b67bb20"
-                onFocus={() => handleFocus('Nom')}
-                onBlur={handleBlur}
-            />
-            <TextInput
-                style={[styles.input, { borderBottomWidth: activeInput === 'Email' ? 1 : 0 }]} placeholder="Email*"
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-                backgroundColor="#3b67bb20"
-                onFocus={() => handleFocus('Email')}
-                onBlur={handleBlur}
-            />
-            <TextInput
-                style={[styles.input, { borderBottomWidth: activeInput === 'Phone' ? 1 : 0 }]} placeholder="Phone*"
-                value={phone}
-                onChangeText={(text) => setPhone(text)}
-                backgroundColor="#3b67bb20"
-                onFocus={() => handleFocus('Phone')}
-                onBlur={handleBlur}
-            />
-            <TextInput
-                style={[styles.input, { borderBottomWidth: activeInput === 'Username' ? 1 : 0 }]} placeholder="Username*"
-                value={username}
-                onChangeText={(text) => setUsername(text)}
-                backgroundColor="#3b67bb20"
-                onFocus={() => handleFocus('Username')}
-                onBlur={handleBlur}
-            />
-            <TextInput
-                style={[styles.input, { borderBottomWidth: activeInput === 'Password' ? 1 : 0 }]} placeholder="Mot de passe*"
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-                backgroundColor="#3b67bb20"
-                onFocus={() => handleFocus('Password')}
-                onBlur={handleBlur}
-            />
-            <TextInput
-                style={[styles.input, { borderBottomWidth: activeInput === 'confirm' ? 1 : 0 }]} placeholder="Confirmer Mot de passe*"
-                value={confirm}
-                onChangeText={(text) => setConfirm(text)}
-                backgroundColor="#3b67bb20"
-                onFocus={() => handleFocus('confirm')}
-                onBlur={handleBlur}
-            />
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={[styles.buttonText, styles.boldText]}>Save</Text>
-            </TouchableOpacity>
+                <TextInput
+                    style={[styles.input, { borderBottomWidth: activeInput === 'Prenom' ? 1 : 0 }]}
+                    placeholder="Prenom*"
+                    value={prenom}
+                    onChangeText={(text) => setPrenom(text)}
+                    backgroundColor="#3b67bb20"
+                    onFocus={() => handleFocus('Prenom')}
+                    onBlur={handleBlur}
+
+                />
+                <TextInput
+                    style={[styles.input, { borderBottomWidth: activeInput === 'Nom' ? 1 : 0 }]} placeholder="Nom*"
+                    value={nom}
+                    onChangeText={(text) => setNom(text)}
+                    backgroundColor="#3b67bb20"
+                    onFocus={() => handleFocus('Nom')}
+                    onBlur={handleBlur}
+                />
+                <TextInput
+                    style={[styles.input, { borderBottomWidth: activeInput === 'Email' ? 1 : 0 }]} placeholder="Email*"
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
+                    backgroundColor="#3b67bb20"
+                    onFocus={() => handleFocus('Email')}
+                    onBlur={handleBlur}
+                />
+                <TextInput
+                    style={[styles.input, { borderBottomWidth: activeInput === 'Phone' ? 1 : 0 }]} placeholder="Phone*"
+                    value={phone}
+                    onChangeText={(text) => setPhone(text)}
+                    backgroundColor="#3b67bb20"
+                    onFocus={() => handleFocus('Phone')}
+                    onBlur={handleBlur}
+                />
+                <TextInput
+                    style={[styles.input, { borderBottomWidth: activeInput === 'Username' ? 1 : 0 }]} placeholder="Username*"
+                    value={username}
+                    onChangeText={(text) => setUsername(text)}
+                    backgroundColor="#3b67bb20"
+                    onFocus={() => handleFocus('Username')}
+                    onBlur={handleBlur}
+                />
+                <TextInput
+                    style={[styles.input, { borderBottomWidth: activeInput === 'Password' ? 1 : 0 }]} placeholder="Mot de passe*"
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                    backgroundColor="#3b67bb20"
+                    onFocus={() => handleFocus('Password')}
+                    onBlur={handleBlur}
+                />
+                <TextInput
+                    style={[styles.input, { borderBottomWidth: activeInput === 'confirm' ? 1 : 0 }]} placeholder="Confirmer Mot de passe*"
+                    value={confirm}
+                    onChangeText={(text) => setConfirm(text)}
+                    backgroundColor="#3b67bb20"
+                    onFocus={() => handleFocus('confirm')}
+                    onBlur={handleBlur}
+                />
+                <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                    <Text style={[styles.buttonText, styles.boldText]}>Save</Text>
+                </TouchableOpacity>
             </SafeAreaView>
         </View>
     );

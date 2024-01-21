@@ -7,7 +7,6 @@ import Statistics from './Statistics';  // Updated line
 import SettingsScreen from './SettingsScreen';
 import AddUserScreen from './usersTest';
 import ContactSupport from './ContactSupport';
-import ErrorBoundary from '../errorBoundry';
 // import { Statistics } from './Statistics';
 import LoginScreen from './Login';
 import { useAuth } from '../Context/AuthContext';
@@ -38,7 +37,7 @@ const ControllerComponent = ({ selectedItem, setSelectedItem }) => {
     case 'Paiement':
       return <PaiementsManager />
     case 'AddUser':
-      return (<ErrorBoundary><AddUserScreen /></ErrorBoundary>)
+      return <AddUserScreen />
     case 'ContactSupport':
       return <ContactSupport />
     case 'Settings':

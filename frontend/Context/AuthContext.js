@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
   const [user, setUser] = useState(null);
- // const [cryptedUser,setCryptedUser] =useState()
+  // const [cryptedUser,setCryptedUser] =useState()
   const login = async (username, password) => {
     const userProps = {
       username: username,
@@ -21,14 +21,14 @@ export const AuthProvider = ({ children }) => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post(BASEURL+'/login/', {
+      const response = await axios.post(BASEURL + '/login/', {
         username: username,
         password: password
       });
 
       setUser(response.data); // Assuming that the server returns user data including token and role
       setAuthenticated(true);
-      console.log("context :",user.User)
+      console.log("context :", user.User)
     } catch (error) {
       console.log(error)
       setError(error);
@@ -37,19 +37,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async() => {
+  const logout = async () => {
     const options = {
-      method :'GET',
-      url: BASEURL+'/logout/',
+      method: 'GET',
+      url: BASEURL + '/logout/',
       params: {},
       // Add other options as needed (headers, data for POST/PUT, etc.)
-      headers: { 
-          Authorization:"Token "+user.Token },
-  };
+      headers: {
+        Authorization: "Token " + user.Token
+      },
+    };
     const response = await axios.request(options);
     setAuthenticated(false);
     setUser(null);
-    console.log('logout:',isAuthenticated,user)
+    console.log('logout:', isAuthenticated, user)
   };
 
   return (

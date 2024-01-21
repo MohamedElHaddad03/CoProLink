@@ -258,7 +258,7 @@ const DocumentsManager = () => {
       //  doc.lastname.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setDocuments(filteredUsers);
-    if(!searchQuery){
+    if (!searchQuery) {
       refetch();
     }
 
@@ -276,7 +276,7 @@ const DocumentsManager = () => {
           value={searchQuery}
           onChangeText={setSearchQuery}
           onSubmitEditing={searchDocument}
-          onPointerLeave={()=>refetch()}
+          onPointerLeave={() => refetch()}
         />
         <TouchableOpacity style={styles.importButton} onPress={importDocument}>
           <MaterialIcons name="cloud-upload" size={24} color="#fff" />

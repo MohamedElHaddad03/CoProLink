@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Dimensions, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import useFetch from '../hook/useFetch';
@@ -20,7 +20,7 @@ const PaiementsManager = () => {
 
   //   // Add more property data as needed
   // ]);
-    
+
 
   const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/paiement');
 
@@ -29,7 +29,7 @@ const PaiementsManager = () => {
     setData(fetchedData);
     setIsLoading(isLoadingData);
 
-   
+
   }, [fetchedData, isLoadingData]);
   console.log(data);
 
@@ -45,21 +45,21 @@ const PaiementsManager = () => {
         },
         {
           text: 'Confirmer',
-          onPress: () => {handlePaymentConfirmation(id_pay), alert('Paiement confirmé')},
+          onPress: () => { handlePaymentConfirmation(id_pay), alert('Paiement confirmé') },
         },
       ],
       { cancelable: true }
     );
   };
 
-  const handlePaymentConfirmation = async(id_pay) => {
+  const handlePaymentConfirmation = async (id_pay) => {
     try {
-      const response = await fetch(BASEURL+'/api/interfaces/paiement/vrpay/' + id_pay, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json', // Set appropriate headers
-      },
-    });
+      const response = await fetch(BASEURL + '/api/interfaces/paiement/vrpay/' + id_pay, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json', // Set appropriate headers
+        },
+      });
 
       if (response.ok) {
         console.log(response);
@@ -86,34 +86,33 @@ const PaiementsManager = () => {
     return monthNames[date.getMonth()];
   };
 
-  const renderItem = ({ item }) => 
-  {
+  const renderItem = ({ item }) => {
     const buttonLabel = item.etat ? 'Unvalidate' : 'Valider';
     const buttonColor = item.etat ? '#FF6347' : '#65B741';
-  
-  return(
 
-    
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <View>
-          <Text style={styles.cardTitle}>Proprieté : {item.id_prop}</Text>
-          <Text style={styles.cardSubtitle}>Date: {getMonthName(item.date_creation)}</Text>
+    return (
+
+
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <View>
+            <Text style={styles.cardTitle}>Proprieté : {item.id_prop}</Text>
+            <Text style={styles.cardSubtitle}>Date: {getMonthName(item.date_creation)}</Text>
+          </View>
+          <TouchableOpacity onPress={() => handlePaymentConfirmation(item.id_pay)} style={[styles.confirmButton, { backgroundColor: buttonColor }]}>
+            <Text style={styles.buttonText}>{buttonLabel}</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => handlePaymentConfirmation(item.id_pay)} style={[styles.confirmButton, { backgroundColor: buttonColor }]}>
-          <Text style={styles.buttonText}>{buttonLabel}</Text>
-        </TouchableOpacity>
+        <View style={styles.divider} />
+        <View style={styles.amountSection}>
+          <Text style={styles.amountText}>Montant: <Text style={styles.amountValue}>{item.montant}</Text></Text>
+        </View>
       </View>
-      <View style={styles.divider} />
-      <View style={styles.amountSection}>
-        <Text style={styles.amountText}>Montant: <Text style={styles.amountValue}>{item.montant}</Text></Text>
-      </View>
-    </View>
-  );
+    );
 
   };
   const searchPaiement = () => {
-    
+
   };
 
   return (
@@ -144,7 +143,7 @@ const PaiementsManager = () => {
 
 const styles = StyleSheet.create({
   container: {
-    position:'relative',
+    position: 'relative',
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
     width: '80%',
     top: '10%',
     left: '5%',
-    height:Dimensions.get('window').height,
+    height: Dimensions.get('window').height,
   },
   titleContainer: {
     top: '1%',
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '300', 
+    fontWeight: '300',
   },
   header: {
     flexDirection: 'row',
@@ -178,7 +177,7 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
   },
-  Flatlist:{
+  Flatlist: {
     alignSelf: 'center',
     width: '100%',
     maxHeight: '85%',

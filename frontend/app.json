@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "CoProLink",
-    "slug": "coprolink",
+    "name": "build-app2",
+    "slug": "build-app2",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "https://firebasestorage.googleapis.com/v0/b/coprolink-5035f.appspot.com/o/assets%2FLogo_CoProLink_Text.png?alt=media&token=929069af-3c85-4002-8453-70e96af4d2c6",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "https://firebasestorage.googleapis.com/v0/b/coprolink-5035f.appspot.com/o/assets%2FLogo_CoProLink_Text.png?alt=media&token=929069af-3c85-4002-8453-70e96af4d2c6",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -15,44 +15,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anon123.coprolink"
+      "supportsTablet": true
     },
     "android": {
-      "permissions": [
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ],
-      "package": "com.anon123.coprolink"
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anon123.buildapp2"
     },
     "web": {
-      "favicon": ""
+      "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-document-picker",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "compileSdkVersion": 31,
-            "targetSdkVersion": 31,
-            "buildToolsVersion": "31.0.0"
-          },
-          "ios": {
-            "deploymentTarget": "13.4"
-          }
-        }
-      ]
-    ],
     "extra": {
-      "router": {
-        "origin": false
-      },
       "eas": {
-        "projectId": "109e79f0-6be8-4c3d-a79e-a2ba4bdf4d0f"
+        "projectId": "7dea1bab-f691-4d5a-b8cb-288ca22457ff"
       }
-    },
-    "owner": "anon123"
+    }
   }
 }
