@@ -3,6 +3,7 @@ from rest_framework import serializers
 from interfaces.models import Cotisation,Propriete
 from users.models import Profile
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 
 
@@ -30,6 +31,8 @@ class CombinedUserSerializer(serializers.ModelSerializer):
             cot = get_object_or_404(Cotisation,pk=cot)
         if utilisateur.profile.role == "admin":
             profile_data['role']="syndic"
+
+        validated_data['password']=make_password(validated_data['password'])
         user = User.objects.create(**validated_data)
         if utilisateur.profile.role == "syndic":
             prop.id_user = user

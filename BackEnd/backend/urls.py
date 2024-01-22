@@ -26,8 +26,10 @@ urlpatterns = [
     path("api/interfaces/", include("interfaces.urls")),
     path("login/", views.LoginView.as_view(), name="Login"),
     path("logout/", views.LogoutView.as_view(), name="Logout"),
+    path("mailverif/<str:email>", views.valider_email_unique, name="mailverif"),
     path("activation/<uidb64>/<token>/",views.activation_compte,name="activation"),
     path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(template_name="password_reset.html"),name="password_reset"),
-    path("reset/done/",auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_done.html"),name="password_reset_complete",
-    ),
+    path("reset/done/",auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_done.html"),name="password_reset_complete"),
+    path("forgot/<str:email>/",views.mdp_oublie,name="ChangerMdp"),
+
 ]

@@ -41,3 +41,4 @@ def send_password_reset_link(sender, instance, created, **kwargs):
             [instance.email],
             html_message=html_message,
         )
+

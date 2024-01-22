@@ -23,6 +23,7 @@ from .serializers import (
     PaiementSerializer,
     PaiementStatSerializer,
     ProprieteSerializer,
+    ProprieteSerializerUsers,
 )
 from django.db.models import Sum
 
@@ -132,6 +133,12 @@ def ListProp(request):
     serializer = ProprieteSerializer(props, many=True)
     return Response(serializer.data)
 
+@api_view(["GET"])
+def ListPropUsers(request):
+    props = Propriete.objects.all()
+    serializer = ProprieteSerializerUsers(props, many=True)
+    return Response(serializer.data)
+
 
 @api_view(["DELETE"])
 def DeleteProp(request, id_prop):
@@ -152,7 +159,8 @@ def CreateProp(request):
 @api_view(["POST"])
 def CreateCopro(request):
     serializer = CoproprieteSerializer(data=request.data)
-    if serializer.is_valid():
+    utilisateur=request.user
+    if serializer.is_valid() and utilisateur.profile.role == "admin":
         copro = serializer.save()
         nbpro = serializer.validated_data.get("nb_props")
         for i in range(nbpro):
@@ -209,7 +217,7 @@ def UpdateCopro(request, id_cop):
 
 @api_view(["GET"])
 def ListerDocument(request):
-    Docs = Document.objects.all()
+    Docs = Document.objects.filter(id_cop=request.user.profile.id_cop)
     serializer = DocumentSerializer(Docs, many=True)
     return Response(serializer.data)
 
@@ -233,57 +241,109 @@ def DeleteDocument(request, id_doc):
     else:
         return Response({"message": "Document introuvable !"})
 
+
 @api_view(["GET"])
 def ListerPaiementStatsMens(request):
     mois = datetime.now().month
-    paiement = Paiement.objects.filter(date_creation__month=mois)
-    serializer = PaiementStatSerializer(paiement,many=True)
+    paiement = Paiement.objects.filter(
+        date_creation__month=mois, id_prop__id_cop=request.user.profile.id_cop
+    )
+    serializer = PaiementStatSerializer(paiement, many=True)
     return Response(serializer.data)
+
 
 @api_view(["GET"])
 def ListerPaiementStatsAnn(request):
     annee = datetime.now().year
-    paiement = Paiement.objects.filter(date_creation__year=annee)
-    serializer = PaiementStatSerializer(paiement,many=True)
+    paiement = Paiement.objects.filter(
+        date_creation__year=annee, id_prop__id_cop=request.user.profile.id_cop
+    )
+    serializer = PaiementStatSerializer(paiement, many=True)
     return Response(serializer.data)
+
 
 @api_view(["GET"])
-def ListerPaiementStatsPer(request,prem,sec):
-    start_date = datetime.strptime(prem, '%Y-%m-%d')
-    end_date = datetime.strptime(sec, '%Y-%m-%d')
-    paiement = Paiement.objects.filter(date_creation__range=[start_date, end_date])
-    serializer = PaiementStatSerializer(paiement,many=True)
+def ListerPaiementStatsPer(request, prem, sec):
+    start_date = datetime.strptime(prem, "%Y-%m-%d")
+    end_date = datetime.strptime(sec, "%Y-%m-%d")
+    paiement = Paiement.objects.filter(
+        date_creation__range=[start_date, end_date],
+        id_prop__id_cop=request.user.profile.id_cop,
+    )
+    serializer = PaiementStatSerializer(paiement, many=True)
     return Response(serializer.data)
-
-
 
 
 @api_view(["GET"])
 def ChartPaiement(request):
     annee = datetime.now().year
     montant_per_month = (
-        Paiement.objects
-        .annotate(mois=ExtractMonth('date_creation'))
+        Paiement.objects.annotate(mois=ExtractMonth("date_creation"))
         .values("mois")
-        .annotate(montant_total=Sum('montant'))
-        .order_by('mois').filter(date_creation__year=annee,id_prop__id_cop=request.user.profile.id_cop)
+        .annotate(montant_total=Sum("montant"))
+        .order_by("mois")
+        .filter(date_creation__year=annee, id_prop__id_cop=request.user.profile.id_cop)
     )
-    serializer = MontantTotMoisSerializer(montant_per_month,many=True)
+    serializer = MontantTotMoisSerializer(montant_per_month, many=True)
     return Response(serializer.data)
 
+
+@api_view(["GET"])
+def ChartPaiementPer(request, prem, sec):
+    start_date = datetime.strptime(prem, "%Y-%m-%d")
+    end_date = datetime.strptime(sec, "%Y-%m-%d")
+    montant_per_month = (
+        Paiement.objects.annotate(mois=ExtractMonth("date_creation"))
+        .values("mois")
+        .annotate(montant_total=Sum("montant"))
+        .order_by("mois")
+        .filter(
+            date_creation__range=[start_date, end_date],
+            id_prop__id_cop=request.user.profile.id_cop,
+        )
+    )
+    serializer = MontantTotMoisSerializer(montant_per_month, many=True)
+    return Response(serializer.data)
+
+
 class GeneratePDFView(View):
-    def get(self, request,paiement_id,uidb64,token):
-        uid = urlsafe_base64_decode(uidb64).decode('utf-8')
+    def get(self, request, paiement_id, uidb64, token):
+        uid = urlsafe_base64_decode(uidb64).decode("utf-8")
         user = User.objects.get(pk=uid)
 
         if default_token_generator.check_token(user, token):
             paiement = Paiement.objects.get(id_pay=paiement_id)
             pdf_buffer = generer_pdf(paiement)
 
-            # Créez une réponse HTTP avec le contenu du PDF
-            response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
+            response = HttpResponse(
+                pdf_buffer.getvalue(), content_type="application/pdf"
+            )
 
-            # Nommez le fichier PDF généré
-            response['Content-Disposition'] = f'filename=paiement_{paiement.id_pay}.pdf'
+            response["Content-Disposition"] = f"filename=paiement_{paiement.id_pay}.pdf"
 
             return response
+
+
+@api_view(["GET"])
+def PieChart(request,annee):
+    depenses_par_categorie = {
+        "Assainissement": Depense.objects.filter(date_dep__year=annee,categorie="Assainissement",id_cop=request.user.profile.id_cop),
+        "Maintenance et reparation": Depense.objects.filter(
+            date_dep__year=annee,
+            categorie="Maintenance et reparation",
+            id_cop=request.user.profile.id_cop,
+
+        ),
+        "Matériel": Depense.objects.filter(date_dep__year=annee,categorie="Matériel",id_cop=request.user.profile.id_cop),
+        "Gardiennage": Depense.objects.filter(date_dep__year=annee,categorie="Gardiennage",id_cop=request.user.profile.id_cop),
+        "Autre": Depense.objects.filter(date_dep__year=annee,categorie="Autre",id_cop=request.user.profile.id_cop),
+    }
+
+    serialized_depenses_par_categorie = {
+        categorie: {
+            "montant_total": depenses.aggregate(Sum("montant"))["montant__sum"] or 0,
+        }
+        for categorie, depenses in depenses_par_categorie.items()
+    }
+
+    return Response(serialized_depenses_par_categorie)

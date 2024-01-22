@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image, Animated, Easing, SafeAreaView, StatusBar } from 'react-native';
 import icons from '../constants/icons';
 import { Ionicons } from '@expo/vector-icons';
-
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 const SidebarAdmin = ({ selectedItem, setSelectedItem }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const largeur = useRef(new Animated.Value(50)).current;
@@ -46,8 +46,7 @@ const SidebarAdmin = ({ selectedItem, setSelectedItem }) => {
         styles.sidebarItem,
         selectedItem === 'Statistiques' && { backgroundColor: bgColorOpen },
       ]} onPress={() => handleItemClick('Statistiques')}>
-        <Ionicons name={selectedItem === "Statistiques" ? "home" : "home-outline"} size={26} color={iconColor} />
-        {isSidebarOpen && (
+<MaterialCommunityIcons name="home-city-outline" size={24} color="black" />        {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Statistiques</Text>
         )}
       </TouchableOpacity>

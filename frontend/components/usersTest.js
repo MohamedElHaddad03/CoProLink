@@ -13,17 +13,41 @@ import {
   ActivityIndicator, // Import ActivityIndicator for the loading spinner
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import useFetch from '../hook/useFetch';
+import useFetchSecure from '../hook/useFetchSecure';
+import BASEURL from '../config';
+import { FontAwesome6 } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAuth } from '../Context/AuthContext';
 
 const UsersManagement = () => {
+  const {user} = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const [prop,setProp]=useState({
+    id_prop: 0,
+        num: "",
+        occupation: true,
+        id_user: 0,
+        id_cot: 0,
+        id_cop: 0
+  });
   const [data, setData] = useState(null); // Initialize 'data' state
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
-
+  const [idProp,setIdProp]=useState();
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  //--------------------SignUp--------------------
+  const [firstname, setFirstName] = useState('');
+  const [lastname, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [cin, setCin] = useState('');
+  const [usernameSU, setUserNameSU] = useState('');
+  const [passwordSU, setPasswordSU] = useState('');
+  const [profile, setProfile] = useState('');
+  const [error2, setError2] = useState('');
   const [newUserData, setNewUserData] = useState({
     first_name: '',
       last_name: '',
@@ -42,11 +66,11 @@ const UsersManagement = () => {
 
 
 
-  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetch('api/users/');
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/propusers');
 
   useEffect(() => {
     setError(fetchedError)
-    setData(fetchedData);
+    setUsers(fetchedData);
     setIsLoading(isLoadingData);
 
    
@@ -63,17 +87,55 @@ const UsersManagement = () => {
     console.log(item)
     return (
       <View style={styles.userItem}>
+        
         <View style={styles.userInfo}>
+          
+        <Text>
+        <FontAwesome6 name="building-user" size={24} color="black" /> Appartement : {item?.num}
+            </Text>
+            {item.occupation && <View>
           <Text>
-            {item.username} : {item.email}
+            {item.user?.first_name} : {item.user?.last_name}
           </Text>
+          <Text>
+           Email : {item.user?.email} 
+          </Text>
+          <Text>
+           Telephone : {item.user?.profile?.telephone} 
+          </Text>
+          </View>}
         </View>
-        <TouchableOpacity
-          style={styles.removeIconContainer}
-          onPress= {()=>handleDeleteUser(item.id)}
-        >
-          <Ionicons name="person-remove" size={20} color="red" />
-        </TouchableOpacity>
+     {item.occupation &&  <View style={styles.ButtonsContainer}>
+  
+
+    <TouchableOpacity
+    style={styles.settingUser}
+    onPress={() => handleUser(item.id)}
+  >
+    <MaterialCommunityIcons name="account-settings" size={24} color="black" />
+
+  </TouchableOpacity>
+  <TouchableOpacity
+    style={styles.removeIconContainer}
+    onPress={() => handleDeleteUser(item.id)}
+  >
+    <Ionicons name="person-remove" size={20} color="red" />
+  </TouchableOpacity>
+</View>}
+{!item.occupation &&  <View style={styles.ButtonsContainer}>
+  
+
+  
+  <TouchableOpacity
+    style={styles.addIconContainer}
+    onPress={() =>{ setShowModal(true);
+    setIdProp(item?.id_prop)
+   }}
+  >
+    <Ionicons name="person-add" size={20} color="green"   />
+  </TouchableOpacity>
+</View>}
+
       </View>
     );
   };
@@ -84,20 +146,35 @@ const UsersManagement = () => {
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.lastname.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    setUsers(filteredUsers);
+    setData(filteredUsers);
   };
 
   const addUser  = async () => {
-    const newUser = {...newUserData  };
+    const newUser = {
+    first_name: firstname,
+    last_name: lastname,
+    email: email,
+    username: username,
+    password: password,
+    id_prop:idProp,
+    id_cot:1,
+    profile: {
+      telephone: phone,
+      cin: cin,
+      id_cop: 1,
+      role: 'proprietaire',
+    }, };
     //setData([...data, newUser]); // Update 'data' with the new user
     // setShowModal(false);
     
+    
     console.log(newUser)
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/users/`, {
+      const response = await fetch(`${BASEURL}/api/users/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // Set appropriate headers
+        'Authorization': 'Token '+ user.Token,
       },
       body: JSON.stringify(newUser), // Convert new user data to JSON string for the request body
     });
@@ -107,11 +184,10 @@ const UsersManagement = () => {
         
         refetch();
       } else {
-        throw new Error('Failed to ADD user');
+        throw new Error(`Failed to ADD user: ${response.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error ADDING user:', error.message);
-
     }
 
    
@@ -120,7 +196,7 @@ const UsersManagement = () => {
   const handleDeleteUser = async (id) => {
 // Custom hook for deleting a user
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/users/${id}/`, {
+      const response = await fetch(`${BASEURL}/api/users/${id}/`, {
         method: 'DELETE',
       });
 
@@ -206,7 +282,7 @@ const UsersManagement = () => {
         ) : ( */}
         <FlatList
           data={users.length > 0 ? users : data}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.id}
           renderItem={renderUserItem}
           numColumns={1}
           refreshing={false}
@@ -228,45 +304,45 @@ const UsersManagement = () => {
             <TextInput
               style={styles.modalInput}
               placeholder="CIN"
-              value={newUserData.cin}
-              onChangeText={(text) => handleInputChange('profile.cin', text)}
+              value={cin}
+              onChangeText={(text) => setCin( text)}
             />
              <TextInput
               style={styles.modalInput}
               placeholder="First Name"
-              value={newUserData.name}
-              onChangeText={(text) => handleInputChange('first_name', text)}
+              value={firstname}
+              onChangeText={(text) => setFirstName( text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Last Name"
-              value={newUserData.lastname}
-              onChangeText={(text) => handleInputChange('last_name', text)}
+              value={lastname}
+              onChangeText={(text) => setLastName( text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Email"
-              value={newUserData.email}
-              onChangeText={(text) => handleInputChange('email', text)}
+              value={email}
+              onChangeText={(text) => setEmail( text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Phone"
-              value={newUserData.phone}
-              onChangeText={(text) => handleInputChange('profile.telephone', text)}
+              value={phone}
+              onChangeText={(text) => setPhone( text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Username"
-              value={newUserData.username}
-              onChangeText={(text) => handleInputChange('username', text)}
+              value={username}
+              onChangeText={(text) => setUserName( text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Password"
               secureTextEntry={true}
-              value={newUserData.password}
-              onChangeText={(text) => handleInputChange('password', text)}
+              value={password}
+              onChangeText={(text) => setPassword( text)}
             />
             {/* <TextInput
               style={styles.modalInput}
@@ -336,6 +412,15 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
   },
+  ButtonsContainer: {
+    flexDirection: 'column',
+    alignItems: 'center', // Optional, adjust as needed
+  },
+
+  settingUser: {
+    marginBottom:30,
+    marginLeft: 10,
+  },
   userItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -352,6 +437,9 @@ const styles = StyleSheet.create({
   },
   removeIconContainer: {
     marginLeft: 10, // Provides some spacing between user info and remove icon
+  },
+  addIconContainer:{
+    padding:10
   },
   flatList: {
     alignSelf: 'center',
