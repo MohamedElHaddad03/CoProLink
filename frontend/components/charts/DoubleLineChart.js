@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import useFetchSecure from '../../hook/useFetchSecure';
 
@@ -15,8 +15,18 @@ const DoubleLineChart = () => {
   const [monthlyData, setMonthlyData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const dateActuelle = new Date();
 
-  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/stats/paiementper/2023-01-01/2024-01-01');
+// Date de début (3 mois avant aujourd'hui)
+const dateDebut = new Date();
+dateDebut.setMonth(dateDebut.getMonth() - 6);
+const formatDateDebut = dateDebut.toISOString().split('T')[0]; // Format YYYY-MM-DD
+
+// Date de fin (6 mois après aujourd'hui)
+const dateFin = new Date();
+dateFin.setMonth(dateFin.getMonth() + 2);
+const formatDateFin = dateFin.toISOString().split('T')[0];
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/stats/paiementper/'+formatDateDebut+'/'+formatDateFin);
 
   useEffect(() => {
     setError(fetchedError);
@@ -72,8 +82,9 @@ const DoubleLineChart = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Monthly Payment Status</Text>
-      {monthlyData.length > 0 ? (<LineChart
+      <Text style={styles.title}>Statut des paiements mensuels</Text>
+      <ScrollView horizontal={true}>
+{monthlyData.length > 0 ? (<LineChart
         data={sampledata}
         width={250}
         height={200}
@@ -83,6 +94,8 @@ const DoubleLineChart = () => {
       />) : (
         <Text>No data available</Text>
       )}
+      </ScrollView>
+      
 
     </View>
   );

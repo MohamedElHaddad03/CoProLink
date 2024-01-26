@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, StatusBar } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
@@ -143,7 +143,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Profile</Text>
       </View>
@@ -170,7 +170,7 @@ const ProfileScreen = () => {
         // Disabled CIN input
         />
         <MaterialCommunityIcons name="lock" size={24} color="#3b67bb" style={styles.lockIcon} />
-      </View>
+      
       <TextInput
         style={[styles.input, { borderBottomWidth: activeInput === 'Prenom' ? 1 : 0 }]}
         placeholder="Prenom*"
@@ -212,10 +212,11 @@ const ProfileScreen = () => {
         onFocus={() => handleFocus('Username')}
         onBlur={handleBlur}
       />
+      </View>
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={[styles.buttonText, styles.boldText]}>Save</Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -227,11 +228,11 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     width: '80%',
-    top: '10%',
+    top: StatusBar.currentHeight +10,
     marginLeft: '10%',
   },
   titleContainer: {
-    top: '2%',
+    top: 0,
     alignSelf: 'center',
     alignItems: 'center',
     position: 'absolute',

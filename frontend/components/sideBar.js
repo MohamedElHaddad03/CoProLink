@@ -109,12 +109,13 @@ const handleItemClick = (item) => {
 
 const styles = StyleSheet.create({
   sidebar: {
-    zIndex:1,
+    zIndex:999,
   //  padding: 10,
     position: 'absolute', // Use absolute positioning for overlay
    // top: 0,
-   paddingTop:StatusBar.currentHeight +10 ,
+   paddingTop:10 ,
     left: 0,
+    top:StatusBar.currentHeight,
     flexDirection: 'column',
     alignItems: 'flex-start',
     // Adjust the width of the sidebar as needed

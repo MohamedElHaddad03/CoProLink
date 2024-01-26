@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions, Alert, Linking } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions, Alert, Linking, ProgressBarAndroid } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -13,17 +13,17 @@ import axios from 'axios';
 
 const checkPermissions = async () => {
   // Check if permission is granted
-  const { status } = await Permissions.getAsync(Permissions.MEDIA_LIBRARY);
+  // const { status } = await Permissions.getAsync(Permissions.MEDIA_LIBRARY);
 
-  if (status !== 'granted') {
-    // If permission is not granted, request it
-    const { status: newStatus } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+  // if (status !== 'granted') {
+  //   // If permission is not granted, request it
+  //   const { status: newStatus } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
 
-    if (newStatus !== 'granted') {
-      console.log('Permission denied');
-      return false;
-    }
-  }
+  //   if (newStatus !== 'granted') {
+  //     console.log('Permission denied');
+  //     return false;
+  //   }
+  // }
 
   return true;
 };
@@ -57,6 +57,7 @@ const DocumentsManager = () => {
   const [data, setData] = useState(null); // Initialize 'data' state
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { user } = useAuth();
 
 
@@ -100,8 +101,9 @@ const DocumentsManager = () => {
         'state_changed',
         (snapshot) => {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% done`);
-        },
+          setUploadProgress(progress);
+
+                 },
         (error) => {
           console.error('Error uploading document:', error);
         },
@@ -284,7 +286,14 @@ const DocumentsManager = () => {
         </TouchableOpacity>
       </View>
       <KeyboardAvoidingView behavior='height'>
-
+      <View style={styles.progressBarContainer}>
+  {uploadProgress >0 || uploadProgress >= 100 &&<ProgressBarAndroid
+    styleAttr="Horizontal"
+    indeterminate={false}
+    progress={uploadProgress / 100}
+    style={styles.progressBar}
+  />}
+</View>
         <View style={styles.Flatlist} >
           <FlatList
             data={documents}
