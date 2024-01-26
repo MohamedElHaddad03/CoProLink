@@ -6,6 +6,7 @@ import { CategoryPopUp } from "./Modals/CategoryPopUp";
 import { DepensePopUp } from "./Modals/DepensePopUp";
 //import useFetch from "../hook/useFetch";
 import useFetchSecure from "../hook/useFetchSecure";
+import { useAuth } from "../Context/AuthContext";
 export const DepenseTest = () => {
   const [isModalCategVisible, setModalCategVisible] = useState(false);
   const [isModalDepVisible, setModalDepVisible] = useState(false);
@@ -14,7 +15,7 @@ export const DepenseTest = () => {
 
   const [data, setData] = useState(null); // Initialize 'data' state
   const [error, setError] = useState(null);
-
+const {user}=useAuth();
   // Replace the axios.request options with the useFetch hook
   const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/depense');
 
@@ -92,7 +93,7 @@ export const DepenseTest = () => {
         <Text style={styles.buttonText}>
           Categorie</Text>
       </TouchableOpacity>  */}
-        {<TouchableOpacity
+        {user?.User.profile?.role == "syndic" &&<TouchableOpacity
           onPress={() => setModalDepVisible(true)}
           style={styles.expenseButton}>
           <Ionicons

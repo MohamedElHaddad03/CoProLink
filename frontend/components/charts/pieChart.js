@@ -21,8 +21,24 @@ const DonutChart = () => {
     useEffect(() => {
         refetch();
     }, [])
+    // Function to generate a random color
+    
+    const palette = ['#FFB6C1', '#AFEEEE', '#98FB98', '#FFD700', '#FFA07A'];
 
-    const pieData = data3;
+const pieData = Object.entries(fetchedData).map(([category, { montant_total }], i) => ({
+    value: montant_total,
+    label: category,
+    color: palette[i % palette.length], // Use modulo operator to cycle through the palette
+}));
+
+
+    const maxValueData = pieData.reduce((max, current) => max.value > current.value ? max : current, { value: -Infinity });
+    const maxLabel = maxValueData.label;
+
+
+
+
+
     // data3.map(({ mois, montant_total }) => ({
     //     value: parseFloat(montant_total),
     //     label: getMonthLabel(mois), // Assuming you have a function to get the label for the month
@@ -46,66 +62,38 @@ const DonutChart = () => {
 
     const renderLegendComponent = () => {
         return (
-            <>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        marginBottom: 10,
-                    }}>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            width: 120,
-                            marginRight: 20,
-                        }}>
-                        {renderDot('#006DFF')}
-                        <Text style={{ color: 'white' }}>Excellent: 47%</Text>
+            <View style={{ flexDirection: 'column', justifyContent: 'center', marginBottom: 10 }}>
+                {pieData.map((dataPoint, index) => (
+                    <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 20 }}>
+                        {renderDot(dataPoint.color)}
+                        <Text style={{ color: 'black', marginLeft: 5 }}>
+                            {dataPoint.label}: {dataPoint.value}
+                        </Text>
                     </View>
-                    <View
-                        style={{ flexDirection: 'row', alignItems: 'center', width: 120 }}>
-                        {renderDot('#8F80F3')}
-                        <Text style={{ color: 'white' }}>Okay: 16%</Text>
-                    </View>
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            width: 120,
-                            marginRight: 20,
-                        }}>
-                        {renderDot('#3BE9DE')}
-                        <Text style={{ color: 'white' }}>Good: 40%</Text>
-                    </View>
-                    <View
-                        style={{ flexDirection: 'row', alignItems: 'center', width: 120 }}>
-                        {renderDot('#FF7F97')}
-                        <Text style={{ color: 'white' }}>Poor: 3%</Text>
-                    </View>
-                </View>
-            </>
+                ))}
+            </View>
         );
     };
+
+
 
     return (
         <View
             style={{
-                paddingVertical: 100,
-                //   backgroundColor: '#34448B',
+              // marginBottom: 100,
+                   backgroundColor: '#fff',
+                  
                 flex: 1,
             }}>
             <View
                 style={{
                     margin: 20,
-                    padding: 16,
+                  // padding: 20,
                     borderRadius: 20,
-                    backgroundColor: '#232B5D',
+                   // backgroundColor: '#34448B',
                 }}>
-                <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
-                    Performance
+                <Text style={{ color: 'black', fontSize: 16, fontWeight: 'bold' }}>
+                    Dépense Annuelle
                 </Text>
                 <View style={{ padding: 20, alignItems: 'center' }}>
                     <PieChart
@@ -115,19 +103,19 @@ const DonutChart = () => {
                         sectionAutoFocus
                         radius={90}
                         innerRadius={60}
-                        innerCircleColor={'#232B5D'}
+                        innerCircleColor={'#fff'}
                         centerLabelComponent={() => {
                             return (
                                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text
-                                        style={{ fontSize: 22, color: 'white', fontWeight: 'bold' }}>
-                                        47%
+                                    <Text style={{ fontSize: 22, color: 'black', fontWeight: 'bold' }}>
+                                        {maxValueData.value}
                                     </Text>
-                                    <Text style={{ fontSize: 14, color: 'white' }}>Excellent</Text>
+                                    <Text style={{ fontSize: 14, color: 'black' }}>{maxLabel}</Text>
                                 </View>
                             );
                         }}
                     />
+
                 </View>
                 {renderLegendComponent()}
             </View>
