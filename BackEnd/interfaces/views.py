@@ -31,7 +31,7 @@ from django.db.models import Sum
 @api_view(["GET"])
 def ListerPaiement(request):
     user = request.user
-    pay = Paiement.objects.filter(id_prop_id_cop_id_cop=user.profile.id_cop.id_cop)
+    pay = Paiement.objects.filter(id_prop__id_cop__id_cop=user.profile.id_cop.id_cop)
     serializer = PaiementSerializer(pay, many=True)
     return Response(serializer.data)
 
