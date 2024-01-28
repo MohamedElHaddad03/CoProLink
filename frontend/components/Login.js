@@ -18,10 +18,16 @@ const LoginScreen = () => {
   const [cin, setCin] = useState('');
   const [usernameSU, setUserNameSU] = useState('');
   const [passwordSU, setPasswordSU] = useState('');
+  const [confirmPass, setconfirmPass] = useState('');
+  const [errorEmail, seterrorEmail] = useState('');
+  const [errorPhone, seterrorPhone] = useState('');
+  const [errorPassword, seterrorPassword] = useState('');
+  const [errorConfPass, seterrorConfPass] = useState('');
+  const [errorAll, seterrorAll] = useState('*All fields are required');
+
   const [profile, setProfile] = useState('');
   const [error2, setError2] = useState('');
 
-  const [confirmPass, setconfirmPass] = useState('');
 
   const [showSignUp, setShowSignUp] = useState(false); // State to manage SignUp form visibility
 
@@ -79,6 +85,46 @@ const LoginScreen = () => {
 
 
   const handleSignup = async () => {
+    if (email == '' || phone == '' || passwordSU == '' || confirmPass == '' || firstname == '' || lastname == '' || cin == '' || usernameSU == '') {
+      seterrorAll('*All fields are required');
+      return;
+    }
+    else {
+      seterrorAll('');
+    }
+    if (passwordSU != confirmPass) {
+      seterrorConfPass('*Passwords do not match');
+      return;
+    }
+    else {
+      seterrorConfPass('');
+    }
+    // regex for password
+    if (!passwordSU.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)) {
+      seterrorPassword('*Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character');
+      return;
+    }
+    else {
+      seterrorPassword('');
+    }
+    if (isNaN(phone)) {
+      seterrorPhone('*Phone number must contain only numbers');
+      return;
+    }
+    else if (phone.length != 10) {
+      seterrorPhone('*Phone number must contain 10 numbers');
+    }
+    else {
+      seterrorPhone('');
+    }
+    if (!email.includes('@') ) {
+      seterrorEmail('*Invalid email');
+      return;
+    }
+    else {
+      seterrorEmail('');
+    }
+  
     const newUser = {
       username: usernameSU,
       password: passwordSU,
@@ -193,6 +239,11 @@ const LoginScreen = () => {
         )}
         {showSignUp && (
           <View style={styles.login}  >
+           { errorEmail &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorEmail}</Text>)}
+           { errorPhone &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorPhone}</Text>)}
+           { errorPassword &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorPassword}</Text>)}
+           { errorConfPass &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorConfPass}</Text>)}
+           { errorAll &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorAll}</Text>)}
             <TextInput
               style={styles.inputS}
               placeholderTextColor={"#607D8B"}
