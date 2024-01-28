@@ -99,21 +99,25 @@ const LoginScreen = () => {
     else {
       seterrorConfPass('');
     }
-    if (passwordSU.length < 8) {
-      seterrorPassword('*Password must be at least 8 characters');
+    // regex for password
+    if (!passwordSU.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)) {
+      seterrorPassword('*Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character');
       return;
     }
     else {
       seterrorPassword('');
     }
-    if (phone.length != 10) {
-      seterrorPhone('*Phone number must be 10 digits');
+    if (isNaN(phone)) {
+      seterrorPhone('*Phone number must contain only numbers');
       return;
+    }
+    else if (phone.length != 10) {
+      seterrorPhone('*Phone number must contain 10 numbers');
     }
     else {
       seterrorPhone('');
     }
-    if (!email.includes('@')) {
+    if (!email.includes('@') ) {
       seterrorEmail('*Invalid email');
       return;
     }
