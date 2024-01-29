@@ -14,13 +14,27 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import useFetchSecure from '../hook/useFetchSecure';
-import BASEURL from '../config';
+import getBaseUrl from '../config';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 
 
 const UsersManagement = () => {
+  const [BASEURL,setBaseUrl]=useState('');
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+        try {
+            const BASEURL = await getBaseUrl();
+            setBaseUrl(BASEURL);
+        } catch (error) {
+            console.error("Error fetching BASEURL:", error);
+        }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+}, []);
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +50,8 @@ const UsersManagement = () => {
   const [data, setData] = useState(null); // Initialize 'data' state
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+
   const [error, setError] = useState(null);
   const [idProp, setIdProp] = useState();
   const [username, setUserName] = useState('');
@@ -112,7 +128,7 @@ const UsersManagement = () => {
 
           <TouchableOpacity
             style={styles.settingUser}
-            onPress={() => handleUser(item.user.id)}
+            onPress={() => {setShowModal2(true);handleUser(item.user.id);}}
           >
             <MaterialCommunityIcons name="account-settings" size={24} color="black" />
 
@@ -335,6 +351,74 @@ const UsersManagement = () => {
         transparent={true}
         visible={showModal}
         onRequestClose={() => setShowModal(false)}
+      >
+        <KeyboardAvoidingView style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add User</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="CIN"
+              value={cin}
+              onChangeText={(text) => setCin(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="First Name"
+              value={firstname}
+              onChangeText={(text) => setFirstName(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Last Name"
+              value={lastname}
+              onChangeText={(text) => setLastName(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Phone"
+              value={phone}
+              onChangeText={(text) => setPhone(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Username"
+              value={username}
+              onChangeText={(text) => setUserName(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Password"
+              secureTextEntry={true}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+            />
+            {/* <TextInput
+              style={styles.modalInput}
+              placeholder="Confirm Password"
+              secureTextEntry={true}
+              value={newUserData.confirmPassword}
+              onChangeText={(text) => handleInputChange('confirmPassword', text)}
+            /> */}
+            <TouchableOpacity style={styles.modalButton} onPress={() => addUser()}>
+              <Text style={styles.modalButtonText}>Add User</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal(false)}>
+              <Text style={styles.modalButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showModal2}
+        onRequestClose={() => setShowModal2(false)}
       >
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>

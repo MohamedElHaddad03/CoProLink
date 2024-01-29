@@ -7,7 +7,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/
 import { app } from '../firebase'; // Import the firebase app instance
 import * as Permissions from 'expo-permissions';
 import useFetchSecure from '../hook/useFetchSecure';
-import BASEURL from '../config';
+import getBaseUrl from '../config';
 import { useAuth } from '../Context/AuthContext';
 import axios from 'axios';
 
@@ -49,6 +49,20 @@ const getBlobFroUri = async (uri) => {
 //const documentBlob = await getBlobFroUri(image)
 
 const DocumentsManager = () => {
+  const [BASEURL,setBaseUrl]=useState('');
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+        try {
+            const BASEURL = await getBaseUrl();
+            setBaseUrl(BASEURL);
+        } catch (error) {
+            console.error("Error fetching BASEURL:", error);
+        }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+}, []);
   const [documents, setDocuments] = useState([]);
   const [documentsFilter, setDocumentsfilter] = useState([]);
   const [documentName, setDocumentName] = useState('');

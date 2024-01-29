@@ -1,8 +1,22 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
-import BASEURL from "../config";
+import getBaseUrl from "../config";
 const useFetchSecure = (endpoint, query, method = "GET") => {
+  const [BASEURL,setBaseUrl]=useState('');
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+        try {
+            const BASEURL = await getBaseUrl();
+            setBaseUrl(BASEURL);
+        } catch (error) {
+            console.error("Error fetching BASEURL:", error);
+        }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+}, []);
   const baseUrl = BASEURL;
   const { user } = useAuth();
   console.log("Tokeeeeeeeen : ", user.Token)

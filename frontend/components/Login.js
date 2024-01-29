@@ -2,10 +2,24 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated, Easing, ImageBackground } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
 import { useAuth } from '../Context/AuthContext';
-import BASEURL from '../config';
+import getBaseUrl from '../config';
 import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = () => {
+  const [BASEURL,setBaseUrl]=useState('');
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+        try {
+            const BASEURL = await getBaseUrl();
+            setBaseUrl(BASEURL);
+        } catch (error) {
+            console.error("Error fetching BASEURL:", error);
+        }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+}, []);
 console.log("BASE",BASEURL)
   // const [loginTop, setLoginTop] = useState(0);
   const [username, setUserName] = useState('');
@@ -140,7 +154,7 @@ console.log("BASE",BASEURL)
     };
 
     try {
-      const response = await fetch(`${BASEURL}/api/users/signup/`, {
+      const response = await fetch(`${getBaseUrl()}/api/users/signup/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

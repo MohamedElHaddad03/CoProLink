@@ -1,9 +1,24 @@
 import { Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import BASEURL from "../../config";
+import getBaseUrl from "../../config";
+import { useEffect } from "react";
 
 
 const CardDepense = ({ item,refetch }) => {
+  const [BASEURL,setBaseUrl]=useState('');
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+        try {
+            const BASEURL = await getBaseUrl();
+            setBaseUrl(BASEURL);
+        } catch (error) {
+            console.error("Error fetching BASEURL:", error);
+        }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+}, []);
 console.log(item)
 const handleDeleteDepense = async (id) => {
 // Custom hook for deleting a user

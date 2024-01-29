@@ -8,6 +8,7 @@ import { DepensePopUp } from "./Modals/DepensePopUp";
 import useFetchSecure from "../hook/useFetchSecure";
 import { useAuth } from "../Context/AuthContext";
 export const DepenseTest = () => {
+  
   const [isModalCategVisible, setModalCategVisible] = useState(false);
   const [isModalDepVisible, setModalDepVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

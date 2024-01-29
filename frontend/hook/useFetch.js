@@ -1,8 +1,22 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import BASEURL from "../config";
+import getBaseUrl from "../config";
 
 const useFetch = (endpoint, query) => {
+  const [BASEURL, setBaseUrl] = useState('');
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+      try {
+        const BASEURL = await getBaseUrl();
+        setBaseUrl(BASEURL);
+      } catch (error) {
+        console.error("Error fetching BASEURL:", error);
+      }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+  }, []);
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);

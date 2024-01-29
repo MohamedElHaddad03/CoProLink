@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet, TextInput  } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
-
+import getBaseUrl from '../../config';
 export  const  DepensePopUp = ({isModalVisible,toggleModal,refetch}) => {
+  const [BASEURL,setBaseUrl]=useState('');
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+        try {
+            const BASEURL = await getBaseUrl();
+            setBaseUrl(BASEURL);
+        } catch (error) {
+            console.error("Error fetching BASEURL:", error);
+        }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+}, []);
 //   const [isModalVisible, setModalVisible] = useState(false);
 
 //   const toggleModal = () => {
@@ -36,7 +50,7 @@ const [selectedCategory, setSelectedCategory] = useState('');
     console.log(newDepense);
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/interfaces/depense/create/', {
+      const response = await fetch(BASEURL+'/api/interfaces/depense/create/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

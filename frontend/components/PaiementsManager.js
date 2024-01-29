@@ -3,9 +3,23 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, Keyboard
 import { MaterialIcons } from '@expo/vector-icons';
 import useFetch from '../hook/useFetch';
 import useFetchSecure from '../hook/useFetchSecure';
-import BASEURL from '../config';
+import getBaseUrl from '../config';
 
 const PaiementsManager = () => {
+  const [BASEURL, setBaseUrl] = useState('');
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+      try {
+        const BASEURL = await getBaseUrl();
+        setBaseUrl(BASEURL);
+      } catch (error) {
+        console.error("Error fetching BASEURL:", error);
+      }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);

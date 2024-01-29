@@ -5,7 +5,7 @@ import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import BASEURL from '../config';
+import getBaseUrl from '../config';
 const CopropCreate = () => {
   const [nom, setNom] = useState('');
   const [adresse, setadresse] = useState('');
@@ -20,7 +20,20 @@ const CopropCreate = () => {
   const { user } = useAuth();
   //const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure(`api/users/${user.User.id}`);
 
+  const [BASEURL,setBaseUrl]=useState('');
 
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+        try {
+            const BASEURL = await getBaseUrl();
+            setBaseUrl(BASEURL);
+        } catch (error) {
+            console.error("Error fetching BASEURL:", error);
+        }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+}, []);
 
 
   // useEffect(() => {

@@ -1,13 +1,28 @@
 // AuthContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import BASEURL from '../config';
+import getBaseUrl from '../config';
 import useFetchSecure from '../hook/useFetchSecure';
 import { err } from 'react-native-svg';
 
 const AuthContext = createContext();
-console.log('BASE2',BASEURL)
+
 export const AuthProvider = ({ children }) => {
+  const [BASEURL,setBaseUrl]=useState('');
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+        try {
+            const BASEURL = await getBaseUrl();
+            setBaseUrl(BASEURL);
+        } catch (error) {
+            console.error("Error fetching BASEURL:", error);
+        }
+    };
+
+    fetchBaseUrl(); // Call the async function immediately
+}, []);
+console.log('BASE2',BASEURL)
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();

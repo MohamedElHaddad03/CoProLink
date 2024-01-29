@@ -126,6 +126,21 @@ def DepenseUpdate(request, id_dep):
 
     return Response({"error": "Invalid request method"}, status=400)
 
+@api_view(["PUT"])
+def UpdateProp(request, id_prop):
+    prop = Propriete.objects.get(pk=id_prop)
+    id_user = request.data.get('id_user')
+    occupation = bool(id_user)
+
+    request.data['occupation'] = occupation
+
+    serializer = ProprieteSerializer(prop, data=request.data)
+    
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(["GET"])
 def ListProp(request):
@@ -135,7 +150,7 @@ def ListProp(request):
 
 @api_view(["GET"])
 def ListPropUsers(request):
-    props = Propriete.objects.all()
+    props = Propriete.objects.filter(id_cop=request.user.profile.id_cop)
     serializer = ProprieteSerializerUsers(props, many=True)
     return Response(serializer.data)
 

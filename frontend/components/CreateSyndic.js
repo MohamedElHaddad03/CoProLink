@@ -5,8 +5,22 @@ import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
-import BASEURL from '../config';
+import getBaseUrl from '../config';
 const CreateSyndic = () => {
+    const [BASEURL,setBaseUrl]=useState('');
+
+    useEffect(() => {
+        const fetchBaseUrl = async () => {
+            try {
+                const BASEURL = await getBaseUrl();
+                setBaseUrl(BASEURL);
+            } catch (error) {
+                console.error("Error fetching BASEURL:", error);
+            }
+        };
+
+        fetchBaseUrl(); // Call the async function immediately
+    }, []);
     const [prenom, setPrenom] = useState('');
     const [CIN, setCIN] = useState('');
     const [nom, setNom] = useState('');

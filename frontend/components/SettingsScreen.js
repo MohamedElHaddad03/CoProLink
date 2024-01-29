@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 
 const SettingsScreen = ({selectedItem, setSelectedItem}) => {
+  
   const { logout } = useAuth();
 
   const Logout = ()=>{
