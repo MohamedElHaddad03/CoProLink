@@ -6,7 +6,7 @@ import useFetchSecure from '../hook/useFetchSecure';
 import { err } from 'react-native-svg';
 
 const AuthContext = createContext();
-
+console.log('BASE2',BASEURL)
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

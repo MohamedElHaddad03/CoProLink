@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, StatusBar } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
-import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import axios from 'axios';
 import BASEURL from '../config';
-const CopropCreate = () => {
+const ProfileScreen = () => {
+  const [prenom, setPrenom] = useState('');
+  const [CIN, setCIN] = useState('');
   const [nom, setNom] = useState('');
-  const [adresse, setadresse] = useState('');
-  const [nbProps, setnbProps] = useState('');
-
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [username, setUsername] = useState('');
+  const [gender, setGender] = useState('Mr');
   const [activeInput, setActiveInput] = useState('');
   const [data, setData] = useState(null); // Initialize 'data' state
   const [error, setError] = useState(null);
@@ -18,6 +21,8 @@ const CopropCreate = () => {
 
   const [saved, setSaved] = useState(false)
   const { user } = useAuth();
+ 
+  
   //const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure(`api/users/${user.User.id}`);
 
 
@@ -29,12 +34,12 @@ const CopropCreate = () => {
   //   setIsLoading(isLoadingData);
 
   //   if (fetchedData) {
-  //     setadresse(fetchedData.adresse);
+  //     setEmail(fetchedData.email);
   //     setNom(fetchedData.last_name);
   //     setPrenom(fetchedData.first_name);
 
   //     if (fetchedData.profile) {
-  //       setnbProps(fetchedData.profile.telenbProps);
+  //       setPhone(fetchedData.profile.telephone);
   //       setCIN(fetchedData.profile.cin);
   //     }
 
@@ -50,7 +55,21 @@ const CopropCreate = () => {
 
 
 
+  useEffect(() => {
+    console.log("test user", user);
+    setEmail(user.User.email);
+    setNom(user.User.last_name);
+    setPrenom(user.User.first_name);
 
+    if (user.User.profile) {
+      setPhone(user.User.profile.telephone);
+      setCIN(user.User.profile.cin);
+    }
+
+    setUsername(user.User.username);
+    console.log(username, nom)
+
+  }, [user]);
 
 
 
@@ -63,12 +82,20 @@ const CopropCreate = () => {
           try {
             const options = {
               method: 'POST',
-              url: `${BASEURL}/api/interfaces/copro/create/`,
+              url: `${BASEURL}/api/users/`,
               data: {
-                "adresse": adresse,
-                "name": nom,
-                "nb_props": nbProps,
-
+             
+                "username": username,
+                "email": email,
+                "first_name": prenom,
+                "last_name": nom,
+                "password": "pwd",
+                "profile": {
+                  "cin": CIN,
+                  "telephone": phone,
+                  "role": "syndic",
+                  "id_cop": syndic.id_cop,
+                }
               },
               headers: {
                 Authorization: "Token " + user.Token
@@ -77,15 +104,6 @@ const CopropCreate = () => {
 
             const response = await axios.request(options);
             console.log(response.data);
-            const jsonData = JSON.stringify(response.data);
-
-            // Stocker les données dans SecureStore
-            try {
-              await SecureStore.setItemAsync('responseData', jsonData);
-              console.log('Données stockées avec succès dans SecureStore');
-            } catch (error) {
-              console.error('Erreur lors du stockage des données dans SecureStore:', error);
-            }
             saveChanges();
           } catch (error) {
             if (error.response) {
@@ -127,12 +145,44 @@ const CopropCreate = () => {
     setActiveInput('');
   };
 
-  return ((
-    user.User.profile.role==="admin" && <View style={styles.container}>
+  return (
+    <KeyboardAvoidingView style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Copropriété</Text>
+        <Text style={styles.title}>Syndic</Text>
       </View>
-
+      <View style={styles.radioContainer}>
+        <TouchableOpacity
+          style={[styles.radioOption, { backgroundColor: gender === 'Mr' ? '#3b67bb' : '#fff' }]}
+          onPress={() => setGender('Mr')}
+        >
+          <Text style={[styles.radioText, { color: gender === 'Mr' ? '#fff' : '#000' }]}>Mr</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.radioOption, { backgroundColor: gender === 'Mrs' ? '#3b67bb' : '#fff' }]}
+          onPress={() => setGender('Mrs')}
+        >
+          <Text style={[styles.radioText, { color: gender === 'Mrs' ? '#fff' : '#000' }]}>Mrs</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="CIN*"
+          value={CIN}
+          editable={false}
+        // Disabled CIN input
+        />
+        <MaterialCommunityIcons name="lock" size={24} color="#3b67bb" style={styles.lockIcon} />
+      
+      <TextInput
+        style={[styles.input, { borderBottomWidth: activeInput === 'Prenom' ? 1 : 0 }]}
+        placeholder="Prenom*"
+        value={prenom}
+        onChangeText={(text) => setPrenom(text)}
+        backgroundColor="#3b67bb20"
+        onFocus={() => handleFocus('Prenom')}
+        onBlur={handleBlur}
+      />
       <TextInput
         style={[styles.input, { borderBottomWidth: activeInput === 'Nom' ? 1 : 0 }]} placeholder="Nom*"
         value={nom}
@@ -142,36 +192,35 @@ const CopropCreate = () => {
         onBlur={handleBlur}
       />
       <TextInput
-        style={[styles.input, { borderBottomWidth: activeInput === 'Adresse' ? 1 : 0 }]} placeholder="Adresse*"
-        value={adresse}
-        onChangeText={(text) => setadresse(text)}
+        style={[styles.input, { borderBottomWidth: activeInput === 'Email' ? 1 : 0 }]} placeholder="Email*"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
         backgroundColor="#3b67bb20"
-        onFocus={() => handleFocus('Adresse')}
+        onFocus={() => handleFocus('Email')}
         onBlur={handleBlur}
       />
- 
       <TextInput
-        style={[styles.input, { borderBottomWidth: activeInput === 'nbProps' ? 1 : 0 }]} placeholder="nbProps*"
-        value={nbProps}
-        onChangeText={(text) => {
-            // Vérifier si le texte est un nombre entier naturel
-            const integerValue = parseInt(text, 10);
-            if (!isNaN(integerValue) && integerValue >= 0 && Number.isInteger(integerValue)) {
-              // Si c'est un nombre entier naturel, mettre à jour le state
-              setnbProps(text);
-            }
-            // Sinon, ignorer le changement
-          }}
+        style={[styles.input, { borderBottomWidth: activeInput === 'Phone' ? 1 : 0 }]} placeholder="Phone*"
+        value={phone}
+        onChangeText={(text) => setPhone(text)}
         backgroundColor="#3b67bb20"
-        onFocus={() => handleFocus('nbProps')}
+        onFocus={() => handleFocus('Phone')}
         onBlur={handleBlur}
       />
-      
+      <TextInput
+        style={[styles.input, { borderBottomWidth: activeInput === 'Username' ? 1 : 0 }]} placeholder="Username*"
+        value={username}
+        onChangeText={(text) => setUsername(text)}
+        backgroundColor="#3b67bb20"
+        onFocus={() => handleFocus('Username')}
+        onBlur={handleBlur}
+      />
+      </View>
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={[styles.buttonText, styles.boldText]}>Save</Text>
       </TouchableOpacity>
-    </View>
-  ));
+    </KeyboardAvoidingView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -182,11 +231,11 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     width: '80%',
-    top: '10%',
+    top: StatusBar.currentHeight +10,
     marginLeft: '10%',
   },
   titleContainer: {
-    top: '2%',
+    top: 0,
     alignSelf: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -246,4 +295,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CopropCreate;
+export default ProfileScreen;

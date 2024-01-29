@@ -19,23 +19,25 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 
+
 const UsersManagement = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [prop,setProp]=useState({
+  const [item2,setItem]= useState({});
+  const [prop, setProp] = useState({
     id_prop: 0,
-        num: "",
-        occupation: true,
-        id_user: 0,
-        id_cot: 0,
-        id_cop: 0
+    num: "",
+    occupation: true,
+    id_user: 0,
+    id_cot: 0,
+    id_cop: 0
   });
   const [data, setData] = useState(null); // Initialize 'data' state
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
-  const [idProp,setIdProp]=useState();
+  const [idProp, setIdProp] = useState();
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   //--------------------SignUp--------------------
@@ -50,16 +52,16 @@ const UsersManagement = () => {
   const [error2, setError2] = useState('');
   const [newUserData, setNewUserData] = useState({
     first_name: '',
-      last_name: '',
-      email: '',
-      username: '',
-      password: '',
-      profile: {
-        telephone: '',
-        cin: '',
-        id_cop: 1,
-        role: 'proprietaire',
-      },
+    last_name: '',
+    email: '',
+    username: '',
+    password: '',
+    profile: {
+      telephone: '',
+      cin: '',
+      id_cop: 1,
+      role: 'proprietaire',
+    },
   });
 
   // Replace the axios.request options with the useFetch hook
@@ -73,68 +75,73 @@ const UsersManagement = () => {
     setUsers(fetchedData);
     setIsLoading(isLoadingData);
 
-   
+
   }, [fetchedData, isLoadingData]);
- // console.log(data)
+  // //console.log(data)
   // Call fetchData on component mount
   // useEffect(()=>{
   // // fetchData();
-  // console.log(data)
+  // //console.log(data)
   // refetch();
   // }, [data]);
 
   const renderUserItem = ({ item }) => {
-    console.log(item)
+    //console.log(item)
     return (
       <View style={styles.userItem}>
-        
+
         <View style={styles.userInfo}>
-          
-        <Text>
-        <FontAwesome6 name="building-user" size={24} color="black" /> Appartement : {item?.num}
+
+          <Text>
+            <FontAwesome6 name="building-user" size={24} color="black" /> Appartement : {item?.num}
+          </Text>
+          {item.occupation && <View>
+            <Text>
+              {item.user?.first_name} : {item.user?.last_name}
             </Text>
-            {item.occupation && <View>
-          <Text>
-            {item.user?.first_name} : {item.user?.last_name}
-          </Text>
-          <Text>
-           Email : {item.user?.email} 
-          </Text>
-          <Text>
-           Telephone : {item.user?.profile?.telephone} 
-          </Text>
+            <Text>
+              Email : {item.user?.email}
+            </Text>
+            <Text>
+              Telephone : {item.user?.profile?.telephone}
+            </Text>
           </View>}
         </View>
-     {item.occupation &&  <View style={styles.ButtonsContainer}>
-  
+        {item.occupation && <View style={styles.ButtonsContainer}>
 
-    <TouchableOpacity
-    style={styles.settingUser}
-    onPress={() => handleUser(item.id)}
-  >
-    <MaterialCommunityIcons name="account-settings" size={24} color="black" />
 
-  </TouchableOpacity>
-  <TouchableOpacity
-    style={styles.removeIconContainer}
-    onPress={() => handleDeleteUser(item.id)}
-  >
-    <Ionicons name="person-remove" size={20} color="red" />
-  </TouchableOpacity>
-</View>}
-{!item.occupation &&  <View style={styles.ButtonsContainer}>
-  
+          <TouchableOpacity
+            style={styles.settingUser}
+            onPress={() => handleUser(item.user.id)}
+          >
+            <MaterialCommunityIcons name="account-settings" size={24} color="black" />
 
-  
-  <TouchableOpacity
-    style={styles.addIconContainer}
-    onPress={() =>{ setShowModal(true);
-    setIdProp(item?.id_prop)
-   }}
-  >
-    <Ionicons name="person-add" size={20} color="green"   />
-  </TouchableOpacity>
-</View>}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.removeIconContainer}
+            onPress={() => { //console.error('id', item); 
+              handleDeleteUser(item.id_user); }
+            }
+          >
+            <Ionicons name="person-remove" size={20} color="red" />
+          </TouchableOpacity>
+        </View>}
+        {!item.occupation && <View style={styles.ButtonsContainer}>
+
+
+
+          <TouchableOpacity
+            style={styles.addIconContainer}
+            onPress={() => {
+              setShowModal(true);
+              setIdProp(item?.id_prop);
+              setItem(item)
+              console.log('item2',item2)
+            }}
+          >
+            <Ionicons name="person-add" size={20} color="green" />
+          </TouchableOpacity>
+        </View>}
 
       </View>
     );
@@ -149,77 +156,107 @@ const UsersManagement = () => {
     setData(filteredUsers);
   };
 
-  const addUser  = async () => {
+  const addUser = async () => {
     const newUser = {
-    first_name: firstname,
-    last_name: lastname,
-    email: email,
-    username: username,
-    password: password,
-    id_prop:idProp,
-    id_cot:1,
-    profile: {
-      telephone: phone,
-      cin: cin,
-      id_cop: 1,
-      role: 'proprietaire',
-    }, };
-    //setData([...data, newUser]); // Update 'data' with the new user
-    // setShowModal(false);
-    
-    
-    console.log(newUser)
+      first_name: firstname,
+      last_name: lastname,
+      email: email,
+      username: username,
+      password: password,
+      id_prop: idProp,
+      id_cot: 1,
+      profile: {
+        telephone: phone,
+        cin: cin,
+        id_cop: user.User.profile.id_cop,
+        role: 'proprietaire',
+      },
+    };
+
+    //console.log(newUser);
     try {
       const response = await fetch(`${BASEURL}/api/users/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', // Set appropriate headers
-        'Authorization': 'Token '+ user.Token,
-      },
-      body: JSON.stringify(newUser), // Convert new user data to JSON string for the request body
-    });
-    console.log(newUser)
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Token ' + user.Token,
+        },
+        body: JSON.stringify(newUser),
+      });
 
       if (response.ok) {
-        
-        refetch();
+        const responseData = await response.json();
+        const response2 = await fetch(`${BASEURL}/api/interfaces/prop/update/${idProp}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + user.Token,
+          },
+          body: JSON.stringify({
+            "num": item2?.num,
+            "id_cop": item2?.id_cop,
+            "occupation": true,
+            "id_user": responseData.id
+          }),
+        });
+
+        if (response2.ok) {
+          refetch();
+        } else {
+          throw new Error(`Failed to update prop: ${response2.statusText}`);
+        }
       } else {
-        throw new Error(`Failed to ADD user: ${response.error || 'Unknown error'}`);
+        throw new Error(`Failed to ADD user: ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Error ADDING user:', error.message);
+      //console.error('Error ADDING user:', error.message);
     }
-
-   
   };
 
   const handleDeleteUser = async (id) => {
-// Custom hook for deleting a user
+    // Custom hook for deleting a user
     try {
       const response = await fetch(`${BASEURL}/api/users/${id}/`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
+        if (response.ok) {
+          const responseData = await response.json();
+          const response2 = await fetch(`${BASEURL}/api/interfaces/prop/update/${idProp}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Token ' + user.Token,
+            },
+            body: JSON.stringify({
+              "num": item2?.num,
+              "id_cop": item2?.id_cop,
+              "occupation": false,
+              "id_user": responseData.id
+            }),
+          });
+        }
         Alert.alert(
-            'Success',
-            'User deleted successfully',
-            [
-              {
-                text: 'Cancel',
-                style: 'cancel',
-              },
-            ],
-            { cancelable: true }
-          );
+          'Success',
+          'User deleted successfully',
+          [
+            {
+              text: 'ok',
+              style: 'cancel',
+            },
+          ],
+          { cancelable: false }
+        );
+        
       } else {
         throw new Error('Failed to delete user');
       }
     } catch (error) {
-      console.error('Error deleting user:', error.message);
+      //console.error('Error deleting user:', error.message);
     }
 
-   refetch();
+    refetch();
 
     // Alert.alert(
     //   'Confirm',
@@ -256,7 +293,8 @@ const UsersManagement = () => {
     } else {
       // For non-profile fields
       setNewUserData({ ...newUserData, [field]: value });
-    }  };
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -271,10 +309,10 @@ const UsersManagement = () => {
           onChangeText={setSearchQuery}
           onSubmitEditing={searchUser}
         />
-        <TouchableOpacity style={styles.addButton} onPress={() => setShowModal(true)}>
+        {/* <TouchableOpacity style={styles.addButton} onPress={() => setShowModal(true)}>
           <Ionicons name="person-add-outline" size={25} color="white" />
           <Text style={styles.addText}>Add User</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <KeyboardAvoidingView behavior="height">
         {/* {isLoading ? (
@@ -305,44 +343,44 @@ const UsersManagement = () => {
               style={styles.modalInput}
               placeholder="CIN"
               value={cin}
-              onChangeText={(text) => setCin( text)}
+              onChangeText={(text) => setCin(text)}
             />
-             <TextInput
+            <TextInput
               style={styles.modalInput}
               placeholder="First Name"
               value={firstname}
-              onChangeText={(text) => setFirstName( text)}
+              onChangeText={(text) => setFirstName(text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Last Name"
               value={lastname}
-              onChangeText={(text) => setLastName( text)}
+              onChangeText={(text) => setLastName(text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Email"
               value={email}
-              onChangeText={(text) => setEmail( text)}
+              onChangeText={(text) => setEmail(text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Phone"
               value={phone}
-              onChangeText={(text) => setPhone( text)}
+              onChangeText={(text) => setPhone(text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Username"
               value={username}
-              onChangeText={(text) => setUserName( text)}
+              onChangeText={(text) => setUserName(text)}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Password"
               secureTextEntry={true}
               value={password}
-              onChangeText={(text) => setPassword( text)}
+              onChangeText={(text) => setPassword(text)}
             />
             {/* <TextInput
               style={styles.modalInput}
@@ -351,7 +389,7 @@ const UsersManagement = () => {
               value={newUserData.confirmPassword}
               onChangeText={(text) => handleInputChange('confirmPassword', text)}
             /> */}
-            <TouchableOpacity style={styles.modalButton} onPress={addUser}>
+            <TouchableOpacity style={styles.modalButton} onPress={() => addUser()}>
               <Text style={styles.modalButtonText}>Add User</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal(false)}>
@@ -418,7 +456,7 @@ const styles = StyleSheet.create({
   },
 
   settingUser: {
-    marginBottom:30,
+    marginBottom: 30,
     marginLeft: 10,
   },
   userItem: {
@@ -438,8 +476,8 @@ const styles = StyleSheet.create({
   removeIconContainer: {
     marginLeft: 10, // Provides some spacing between user info and remove icon
   },
-  addIconContainer:{
-    padding:10
+  addIconContainer: {
+    padding: 10
   },
   flatList: {
     alignSelf: 'center',

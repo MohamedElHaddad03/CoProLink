@@ -6,7 +6,7 @@ import BASEURL from '../config';
 import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = () => {
-
+console.log("BASE",BASEURL)
   // const [loginTop, setLoginTop] = useState(0);
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');

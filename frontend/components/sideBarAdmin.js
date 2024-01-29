@@ -27,27 +27,32 @@ const SidebarAdmin = ({ selectedItem, setSelectedItem }) => {
   const handleItemClick = (item) => {
     setSelectedItem(item);
   };
+  const handleUser=()=>{
 
+  }
   return (
 
     <Animated.View style={[styles.sidebar, { width: largeur, backgroundColor: bgColor }]}>
 
       <View style={{ marginLeft: 5 }}>
-        <TouchableOpacity style={{ marginBottom: 50 }} onPress={toggleSidebar}>
-          {!isSidebarOpen && (
-            <Ionicons name="menu" size={40} color={iconColor} />
-          )}
-          {isSidebarOpen && (
-            <Ionicons name="close" size={40} color={iconColor} />
-          )}
-        </TouchableOpacity>
+      <TouchableOpacity style={{ marginBottom: 50 }} onPress={toggleSidebar}>
+  {!isSidebarOpen && (
+    <Text><Ionicons name="menu" size={40} color={iconColor} /></Text>
+  )}
+  {isSidebarOpen && (
+    <Text><Ionicons name="close" size={40} color={iconColor} /></Text>
+  )}
+</TouchableOpacity>
+
       </View>
       <TouchableOpacity style={[
         styles.sidebarItem,
-        selectedItem === 'Statistiques' && { backgroundColor: bgColorOpen },
-      ]} onPress={() => handleItemClick('Statistiques')}>
-<MaterialCommunityIcons name="home-city-outline" size={24} color="black" />        {isSidebarOpen && (
-          <Text style={[styles.sidebarText, { color: iconColor }]}>Statistiques</Text>
+        selectedItem === 'Coprop' && { backgroundColor: bgColorOpen },
+      ]} onPress={() => handleItemClick('Coprop')}>
+
+<MaterialCommunityIcons name="home-city-outline" size={24} color={iconColor} />        
+{isSidebarOpen && (
+          <Text style={[styles.sidebarText, { color: iconColor }]}>Copropriété</Text>
         )}
       </TouchableOpacity>
 
@@ -57,9 +62,9 @@ const SidebarAdmin = ({ selectedItem, setSelectedItem }) => {
 
       <TouchableOpacity style={[
         styles.sidebarItem,
-        selectedItem === 'AddUser' && { backgroundColor: bgColorOpen },
-      ]} onPress={() => handleItemClick('AddUser')}>
-        <Ionicons name={selectedItem === "AddUser" ? "people" : "people-outline"} size={26} color={iconColor} />
+        selectedItem === 'Syndic' && { backgroundColor: bgColorOpen },
+      ]} onPress={() => handleItemClick('Syndic')}>
+        <Ionicons name={selectedItem === "Syndic" ? "people" : "people-outline"} size={26} color={iconColor} />
 
         {isSidebarOpen && (
           <Text style={[styles.sidebarText, { color: iconColor }]}>Profil</Text>

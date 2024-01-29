@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvo
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
+import * as SecureStore from 'expo-secure-store';
+
 import axios from 'axios';
 import BASEURL from '../config';
 const ProfileScreen = () => {
@@ -101,6 +103,7 @@ const ProfileScreen = () => {
 
             const response = await axios.request(options);
             console.log(response.data);
+           
             saveChanges();
           } catch (error) {
             if (error.response) {

@@ -43,6 +43,10 @@ const ControllerComponent = ({ selectedItem, setSelectedItem }) => {
     case 'Settings':
       return <SettingsScreen selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
     // return <CreateSyndic/>
+    case 'Coprop':
+      return <CopropCreate ></CopropCreate>
+      case 'Syndic':
+      return <CreateSyndic ></CreateSyndic>
     default:
       return <LoginScreen />;
   }

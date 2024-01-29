@@ -102,14 +102,13 @@ const handleItemClick = (item) => {
           <Text style={[styles.sidebarText, { color: iconColor }]}>Settings</Text>
         )}
       </TouchableOpacity>
-      {/* Add other sidebar items as needed */}
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   sidebar: {
-    zIndex:999,
+    zIndex:99999,
   //  padding: 10,
     position: 'absolute', // Use absolute positioning for overlay
    // top: 0,
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     // Adjust the width of the sidebar as needed
-    width: '10%',
+   // width: '10%',
     height: '100%',
     backgroundColor: '#3b67bb',
     elevation: 8, // Elevation for Android shadow
@@ -129,6 +128,8 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   sidebarItem: {
+   // position:'absolute',
+   zIndex:99999,
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -138,6 +139,7 @@ const styles = StyleSheet.create({
   },
   
   sidebarText: {
+    zIndex:9999,
     color: '#F0F8FF',
     marginLeft: 10,
   },

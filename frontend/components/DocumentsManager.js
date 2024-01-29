@@ -159,7 +159,6 @@ const DocumentsManager = () => {
         setError(error);
       }
     };
-    saveChanges();
     fetchData(); // Call the async function
   }, [documentUrl]);
 
@@ -193,6 +192,8 @@ const DocumentsManager = () => {
           const blob = await getBlobFroUri(result.assets[0].uri);
 
           handleUpload(blob, result.assets[0].name);
+          saveChanges();
+
         } else {
           console.log('Document picking cancelled by the user');
         }

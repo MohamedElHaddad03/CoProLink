@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, SafeAreaVie
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
+import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import BASEURL from '../config';
 const CreateSyndic = () => {
@@ -23,6 +24,9 @@ const CreateSyndic = () => {
 
     const [saved, setSaved] = useState(false)
     const { user } = useAuth();
+    const syndic = JSON.parse(SecureStore.getItem("responseData"));
+    console.log('syndic',syndic)
+   // useEffect(,[]);
     //const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure(`api/users/${user.User.id}`);
 
 
@@ -136,6 +140,8 @@ const CreateSyndic = () => {
         <View style={styles.container}>
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>Création Syndic</Text>
+                <Text>Copropriété {syndic.name} </Text>
+                <Text>Adresse {syndic.adresse}</Text>
             </View>
             <View style={styles.radioContainer}>
                 <TouchableOpacity

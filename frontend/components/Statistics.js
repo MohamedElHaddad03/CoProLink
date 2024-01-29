@@ -60,7 +60,7 @@ const Statistics = () => {
     return (
         <View style={styles.container}>
             <ScrollView>
-            <Text>Statistics Component</Text>
+            <Text style={styles.title}>Statistics</Text>
             {/* <PieChartComponent data={data} />*/}
             {/* <DoubleLineChart /> */}
             <View style={styles.chart}>
@@ -114,6 +114,12 @@ const styles = StyleSheet.create({
     // },
     // elevation: 2,
        },
+       title: {
+        alignItems:'center',
+        alignSelf:"center",
+        fontSize: 24,
+        fontWeight: '300',
+      },
 });
 export default Statistics;
 
