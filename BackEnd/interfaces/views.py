@@ -31,7 +31,7 @@ from django.db.models import Sum
 @api_view(["GET"])
 def ListerPaiement(request):
     user = request.user
-    pay = Paiement.objects.filter(id_prop_id_cop_id_cop=user.profile.id_cop.id_cop)
+    pay = Paiement.objects.filter(id_prop__id_cop__id_cop=user.profile.id_cop.id_cop)
     serializer = PaiementSerializer(pay, many=True)
     return Response(serializer.data)
 
@@ -135,7 +135,7 @@ def ListProp(request):
 
 @api_view(["GET"])
 def ListPropUsers(request):
-    props = Propriete.objects.all()
+    props = Propriete.objects.filter(id_cop=request.user.profile.id_cop)
     serializer = ProprieteSerializerUsers(props, many=True)
     return Response(serializer.data)
 
@@ -154,6 +154,21 @@ def CreateProp(request):
         serializer.save()
     prop = serializer.data
     return Response(prop)
+
+@api_view(["PUT"])
+def UpdateProp(request, id_prop):
+    prop = Propriete.objects.get(pk=id_prop)
+    id_user = request.data.get('id_user')
+    occupation = bool(id_user)
+
+    request.data['occupation'] = occupation
+
+    serializer = ProprieteSerializer(prop, data=request.data)
+    
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])

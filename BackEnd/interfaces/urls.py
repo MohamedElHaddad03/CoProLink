@@ -20,6 +20,7 @@ urlpatterns = [
     path("propusers", views.ListPropUsers, name="ListPropUsers"),
     path("prop/create/", views.CreateProp, name="CreateProp"),
     path("prop/delete/<int:id_prop>", views.DeleteProp, name="DeleteProp"),
+    path("prop/update/<int:id_prop>", views.UpdateProp, name='UpdateProp'),
     path("copro", views.ListCopro, name="ListCopro"),
     path("copro/create/", views.CreateCopro, name="CreateCopro"),
     path("copro/delete/<int:id_cop>", views.DeleteCopro, name="DeleteCopro"),
