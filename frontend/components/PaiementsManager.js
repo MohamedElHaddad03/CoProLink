@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Dimensions, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import useFetch from '../hook/useFetch';
 import useFetchSecure from '../hook/useFetchSecure';
@@ -22,7 +22,7 @@ const PaiementsManager = () => {
   }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   //   { id: '1', property: 'Propriété 1', date: 'Janvier 2024' , price: '1000 DH'},
   //   { id: '2', property: 'Propriété 2', date: 'Février 2024' , price: '1000 DH'},
@@ -142,7 +142,10 @@ const PaiementsManager = () => {
           onChangeText={setSearchQuery}
         />
       </View>
-      <KeyboardAvoidingView behavior='height'>
+      {isLoading && (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+      {!isLoading && <KeyboardAvoidingView behavior='height'>
         <FlatList
           data={data}
           renderItem={renderItem}
@@ -150,7 +153,7 @@ const PaiementsManager = () => {
           style={styles.Flatlist}
           showsVerticalScrollIndicator={false}
         />
-      </KeyboardAvoidingView>
+      </KeyboardAvoidingView>}
     </View>
   );
 };

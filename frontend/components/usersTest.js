@@ -66,6 +66,8 @@ const UsersManagement = () => {
   const [passwordSU, setPasswordSU] = useState('');
   const [profile, setProfile] = useState('');
   const [error2, setError2] = useState('');
+  const [id_current_user, setIdUser] = useState('');
+
   const [newUserData, setNewUserData] = useState({
     first_name: '',
     last_name: '',
@@ -82,7 +84,15 @@ const UsersManagement = () => {
 
   // Replace the axios.request options with the useFetch hook
 
-
+const handleDefault =(item)=>{
+  setCin(item?.user?.profile?.cin);
+  setEmail(item?.user?.email);
+  setFirstName(item?.user?.first_name)
+  setLastName(item?.user?.last_name)
+  setPhone(item?.user?.telephone)
+  setUserName(item?.user?.username)
+  setPasswordSU(  item?.user?.password )
+}
 
   const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/propusers');
 
@@ -100,6 +110,43 @@ const UsersManagement = () => {
   // //console.log(data)
   // refetch();
   // }, [data]);
+const handleUser =async (id) => {
+  const newUser = {
+    first_name: firstname,
+    last_name: lastname,
+    email: email,
+    username: username,
+    password: password  ===''? passwordSU : password   ,
+    id_prop: idProp,
+    id_cot: 1,
+    profile: {
+      telephone: phone,
+      cin: cin,
+      id_cop: user.User.profile.id_cop,
+      role: 'proprietaire',
+    },
+  };
+
+  //console.log(newUser);
+  try {
+    const response = await fetch(`${BASEURL}/api/users/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ' + user.Token,
+      },
+      body: JSON.stringify(newUser),
+    });
+
+    if (response.ok) {
+      refetch();
+    } else {
+      throw new Error(`Failed to Update user: ${response.statusText}`);
+    }
+  } catch (error) {
+    //console.error('Error ADDING user:', error.message);
+  }
+};
 
   const renderUserItem = ({ item }) => {
     //console.log(item)
@@ -128,7 +175,7 @@ const UsersManagement = () => {
 
           <TouchableOpacity
             style={styles.settingUser}
-            onPress={() => {setShowModal2(true);handleUser(item.user.id);}}
+            onPress={() => {console.error('item',item);setShowModal2(true);setIdUser(item?.user?.id);handleDefault(item)}}
           >
             <MaterialCommunityIcons name="account-settings" size={24} color="black" />
 
@@ -331,10 +378,10 @@ const UsersManagement = () => {
         </TouchableOpacity> */}
       </View>
       <KeyboardAvoidingView behavior="height">
-        {/* {isLoading ? (
+        {isLoading && (
           <ActivityIndicator size="large" color="#3b67bb" />
-        ) : ( */}
-        <FlatList
+        ) }
+        {!isLoading && <FlatList
           data={users.length > 0 ? users : data}
           keyExtractor={(item) => item.id}
           renderItem={renderUserItem}
@@ -342,7 +389,7 @@ const UsersManagement = () => {
           refreshing={false}
           style={styles.flatList}
           showsVerticalScrollIndicator={false}
-        />
+        />}
         {/* )} */}
       </KeyboardAvoidingView>
 
@@ -422,7 +469,7 @@ const UsersManagement = () => {
       >
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add User</Text>
+            <Text style={styles.modalTitle}>Modifier User</Text>
             <TextInput
               style={styles.modalInput}
               placeholder="CIN"
@@ -432,6 +479,7 @@ const UsersManagement = () => {
             <TextInput
               style={styles.modalInput}
               placeholder="First Name"
+             
               value={firstname}
               onChangeText={(text) => setFirstName(text)}
             />
@@ -463,6 +511,7 @@ const UsersManagement = () => {
               style={styles.modalInput}
               placeholder="Password"
               secureTextEntry={true}
+              
               value={password}
               onChangeText={(text) => setPassword(text)}
             />
@@ -473,10 +522,10 @@ const UsersManagement = () => {
               value={newUserData.confirmPassword}
               onChangeText={(text) => handleInputChange('confirmPassword', text)}
             /> */}
-            <TouchableOpacity style={styles.modalButton} onPress={() => addUser()}>
-              <Text style={styles.modalButtonText}>Add User</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={() => handleUser(id_current_user)}>
+              <Text style={styles.modalButtonText}>Modifier User</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal(false)}>
+            <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal2(false)}>
               <Text style={styles.modalButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>

@@ -104,38 +104,10 @@ const DocumentsManager = () => {
     }
     return 'insert-drive-file'; // Default icon if filename is undefined
   };
-
-  const handleUpload = async (document, filename) => {
-    try {
-      const storageRef = ref(storage, `documents/${user.User.profile.id_cop}/${filename}`);
-      setDocumentName(filename);
-      const uploadTask = uploadBytesResumable(storageRef, document);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-
-                 },
-        (error) => {
-          console.error('Error uploading document:', error);
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          console.log('Document uploaded successfully. Download URL:', downloadURL);
-          setDocumentUrl(downloadURL);
-          handleCreate()
-        }
-      );
-    } catch (error) {
-      console.error('Error handling upload:', error);
-    }
-  };
-  const handleCreate =  () => {
+  const handleCreate =   () => {
     const fetchData2 = async () => {
       try {
-        console.log(documentName, documentUrl, user.User.profile.id_cop);
+        console.error('create',documentName, documentUrl, user.User.profile.id_cop);
         const options = {
           method: 'POST',
           url: `${BASEURL}/api/interfaces/Docs/create/`,
@@ -174,18 +146,69 @@ const DocumentsManager = () => {
         setError(error);
       }
     };
-    fetchData2(); // Call the async function
+     fetchData2(); // Call the async function
   }
+  const handleUpload = async (document, filename) => {
+    try {
+        const storageRef = ref(storage, `documents/${user.User.profile.id_cop}/${filename}`);
+        const uploadTask = uploadBytesResumable(storageRef, document);
+
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setUploadProgress(progress);
+                console.error(progress)
+            },
+            (error) => {
+                console.error('Error uploading document:', error);
+            },
+            async () => {
+                try {
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    console.log('Document uploaded successfully. Download URL:', downloadURL);
+
+                    // Update document URL state here
+                    setDocumentName(filename);
+                    setDocumentUrl(downloadURL);
+
+                    // Call handleCreate after updating states
+                 //   await handleCreate();
+                } catch (error) {
+                    console.error('Error getting download URL:', error);
+                }
+            }
+        );
+    } catch (error) {
+        console.error('Error handling upload:', error);
+    }
+};
+
+  
+  
+   
+ 
 
 
-  const saveChanges = () => {
-    Alert.alert('Success', 'File Uploaded !!');
+const saveChanges = () => {
+  const checkProgress = () => {
+    if (uploadProgress < 100) {
+      setTimeout(checkProgress, 100); // Check progress again after 100 milliseconds
+    } else {
+      // Progress reached 100%, show success alert
+      handleCreate()
+      Alert.alert('Success', 'File Uploaded !!');
+    }
   };
+
+  checkProgress(); // Start checking progress
+};
+
 
   const importDocument = async () => {
     try {
       const hasPermissions = await checkPermissions();
-
+  
       if (hasPermissions || !hasPermissions) {
         const result = await DocumentPicker.getDocumentAsync({
           type: [
@@ -196,20 +219,17 @@ const DocumentsManager = () => {
           ],
           copyToCacheDirectory: true,
         });
-
+  
         console.log('Document Picker Result:', result);
-
+  
         if (!result.cancelled) {
-          const newDocument = { name: result.assets[0].name, url: documentUrl };
-          //   setDocuments([...documents, newDocument]);
-          console.log("UUUUUUUUURRRRRRRRRRIIIIIIII", result.assets[0].uri)
-
           const blob = await getBlobFroUri(result.assets[0].uri);
-
-          handleUpload(blob, result.assets[0].name);
+  
+          await handleUpload(blob, result.assets[0].name); // Wait for the upload to complete
+  
+          // Save changes and call handleCreate after the upload is complete
           saveChanges();
-          
-
+        //  handleCreate();
         } else {
           console.log('Document picking cancelled by the user');
         }
@@ -220,6 +240,8 @@ const DocumentsManager = () => {
       console.error('Error picking a document', error);
     }
   };
+  
+  
 
 
 
