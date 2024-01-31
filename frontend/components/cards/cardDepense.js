@@ -1,7 +1,7 @@
 import { Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import getBaseUrl from "../../config";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 
 
 const CardDepense = ({ item,refetch }) => {
@@ -30,7 +30,7 @@ const handleDeleteDepense = async (id) => {
       if (response.ok) {
         Alert.alert(
             'Success',
-            'User deleted successfully',
+            'Depense deleted successfully',
             [
               {
                 text: 'Cancel',
@@ -40,10 +40,10 @@ const handleDeleteDepense = async (id) => {
             { cancelable: true }
           );
       } else {
-        throw new Error('Failed to delete user');
+        throw new Error('Failed to delete Depense');
       }
     } catch (error) {
-      console.error('Error deleting user:', error.message);
+      console.error('Error deleting Depense:', error.message);
     }
 
    refetch();

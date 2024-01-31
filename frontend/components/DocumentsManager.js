@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions, Alert, Linking, ProgressBarAndroid } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions, Alert, Linking, ProgressBarAndroid, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -70,7 +70,7 @@ const DocumentsManager = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState(null); // Initialize 'data' state
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { user } = useAuth();
 
@@ -125,14 +125,15 @@ const DocumentsManager = () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           console.log('Document uploaded successfully. Download URL:', downloadURL);
           setDocumentUrl(downloadURL);
+          handleCreate()
         }
       );
     } catch (error) {
       console.error('Error handling upload:', error);
     }
   };
-  useEffect(() => {
-    const fetchData = async () => {
+  const handleCreate =  () => {
+    const fetchData2 = async () => {
       try {
         console.log(documentName, documentUrl, user.User.profile.id_cop);
         const options = {
@@ -173,8 +174,8 @@ const DocumentsManager = () => {
         setError(error);
       }
     };
-    fetchData(); // Call the async function
-  }, [documentUrl]);
+    fetchData2(); // Call the async function
+  }
 
 
   const saveChanges = () => {
@@ -207,6 +208,7 @@ const DocumentsManager = () => {
 
           handleUpload(blob, result.assets[0].name);
           saveChanges();
+          
 
         } else {
           console.log('Document picking cancelled by the user');
@@ -302,14 +304,17 @@ const DocumentsManager = () => {
       </View>
       <KeyboardAvoidingView behavior='height'>
       <View style={styles.progressBarContainer}>
-  {uploadProgress >0 || uploadProgress >= 100 &&<ProgressBarAndroid
+  {uploadProgress >0 && uploadProgress <= 99 &&<ProgressBarAndroid
     styleAttr="Horizontal"
     indeterminate={false}
     progress={uploadProgress / 100}
     style={styles.progressBar}
   />}
 </View>
-        <View style={styles.Flatlist} >
+{isLoading && (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+       {!isLoading && <View style={styles.Flatlist} >
           <FlatList
             data={documents}
             keyExtractor={(item, index) => index.toString()}
@@ -319,7 +324,7 @@ const DocumentsManager = () => {
             refreshing={false}
             showsVerticalScrollIndicator={false}
           />
-        </View>
+        </View>}
 
       </KeyboardAvoidingView>
 

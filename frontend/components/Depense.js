@@ -1,9 +1,9 @@
 import { Dimensions, FlatList, KeyboardAvoidingView, SafeAreaView, ScrollView, ScrollViewBase, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import CardDepense from "./cards/cardDepense"
-import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { CategoryPopUp } from "./Modals/CategoryPopUp";
 import { DepensePopUp } from "./Modals/DepensePopUp";
+import { useState } from "react";
 
 export const Depense = () => {
   const [isModalCategVisible, setModalCategVisible] = useState(false);

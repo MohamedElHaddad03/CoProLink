@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, KeyboardAvoidingView, SafeAreaView, ScrollView, ScrollViewBase, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Dimensions, FlatList, KeyboardAvoidingView, SafeAreaView, ScrollView, ScrollViewBase, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import CardDepense from "./cards/cardDepense"
 import { useEffect, useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
@@ -12,7 +12,7 @@ export const DepenseTest = () => {
   const [isModalCategVisible, setModalCategVisible] = useState(false);
   const [isModalDepVisible, setModalDepVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [data, setData] = useState(null); // Initialize 'data' state
   const [error, setError] = useState(null);
@@ -55,7 +55,7 @@ const {user}=useAuth();
   const categories = data ? Array.from(new Set(data.map(item => item.categorie))) : [];
 
   const renderCategory = (category) => {
-    const expensesInCategory = data.filter((item) => item.categorie === category);
+    const expensesInCategory = data?.filter((item) => item.categorie === category);
 
 
 
@@ -111,7 +111,11 @@ const {user}=useAuth();
         <DepensePopUp isModalVisible={isModalDepVisible} toggleModal={toggleDepgModal} />
 
       </View >
-      {data && (
+      {/* Loading indicator */}
+      {isLoading && (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+      {data && !isLoading && (
         <FlatList
           style={{ paddingBottom: 200 }}
           data={categories}

@@ -2,7 +2,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import getBaseUrl from '../config';
-import useFetchSecure from '../hook/useFetchSecure';
 import { err } from 'react-native-svg';
 
 const AuthContext = createContext();

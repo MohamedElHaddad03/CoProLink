@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "build-app2",
-    "slug": "build-app2",
+    "name": "coprolink",
+    "slug": "coprolink",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/Logo_CoProLink_Text.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/Logo_CoProLink_Text.png",
@@ -19,18 +19,19 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/Logo_CoProLink_Text.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anon123.buildapp2"
+      "package": "com.ana20035.coprolink"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "7dea1bab-f691-4d5a-b8cb-288ca22457ff"
+        "projectId": "4ecf50a5-5489-4566-8f02-99c7a364c47a"
       }
-    }
+    },
+    "owner": "ana20035"
   }
 }
