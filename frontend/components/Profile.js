@@ -164,20 +164,6 @@ const ProfileScreen = () => {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Profile</Text>
       </View>
-      <View style={styles.radioContainer}>
-        <TouchableOpacity
-          style={[styles.radioOption, { backgroundColor: gender === 'Mr' ? '#3b67bb' : '#fff' }]}
-          onPress={() => setGender('Mr')}
-        >
-          <Text style={[styles.radioText, { color: gender === 'Mr' ? '#fff' : '#000' }]}>Mr</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.radioOption, { backgroundColor: gender === 'Mrs' ? '#3b67bb' : '#fff' }]}
-          onPress={() => setGender('Mrs')}
-        >
-          <Text style={[styles.radioText, { color: gender === 'Mrs' ? '#fff' : '#000' }]}>Mrs</Text>
-        </TouchableOpacity>
-      </View>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -253,6 +239,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     position: 'absolute',
+    top:'7%',
   },
   title: {
     fontSize: 24,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, StatusBar, ScrollView ,KeyboardAvoidingView} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
@@ -151,27 +151,13 @@ const CreateSyndic = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>Création Syndic</Text>
                 <Text>Copropriété {syndic.name} </Text>
                 <Text>Adresse {syndic.adresse}</Text>
             </View>
-            <View style={styles.radioContainer}>
-                <TouchableOpacity
-                    style={[styles.radioOption, { backgroundColor: gender === 'Mr' ? '#3b67bb' : '#fff' }]}
-                    onPress={() => setGender('Mr')}
-                >
-                    <Text style={[styles.radioText, { color: gender === 'Mr' ? '#fff' : '#000' }]}>Mr</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.radioOption, { backgroundColor: gender === 'Mrs' ? '#3b67bb' : '#fff' }]}
-                    onPress={() => setGender('Mrs')}
-                >
-                    <Text style={[styles.radioText, { color: gender === 'Mrs' ? '#fff' : '#000' }]}>Mrs</Text>
-                </TouchableOpacity>
-            </View>
-            <SafeAreaView style={styles.inputContainer}>
+            <View style={styles.inputContainer}>
                 <TextInput
                     style={[styles.input, { borderBottomWidth: activeInput === 'CIN' ? 1 : 0 }]}
                     onChangeText={(text) => setCIN(text)}
@@ -245,8 +231,9 @@ const CreateSyndic = () => {
                 <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                     <Text style={[styles.buttonText, styles.boldText]}>Save</Text>
                 </TouchableOpacity>
-            </SafeAreaView>
-        </View>
+            </View>
+         </KeyboardAvoidingView>
+
     );
 };
 
@@ -258,18 +245,21 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#fff',
         width: '80%',
-        top: '10%',
         marginLeft: '10%',
+        top:StatusBar.currentHeight +10,
     },
     titleContainer: {
         top: '2%',
         alignSelf: 'center',
         alignItems: 'center',
         position: 'absolute',
+        top: '7%',
+
     },
     title: {
         fontSize: 24,
         fontWeight: '300',
+        
     },
     radioContainer: {
         flexDirection: 'row',
@@ -288,6 +278,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     inputContainer: {
+        top: '10%',
     },
     input: {
         height: 40,
@@ -295,7 +286,7 @@ const styles = StyleSheet.create({
         borderColor: '#3b67bb',
         borderRadius: 5,
         paddingLeft: 10,
-        marginBottom: 20,
+        marginBottom: 10,
         backgroundColor: '#3b67bb20',
         width: '100%',
     },
