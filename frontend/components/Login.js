@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated, Easing, ImageBackground, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated, Easing, ImageBackground, Modal, Alert } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
 import { useAuth } from '../Context/AuthContext';
 import getBaseUrl from '../config';
@@ -45,10 +45,41 @@ const LoginScreen = () => {
 
   const [profile, setProfile] = useState('');
   const [error2, setError2] = useState('');
-  const [showModal, setShowModal] = useState(true)
+  const [error3, setError3] = useState('');
+
+  const [showModal, setShowModal] = useState(false)
 
 
   const [showSignUp, setShowSignUp] = useState(false); // State to manage SignUp form visibility
+  useEffect(() => {
+    const fetchMailVerification = async () => {
+      try {
+        const response = await fetch(`${BASEURL}/mailverif/${email}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.message === -1) seterrorEmail("Email déjà existant")
+          if (data.message === 1) seterrorEmail("")
+          console.log('Mail Verification Response:', data.message);
+        } else {
+          console.error('Failed to fetch mail verification:', response.status);
+          // Vous pouvez gérer les différents cas de réponse en fonction du status ici
+        }
+      } catch (error) {
+        console.error('Error in signup:', error.message);
+        alert('Error in signup:', error.message);
+      }
+    };
+
+    if (email) {
+      fetchMailVerification();
+    }
+  }, [email]);
 
   // const loginRef = useRef(null);
   const { login, error } = useAuth();
@@ -179,14 +210,14 @@ const LoginScreen = () => {
         body: JSON.stringify(newUser),
       });
       alert('Utilisateur créé avec succès, vérifiez votre e-mail pour activer votre compte')
-    toggleSignUp();
+      toggleSignUp();
     } catch (error2) {
       console.log('Error in signup:', error2.message);
       alert(error2.message)
 
     }
 
-    
+
   };
 
 
@@ -195,18 +226,20 @@ const LoginScreen = () => {
       method: 'GET',
       url: `${BASEURL}/forgot/${emailForgot}/`,
     };
-    console.log('email',emailForgot)
+    console.log('email', emailForgot)
     try {
       const response = await axios.request(options);
-      console.log("data", response.data);
+      Alert.alert("Succès", response.data.message);
       setEmailForgot(''); // Réinitialise l'état de l'e-mail
     } catch (error) {
-      setError2("Email inexistant")
-      console.error("Error fetching data:", error);
-      // Gérer les erreurs de requête ici
+      setError3("Email inexistant");
+      console.error('Error fetching data:', response.status);
+      setTimeout(() => {
+        setError3("");
+      }, 5000);
     }
   }
-  
+
 
   return (
 
@@ -231,10 +264,10 @@ const LoginScreen = () => {
                   style={styles.input}
                   placeholder="Entrez votre email"
                   value={emailForgot}
-                  onChangeText={(text) => handleEmailChange(text, setEmailForgot)}
+                  onChangeText={(text) => { handleEmailChange(text, setEmailForgot); }}
                 />
-                {!isValidEmail(emailForgot) && <Text style={{ color: 'red' }}>Email non valide</Text>}
-                {error2==='Email inexistant' && <Text style={{ color: 'red' }}>{error2}</Text>}
+                {!isValidEmail(emailForgot) && emailForgot && <Text style={{ color: 'red' }}>Email non valide</Text>}
+                {error3 && <Text style={{ color: 'red' }}>{error3}</Text>}
                 <View style={styles.buttonContainer}>
 
                   <TouchableOpacity
@@ -330,11 +363,8 @@ const LoginScreen = () => {
         )}
         {showSignUp && (
           <View style={styles.login}  >
-            {errorEmail && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorEmail}</Text>)}
-            {errorPhone && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorPhone}</Text>)}
-            {errorPassword && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorPassword}</Text>)}
-            {errorConfPass && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorConfPass}</Text>)}
-            {errorAll && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorAll}</Text>)}
+
+            {errorAll && (<Text style={{ color: 'red', marginBottom: 3 }}>{errorAll}</Text>)}
             <TextInput
               style={styles.inputS}
               placeholderTextColor={"#607D8B"}
@@ -363,6 +393,8 @@ const LoginScreen = () => {
               value={email}
               onChangeText={(value) => setEmail(value)}
             />
+            {errorEmail && (<Text style={{ color: 'red', marginBottom: 3 }}>{errorEmail}</Text>)}
+
             <TextInput
               style={styles.inputS}
               placeholderTextColor={"#607D8B"}
@@ -370,6 +402,7 @@ const LoginScreen = () => {
               value={phone}
               onChangeText={(value) => setPhone(value)}
             />
+            {errorPhone && (<Text style={{ color: 'red', marginBottom: 3 }}>{errorPhone}</Text>)}
             <TextInput
               style={styles.inputS}
               placeholderTextColor={"#607D8B"}
@@ -385,6 +418,7 @@ const LoginScreen = () => {
               value={passwordSU}
               onChangeText={(value) => setPasswordSU(value)}
             />
+            {errorPassword && (<Text style={{ color: 'red', marginBottom: 3 }}>{errorPassword}</Text>)}
             <TextInput
               style={styles.inputS}
               placeholderTextColor={"#607D8B"}
@@ -394,6 +428,7 @@ const LoginScreen = () => {
               value={confirmPass}
               onChangeText={(value) => setconfirmPass(value)}
             />
+            {errorConfPass && (<Text style={{ color: 'red', marginBottom: 3 }}>{errorConfPass}</Text>)}
 
             <TouchableOpacity style={styles.LoginButton} onPress={handleSignup}>
               <Text style={styles.LoginButtonText}>Sign Up</Text>
@@ -510,7 +545,7 @@ const styles = StyleSheet.create({
   },
   Error: {
     color: 'red',
-    marginBottom: 10
+    marginBottom: 30
   },
   LoginButton: {
     color: '#fff',
@@ -547,7 +582,7 @@ const styles = StyleSheet.create({
   errorContainer: {
     flexDirection: 'row', // Horizontal layout
     alignItems: 'center', // Center items vertically
-    marginBottom: 10, // Adjust spacing as needed
+    marginBottom: 30, // Adjust spacing as needed
   },
 
   errorText: {

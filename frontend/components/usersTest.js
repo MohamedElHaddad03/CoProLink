@@ -66,7 +66,7 @@ const UsersManagement = () => {
   const [passwordSU, setPasswordSU] = useState('');
   const [profile, setProfile] = useState('');
   const [error2, setError2] = useState('');
-  const [id_current_user, setIdUser] = useState('');
+  const [id_current_user, setIdUser] = useState(0);
 
   const [newUserData, setNewUserData] = useState({
     first_name: '',
@@ -111,13 +111,13 @@ const handleDefault =(item)=>{
   // refetch();
   // }, [data]);
 const handleUser =async (id) => {
+  
   const newUser = {
     first_name: firstname,
     last_name: lastname,
     email: email,
     username: username,
-    password: password  ===''? passwordSU : password   ,
-    id_prop: idProp,
+    password: "password" ,
     id_cot: 1,
     profile: {
       telephone: phone,
@@ -127,9 +127,9 @@ const handleUser =async (id) => {
     },
   };
 
-  //console.log(newUser);
+  console.log(newUser);
   try {
-    const response = await fetch(`${BASEURL}/api/users/${id}`, {
+    const response = await fetch(`${BASEURL}/api/users/${id}/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -137,14 +137,15 @@ const handleUser =async (id) => {
       },
       body: JSON.stringify(newUser),
     });
-
+    console.error('response',response);
     if (response.ok) {
+      Alert.alert("Success","Utilisateur modifié avec succès")
       refetch();
     } else {
       throw new Error(`Failed to Update user: ${response.statusText}`);
     }
   } catch (error) {
-    //console.error('Error ADDING user:', error.message);
+    console.error('Error ADDING user:', error.message);
   }
 };
 
@@ -175,7 +176,7 @@ const handleUser =async (id) => {
 
           <TouchableOpacity
             style={styles.settingUser}
-            onPress={() => {console.error('item',item);setShowModal2(true);setIdUser(item?.user?.id);handleDefault(item)}}
+            onPress={() => {console.error('item',item);setShowModal2(true);setIdUser(item?.user?.id);console.error('idUserrrrrrrrrr',id_current_user);setIdProp(item?.id_prop);;handleDefault(item)}}
           >
             <MaterialCommunityIcons name="account-settings" size={24} color="black" />
 
@@ -507,14 +508,7 @@ const handleUser =async (id) => {
               value={username}
               onChangeText={(text) => setUserName(text)}
             />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Password"
-              secureTextEntry={true}
-              
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-            />
+            
             {/* <TextInput
               style={styles.modalInput}
               placeholder="Confirm Password"
@@ -522,7 +516,8 @@ const handleUser =async (id) => {
               value={newUserData.confirmPassword}
               onChangeText={(text) => handleInputChange('confirmPassword', text)}
             /> */}
-            <TouchableOpacity style={styles.modalButton} onPress={() => handleUser(id_current_user)}>
+            <TouchableOpacity style={styles.modalButton} onPress={() => {handleUser(id_current_user);
+            }}>
               <Text style={styles.modalButtonText}>Modifier User</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal2(false)}>
