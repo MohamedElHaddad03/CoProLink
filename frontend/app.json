@@ -32,6 +32,12 @@
         "projectId": "4ecf50a5-5489-4566-8f02-99c7a364c47a"
       }
     },
-    "owner": "ana20035"
+    "owner": "ana20035",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4ecf50a5-5489-4566-8f02-99c7a364c47a"
+    }
   }
 }

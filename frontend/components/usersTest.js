@@ -117,7 +117,7 @@ const handleUser =async (id) => {
     last_name: lastname,
     email: email,
     username: username,
-    password: "password" ,
+  //  password: "password" ,
     id_cot: 1,
     profile: {
       telephone: phone,
@@ -129,17 +129,18 @@ const handleUser =async (id) => {
 
   console.log(newUser);
   try {
-    const response = await fetch(`${BASEURL}/api/users/${id}/`, {
-      method: 'PUT',
+    const response = await fetch(`${BASEURL}/api/users/update/${id}/`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Token ' + user.Token,
       },
       body: JSON.stringify(newUser),
     });
-    console.error('response',response);
+    console.log('TOKEEEEEEEEEEEEN',user.Token);
     if (response.ok) {
       Alert.alert("Success","Utilisateur modifié avec succès")
+      setShowModal2(false)
       refetch();
     } else {
       throw new Error(`Failed to Update user: ${response.statusText}`);
@@ -176,7 +177,7 @@ const handleUser =async (id) => {
 
           <TouchableOpacity
             style={styles.settingUser}
-            onPress={() => {console.error('item',item);setShowModal2(true);setIdUser(item?.user?.id);console.error('idUserrrrrrrrrr',id_current_user);setIdProp(item?.id_prop);;handleDefault(item)}}
+            onPress={() => {setShowModal2(true);;setIdUser(item?.user?.id);while(id_current_user==0){};setIdUser(item?.user?.id);console.error('idUserrrrrrrrrr',id_current_user);setIdProp(item?.id_prop);;handleDefault(item)}}
           >
             <MaterialCommunityIcons name="account-settings" size={24} color="black" />
 

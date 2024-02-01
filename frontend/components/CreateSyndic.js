@@ -38,7 +38,7 @@ const CreateSyndic = () => {
 
     const [saved, setSaved] = useState(false)
     const { user } = useAuth();
-    const syndic = JSON.parse(SecureStore.getItem("responseData"));
+    const syndic = SecureStore.getItem("responseData") ?JSON.parse(SecureStore.getItem("responseData")):{};
     console.log('syndic',syndic)
    // useEffect(,[]);
     //const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure(`api/users/${user.User.id}`);
