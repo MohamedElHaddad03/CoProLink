@@ -109,7 +109,7 @@ const DocumentsManager = () => {
   let tempDocumentUrl = '';
 
 
-  function sanitizeFilename(str) {
+  function sanitizeFilename(str, maxLength) {
     const accentMap = {
       'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
       'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u',
@@ -119,21 +119,34 @@ const DocumentsManager = () => {
       'ñ': 'n'
       // Add more mappings as needed
     };
-  
-    const sanitizedStr = str
-      .replace(/[^\w\s]/g, '') // Remove non-alphanumeric characters
+
+    const lastDotIndex = str.lastIndexOf('.');
+    const filenamePart = str.substring(0, lastDotIndex);
+    const extensionPart = str.substring(lastDotIndex);
+
+    const sanitizedFilenamePart = filenamePart
+      .replace(/[^\w\s-]/g, '') // Remove non-alphanumeric characters excluding hyphen and underscore
       .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/[áéíóúàèìòùâêîôûäëïöüçñ]/g, match => accentMap[match] || match) // Replace accented characters
-  
+      .replace(/_/g, '-') // Replace underscores with hyphens
+      .replace(/[áéíóúàèìòùâêîôûäëïöüçñ]/g, match => accentMap[match] || match);
+
+    // Use the provided maxLength parameter for truncation
+    const truncatedFilenamePart = sanitizedFilenamePart.substring(0, maxLength);
+    const sanitizedStr = truncatedFilenamePart + extensionPart;
+
     return sanitizedStr;
-  }
+}
+
+
   
   const handleCreate = async () => {
     try {
       // Check if temp variables are filled
       if (tempDocumentName && tempDocumentUrl) {
         console.error("create :" + tempDocumentName + " ," + tempDocumentUrl + "," + user.User.profile.id_cop);
-          tempDocumentName = sanitizeFilename(tempDocumentName);
+        const maxLength = 30;
+          tempDocumentName = sanitizeFilename(tempDocumentName, maxLength);
+          console.error(tempDocumentName)
           const NewDocument = {
           nomdoc: tempDocumentName,
           url: tempDocumentUrl,
