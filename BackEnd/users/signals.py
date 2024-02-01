@@ -16,7 +16,7 @@ def send_password_reset_link(sender, instance, created, **kwargs):
     if created:
         uid = urlsafe_base64_encode(force_bytes(instance.pk))
         token = default_token_generator.make_token(instance)
-        lien = f"http://192.168.1.156:8000/reset/{uid}/{token}/"
+        lien = f"http://16.171.140.68:8000/reset/{uid}/{token}/"
         message1 = "Bienvenue à notre application !"
         message2 = "Voici votre Username ou Nom d'utilisateur :" + str(
             instance.username
@@ -37,7 +37,7 @@ def send_password_reset_link(sender, instance, created, **kwargs):
         send_mail(
             subject,
             "",
-            "elbaghdadinada5@gmail.com",
+            "noreplycoprolink@gmail.com",
             [instance.email],
             html_message=html_message,
         )

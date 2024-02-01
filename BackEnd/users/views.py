@@ -36,7 +36,7 @@ def signup(request):
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        lien = f"http://192.168.1.156:8000/activation/{uid}/{token}/"
+        lien = f"http://16.171.140.68:8000/activation/{uid}/{token}/"
         subject = 'CoProLink-Activation de Compte'
         message1 = "Bienvenue à notre application !"
         message2 = "Voici votre Username ou Nom d'utilisateur :" + str(
@@ -58,7 +58,7 @@ def signup(request):
         send_mail(
             subject,
             "",
-            "elbaghdadinada5@gmail.com",
+            "noreplycoprolink@gmail.com",
             [user.email],
             html_message=html_message,
         )
@@ -165,7 +165,7 @@ def mdp_oublie(request,email):
         user= get_object_or_404(User,email=email)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        lien = f"http://192.168.1.156:8000/reset/{uid}/{token}/"
+        lien = f"http://16.171.140.68:8000/reset/{uid}/{token}/"
         message1 = "Bienvenue à notre application !"
         message2 = "Voici votre Username ou Nom d'utilisateur :" + str(
             user.username
@@ -186,7 +186,7 @@ def mdp_oublie(request,email):
         send_mail(
             subject,
             "",
-            "elbaghdadinada5@gmail.com",
+            "noreplycoprolink@gmail.com",
             [user.email],
             html_message=html_message,
         )
