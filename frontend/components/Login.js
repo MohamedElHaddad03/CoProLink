@@ -41,7 +41,7 @@ const LoginScreen = () => {
   const [errorPhone, seterrorPhone] = useState('');
   const [errorPassword, seterrorPassword] = useState('');
   const [errorConfPass, seterrorConfPass] = useState('');
-  const [errorAll, seterrorAll] = useState('*All fields are required');
+  const [errorAll, seterrorAll] = useState('*Tous les champs sont obligatoires');
 
   const [profile, setProfile] = useState('');
   const [error2, setError2] = useState('');
@@ -117,14 +117,14 @@ const LoginScreen = () => {
 
   const handleSignup = async () => {
     if (email == '' || phone == '' || passwordSU == '' || confirmPass == '' || firstname == '' || lastname == '' || cin == '' || usernameSU == '') {
-      seterrorAll('*All fields are required');
+      seterrorAll('*Tous les champs sont obligatoires');
       return;
     }
     else {
       seterrorAll('');
     }
     if (passwordSU != confirmPass) {
-      seterrorConfPass('*Passwords do not match');
+      seterrorConfPass('*Les mots de passe ne correspondent pas');
       return;
     }
     else {
@@ -132,24 +132,24 @@ const LoginScreen = () => {
     }
     // regex for password
     if (!passwordSU.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)) {
-      seterrorPassword('*Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character');
+      seterrorPassword('*Le mot de passe doit contenir au moins 8 caractères, 1 lettre majuscule, 1 lettre minuscule, 1 chiffre et 1 caractère spécial');
       return;
     }
     else {
       seterrorPassword('');
     }
     if (isNaN(phone)) {
-      seterrorPhone('*Phone number must contain only numbers');
+      seterrorPhone('*Le numéro de téléphone ne doit contenir que des chiffres');
       return;
     }
     else if (phone.length != 10) {
-      seterrorPhone('*Phone number must contain 10 numbers');
+      seterrorPhone('*Le numéro de téléphone doit contenir 10 chiffres');
     }
     else {
       seterrorPhone('');
     }
     if (!email.includes('@')) {
-      seterrorEmail('*Invalid email');
+      seterrorEmail('*Adresse e-mail invalide');
       return;
     }
     else {
@@ -178,10 +178,10 @@ const LoginScreen = () => {
         },
         body: JSON.stringify(newUser),
       });
-      alert('User created successfully, check your email to activate your account')
+      alert('Utilisateur créé avec succès, vérifiez votre e-mail pour activer votre compte')
     toggleSignUp();
     } catch (error2) {
-      console.log('Error2 deleting user:', error2.message);
+      console.log('Error in signup:', error2.message);
       alert(error2.message)
 
     }
