@@ -1,26 +1,28 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated, Easing, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated, Easing, ImageBackground, Modal } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
 import { useAuth } from '../Context/AuthContext';
 import getBaseUrl from '../config';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 
 const LoginScreen = () => {
-  const [BASEURL,setBaseUrl]=useState('');
+
+  const [BASEURL, setBaseUrl] = useState('');
 
   useEffect(() => {
     const fetchBaseUrl = async () => {
-        try {
-            const BASEURL = await getBaseUrl();
-            setBaseUrl(BASEURL);
-        } catch (error) {
-            console.error("Error fetching BASEURL:", error);
-        }
+      try {
+        const BASEURL = await getBaseUrl();
+        setBaseUrl(BASEURL);
+      } catch (error) {
+        console.error("Error fetching BASEURL:", error);
+      }
     };
 
     fetchBaseUrl(); // Call the async function immediately
-}, []);
-console.log("BASE",BASEURL)
+  }, []);
+  console.log("BASE", BASEURL)
   // const [loginTop, setLoginTop] = useState(0);
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -28,6 +30,8 @@ console.log("BASE",BASEURL)
   const [firstname, setFirstName] = useState('');
   const [lastname, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [emailForgot, setEmailForgot] = useState('');
+
   const [phone, setPhone] = useState('');
   const [cin, setCin] = useState('');
   const [usernameSU, setUserNameSU] = useState('');
@@ -41,6 +45,7 @@ console.log("BASE",BASEURL)
 
   const [profile, setProfile] = useState('');
   const [error2, setError2] = useState('');
+  const [showModal, setShowModal] = useState(true)
 
 
   const [showSignUp, setShowSignUp] = useState(false); // State to manage SignUp form visibility
@@ -71,7 +76,19 @@ console.log("BASE",BASEURL)
   useEffect(() => {
     // startAnimation();
   }, []);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  // Fonction de validation d'e-mail
+  const isValidEmail = (email) => {
+    return emailRegex.test(email);
+  };
+
+  // Fonction pour gérer les modifications de l'e-mail
+  const handleEmailChange = (text, setEmailForgot) => {
+    setEmailForgot(text); // Met à jour l'état de l'e-mail
+
+    // Vous pouvez ajouter une logique de validation ici si nécessaire
+  };
   let translateX1 = new Animated.Value(-160);
 
   // const startAnimation = () => {
@@ -131,14 +148,14 @@ console.log("BASE",BASEURL)
     else {
       seterrorPhone('');
     }
-    if (!email.includes('@') ) {
+    if (!email.includes('@')) {
       seterrorEmail('*Invalid email');
       return;
     }
     else {
       seterrorEmail('');
     }
-  
+
     const newUser = {
       username: usernameSU,
       password: passwordSU,
@@ -172,6 +189,23 @@ console.log("BASE",BASEURL)
   };
 
 
+  async function handleEmailSubmission() {
+    const options = {
+      method: 'GET',
+      url: `${BASEURL}/forgot/${emailForgot}/`,
+    };
+    console.log('email',emailForgot)
+    try {
+      const response = await axios.request(options);
+      console.log("data", response.data);
+      setEmailForgot(''); // Réinitialise l'état de l'e-mail
+    } catch (error) {
+      setError2("Email inexistant")
+      console.error("Error fetching data:", error);
+      // Gérer les erreurs de requête ici
+    }
+  }
+  
 
   return (
 
@@ -182,6 +216,48 @@ console.log("BASE",BASEURL)
         style={styles.backgroundImage}
         blurRadius={5} // Adjust the blur radius as needed
       >
+        {showModal && (
+          <Modal
+            visible={showModal}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setShowModal(false)}
+          >
+            <View style={styles.modalBackground}>
+              <View style={styles.modalContainer}>
+                <Text>Entrer votre email</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Entrez votre email"
+                  value={emailForgot}
+                  onChangeText={(text) => handleEmailChange(text, setEmailForgot)}
+                />
+                {!isValidEmail(emailForgot) && <Text style={{ color: 'red' }}>Email non valide</Text>}
+                {error2==='Email inexistant' && <Text style={{ color: 'red' }}>{error2}</Text>}
+                <View style={styles.buttonContainer}>
+
+                  <TouchableOpacity
+                    style={{ display: isValidEmail(emailForgot) ? 'flex' : 'none' }}
+                    onPress={handleEmailSubmission}
+                  >
+                    <Text style={styles.buttonText}>Confirmer</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={() => {
+                    setShowModal(false);
+                    setEmailForgot('');
+                  }
+                  }>
+                    <Text style={styles.buttonText}>Annuler</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
+
+
+
         <View style={styles.backgroundTint} />
         <Image
           source={require('../assets/images/Logo_White_text.png')}
@@ -245,7 +321,7 @@ console.log("BASE",BASEURL)
 
             </View>
             <View style={styles.choiceText}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowModal(true)}>
                 <Text style={styles.ForgotButton} >Forgot password?</Text>
               </TouchableOpacity>
             </View>
@@ -253,11 +329,11 @@ console.log("BASE",BASEURL)
         )}
         {showSignUp && (
           <View style={styles.login}  >
-           { errorEmail &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorEmail}</Text>)}
-           { errorPhone &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorPhone}</Text>)}
-           { errorPassword &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorPassword}</Text>)}
-           { errorConfPass &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorConfPass}</Text>)}
-           { errorAll &&(<Text style={{ color: 'red', marginBottom: 1 }}>{errorAll}</Text>)}
+            {errorEmail && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorEmail}</Text>)}
+            {errorPhone && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorPhone}</Text>)}
+            {errorPassword && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorPassword}</Text>)}
+            {errorConfPass && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorConfPass}</Text>)}
+            {errorAll && (<Text style={{ color: 'red', marginBottom: 1 }}>{errorAll}</Text>)}
             <TextInput
               style={styles.inputS}
               placeholderTextColor={"#607D8B"}
@@ -364,6 +440,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b67bb', // Your color here
     opacity: 0.2, // Adjust opacity as needed
   },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  buttonText: {
+    fontSize: 16,
+    color: '#3b67bb',
+  },
+
   login: {
     overflow: 'hidden',
     backgroundColor: '#ffffff',

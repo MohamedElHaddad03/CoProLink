@@ -301,6 +301,7 @@ const saveChanges = () => {
 
 
   const refreshDocuments = () => {
+    refetch();
 
   };
 

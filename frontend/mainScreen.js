@@ -6,7 +6,6 @@ import ProfileScreen from './components/Profile';
 import Sidebar from './components/sideBar';
 import { SafeAreaView, View } from 'react-native';
 import ControllerComponent from './components/Controller';
-import LoginStack from './stacks/loginStack';
 import SidebarAdmin from './components/sideBarAdmin';
 import SidebarUser from './components/sideBarUser';
 
@@ -38,7 +37,7 @@ console.log("main",isAuthenticated)
 
           </>
         ) : (
-          <LoginStack />
+          <LoginScreen />
         )}
        
       </SafeAreaView>
