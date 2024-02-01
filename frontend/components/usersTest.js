@@ -21,24 +21,24 @@ import { useAuth } from '../Context/AuthContext';
 
 
 const UsersManagement = () => {
-  const [BASEURL,setBaseUrl]=useState('');
+  const [BASEURL, setBaseUrl] = useState('');
 
   useEffect(() => {
     const fetchBaseUrl = async () => {
-        try {
-            const BASEURL = await getBaseUrl();
-            setBaseUrl(BASEURL);
-        } catch (error) {
-            console.error("Error fetching BASEURL:", error);
-        }
+      try {
+        const BASEURL = await getBaseUrl();
+        setBaseUrl(BASEURL);
+      } catch (error) {
+        console.error("Error fetching BASEURL:", error);
+      }
     };
 
     fetchBaseUrl(); // Call the async function immediately
-}, []);
+  }, []);
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [item2,setItem]= useState({});
+  const [item2, setItem] = useState({});
   const [prop, setProp] = useState({
     id_prop: 0,
     num: "",
@@ -81,18 +81,24 @@ const UsersManagement = () => {
       role: 'proprietaire',
     },
   });
-
+  useEffect(() => {
+    if (id_current_user !== 0) {
+      console.log('idUserrrrrrrrrr', id_current_user);
+      
+    }
+  }, [id_current_user]);
+  
   // Replace the axios.request options with the useFetch hook
 
-const handleDefault =(item)=>{
-  setCin(item?.user?.profile?.cin);
-  setEmail(item?.user?.email);
-  setFirstName(item?.user?.first_name)
-  setLastName(item?.user?.last_name)
-  setPhone(item?.user?.telephone)
-  setUserName(item?.user?.username)
-  setPasswordSU(  item?.user?.password )
-}
+  const handleDefault = (item) => {
+    setCin(item?.user?.profile?.cin);
+    setEmail(item?.user?.email);
+    setFirstName(item?.user?.first_name)
+    setLastName(item?.user?.last_name)
+    setPhone(item?.user?.telephone)
+    setUserName(item?.user?.username)
+    setPasswordSU(item?.user?.password)
+  }
 
   const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/propusers');
 
@@ -110,45 +116,45 @@ const handleDefault =(item)=>{
   // //console.log(data)
   // refetch();
   // }, [data]);
-const handleUser =async (id) => {
-  
-  const newUser = {
-    first_name: firstname,
-    last_name: lastname,
-    email: email,
-    username: username,
-  //  password: "password" ,
-    id_cot: 1,
-    profile: {
-      telephone: phone,
-      cin: cin,
-      id_cop: user.User.profile.id_cop,
-      role: 'proprietaire',
-    },
-  };
+  const handleUser = async (id) => {
 
-  console.log(newUser);
-  try {
-    const response = await fetch(`${BASEURL}/api/users/update/${id}/`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Token ' + user.Token,
+    const newUser = {
+      first_name: firstname,
+      last_name: lastname,
+      email: email,
+      username: username,
+      //  password: "password" ,
+      id_cot: 1,
+      profile: {
+        telephone: phone,
+        cin: cin,
+        id_cop: user.User.profile.id_cop,
+        role: 'proprietaire',
       },
-      body: JSON.stringify(newUser),
-    });
-    console.log('TOKEEEEEEEEEEEEN',user.Token);
-    if (response.ok) {
-      Alert.alert("Success","Utilisateur modifié avec succès")
-      setShowModal2(false)
-      refetch();
-    } else {
-      throw new Error(`Failed to Update user: ${response.statusText}`);
+    };
+
+    console.log(newUser);
+    try {
+      const response = await fetch(`${BASEURL}/api/users/update/${id}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Token ' + user.Token,
+        },
+        body: JSON.stringify(newUser),
+      });
+      console.log('TOKEEEEEEEEEEEEN', user.Token);
+      if (response.ok) {
+        Alert.alert("Success", "Utilisateur modifié avec succès")
+        setShowModal2(false)
+        refetch();
+      } else {
+        throw new Error(`Failed to Update user: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error ADDING user:', error.message);
     }
-  } catch (error) {
-    console.error('Error ADDING user:', error.message);
-  }
-};
+  };
 
   const renderUserItem = ({ item }) => {
     //console.log(item)
@@ -177,15 +183,21 @@ const handleUser =async (id) => {
 
           <TouchableOpacity
             style={styles.settingUser}
-            onPress={() => {setShowModal2(true);;setIdUser(item?.user?.id);while(id_current_user==0){};setIdUser(item?.user?.id);console.error('idUserrrrrrrrrr',id_current_user);setIdProp(item?.id_prop);;handleDefault(item)}}
+            onPress={() => {
+              setShowModal2(true);
+              setIdUser(item?.user?.id);
+              handleDefault(item);
+            }}
           >
+
             <MaterialCommunityIcons name="account-settings" size={24} color="black" />
 
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.removeIconContainer}
             onPress={() => { //console.error('id', item); 
-              handleDeleteUser(item.id_user); }
+              handleDeleteUser(item.id_user);
+            }
             }
           >
             <Ionicons name="person-remove" size={20} color="red" />
@@ -201,7 +213,7 @@ const handleUser =async (id) => {
               setShowModal(true);
               setIdProp(item?.id_prop);
               setItem(item)
-              console.log('item2',item2)
+              console.log('item2', item2)
             }}
           >
             <Ionicons name="person-add" size={20} color="green" />
@@ -313,7 +325,7 @@ const handleUser =async (id) => {
           ],
           { cancelable: false }
         );
-        
+
       } else {
         throw new Error('Failed to delete user');
       }
@@ -382,7 +394,7 @@ const handleUser =async (id) => {
       <KeyboardAvoidingView behavior="height">
         {isLoading && (
           <ActivityIndicator size="large" color="#3b67bb" />
-        ) }
+        )}
         {!isLoading && <FlatList
           data={users.length > 0 ? users : data}
           keyExtractor={(item) => item.id}
@@ -481,7 +493,7 @@ const handleUser =async (id) => {
             <TextInput
               style={styles.modalInput}
               placeholder="First Name"
-             
+
               value={firstname}
               onChangeText={(text) => setFirstName(text)}
             />
@@ -509,7 +521,7 @@ const handleUser =async (id) => {
               value={username}
               onChangeText={(text) => setUserName(text)}
             />
-            
+
             {/* <TextInput
               style={styles.modalInput}
               placeholder="Confirm Password"
@@ -517,7 +529,8 @@ const handleUser =async (id) => {
               value={newUserData.confirmPassword}
               onChangeText={(text) => handleInputChange('confirmPassword', text)}
             /> */}
-            <TouchableOpacity style={styles.modalButton} onPress={() => {handleUser(id_current_user);
+            <TouchableOpacity style={styles.modalButton} onPress={() => {
+              handleUser(id_current_user);
             }}>
               <Text style={styles.modalButtonText}>Modifier User</Text>
             </TouchableOpacity>
