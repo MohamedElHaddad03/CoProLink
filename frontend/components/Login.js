@@ -165,27 +165,28 @@ const LoginScreen = () => {
       profile: {
         cin: cin,
         telephone: phone,
-        role: "xcfvgj",
+        role: "admin",
         id_cop: 3,
       },
     };
 
     try {
-      const response = await fetch(`${getBaseUrl()}/api/users/signup/`, {
+      const response = await fetch(`${BASEURL}/api/users/signup/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newUser),
       });
+      alert('User created successfully, check your email to activate your account')
+    toggleSignUp();
     } catch (error2) {
       console.log('Error2 deleting user:', error2.message);
       alert(error2.message)
 
     }
 
-    alert('User created successfully, check your email to activate your account')
-    toggleSignUp();
+    
   };
 
 
