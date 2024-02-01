@@ -5,7 +5,7 @@ from rest_framework import status
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
-from users.serializers import CombinedUserSerializer, LoginSerializer
+from users.serializers import CombinedUserSerializer, LoginSerializer, UpdateUserSerializer
 from interfaces.models import Copropriete
 from .models import Profile
 from django.contrib.auth.models import User
@@ -198,3 +198,18 @@ def valider_email_unique(request,email):
        return Response({"message":-1})
     else:
         return Response({"message":1})
+
+@api_view(["PATCH"])
+def UserUpdate(request, id_user):
+    user = get_object_or_404(User, pk=id_user)
+
+    if request.user != user and not request.user.is_staff:
+        return Response({"detail": "You do not have permission to update this profile."}, status=403)
+
+    serializer = UpdateUserSerializer(user, data=request.data, partial=True, context={'request': request})
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    else:
+        return Response(serializer.errors, status=400)

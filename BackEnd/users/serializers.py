@@ -77,3 +77,50 @@ class LoginSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username','password']   
 
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    telephone = serializers.CharField(validators=[])
+    class Meta:
+        model = Profile
+        fields = ['cin', 'telephone', 'role', 'id_cop']
+ 
+class UpdateUserSerializer(serializers.ModelSerializer):
+    profile = ProfileUpdateSerializer()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'profile']
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile')
+        profile = instance.profile
+
+        new_telephone = profile_data.get('telephone')
+        if new_telephone and Profile.objects.exclude(user=instance).filter(telephone=new_telephone).exists():
+            raise serializers.ValidationError({"telephone": "Le numéro de téléphone est déjà utilisé par un autre utilisateur"})
+        
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.save()
+
+        profile.cin = profile_data.get(
+            'cin',
+            profile.cin
+        )
+        profile.telephone = profile_data.get(
+            'telephone',
+            profile.telephone
+        )
+        profile.role = profile_data.get(
+            'role',
+            profile.role
+         )
+        profile.id_cop = profile_data.get(
+            'id_cop',
+            profile.id_cop
+        )
+        profile.save()
+
+        return instance
