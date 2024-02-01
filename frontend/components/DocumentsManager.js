@@ -108,12 +108,33 @@ const DocumentsManager = () => {
   let tempDocumentName = '';
   let tempDocumentUrl = '';
 
+
+  function sanitizeFilename(str) {
+    const accentMap = {
+      'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+      'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u',
+      'â': 'a', 'ê': 'e', 'î': 'i', 'ô': 'o', 'û': 'u',
+      'ä': 'a', 'ë': 'e', 'ï': 'i', 'ö': 'o', 'ü': 'u',
+      'ç': 'c',
+      'ñ': 'n'
+      // Add more mappings as needed
+    };
+  
+    const sanitizedStr = str
+      .replace(/[^\w\s]/g, '') // Remove non-alphanumeric characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/[áéíóúàèìòùâêîôûäëïöüçñ]/g, match => accentMap[match] || match) // Replace accented characters
+  
+    return sanitizedStr;
+  }
+  
   const handleCreate = async () => {
     try {
       // Check if temp variables are filled
       if (tempDocumentName && tempDocumentUrl) {
         console.error("create :" + tempDocumentName + " ," + tempDocumentUrl + "," + user.User.profile.id_cop);
-        const NewDocument = {
+          tempDocumentName = sanitizeFilename(tempDocumentName);
+          const NewDocument = {
           nomdoc: tempDocumentName,
           url: tempDocumentUrl,
           id_cop: user.User.profile.id_cop,
