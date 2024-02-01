@@ -203,7 +203,7 @@ def valider_email_unique(request,email):
 def UserUpdate(request, id_user):
     user = get_object_or_404(User, pk=id_user)
 
-    if request.user != user and not request.user.is_staff:
+    if request.user.profile.role == "syndic":
         return Response({"detail": "You do not have permission to update this profile."}, status=403)
 
     serializer = UpdateUserSerializer(user, data=request.data, partial=True, context={'request': request})
