@@ -104,90 +104,83 @@ const DocumentsManager = () => {
     }
     return 'insert-drive-file'; // Default icon if filename is undefined
   };
-  const handleCreate =   () => {
-    const fetchData2 = async () => {
-      try {
-        console.error('create',documentName, documentUrl, user.User.profile.id_cop);
+  
+  let tempDocumentName = '';
+  let tempDocumentUrl = '';
+
+  const handleCreate = async () => {
+    try {
+      // Check if temp variables are filled
+      if (tempDocumentName && tempDocumentUrl) {
+        console.error("create :" + tempDocumentName + " ," + tempDocumentUrl + "," + user.User.profile.id_cop);
+        const NewDocument = {
+          nomdoc: tempDocumentName,
+          url: tempDocumentUrl,
+          id_cop: user.User.profile.id_cop,
+        };
         const options = {
           method: 'POST',
           url: `${BASEURL}/api/interfaces/Docs/create/`,
-          data: {
-            "nomdoc": documentName,
-            "url": documentUrl,
-            "id_cop": user.User.profile.id_cop,
-          },
+          data: NewDocument,
           headers: {
             Authorization: "Token " + user.Token,
           },
         };
-
+  
         const response = await axios.request(options);
         console.log("data", response.data);
-
+  
+        // Reset temp variables after successful create
+        tempDocumentName = '';
+        tempDocumentUrl = '';
+  
         refetch();
-      } catch (error) {
-        if (error.response) {
-          // The request was made, but the server responded with a status code
-          console.error('Response data:', error.response.data);
-          console.error('Response status:', error.response.status);
-          console.error('Response headers:', error.response.headers);
-
-          alert('Error Updating: ' + (error.response.data.detail || 'Unknown error'));
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error('No response received:', error.request);
-          alert('Error Updating: No response received');
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Error setting up request:', error.message);
-          alert('Error Updating: ' + (error.message || 'Unknown error'));
-        }
-
-        setError(error);
+      } else {
+        console.log('Temp variables are not filled. Skipping create.');
       }
-    };
-     fetchData2(); // Call the async function
-  }
+    } catch (error) {
+      console.error('Error creating document:', error);
+    }
+  };
+
+
   const handleUpload = async (document, filename) => {
     try {
-        const storageRef = ref(storage, `documents/${user.User.profile.id_cop}/${filename}`);
-        const uploadTask = uploadBytesResumable(storageRef, document);
-
-        uploadTask.on(
-            'state_changed',
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setUploadProgress(progress);
-                console.error(progress)
-            },
-            (error) => {
-                console.error('Error uploading document:', error);
-            },
-            async () => {
-                try {
-                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    console.log('Document uploaded successfully. Download URL:', downloadURL);
-
-                    // Update document URL state here
-                    setDocumentName(filename);
-                    setDocumentUrl(downloadURL);
-
-                    // Call handleCreate after updating states
-                 //   await handleCreate();
-                } catch (error) {
-                    console.error('Error getting download URL:', error);
-                }
-            }
-        );
+      const storageRef = ref(storage, `documents/${user.User.profile.id_cop}/${filename}`);
+      const uploadTask = uploadBytesResumable(storageRef, document);
+  
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+          console.error(progress);
+        },
+        (error) => {
+          console.error('Error uploading document:', error);
+        },
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log('Document uploaded successfully. Download URL:', downloadURL);
+  
+            // Update temp variables
+            tempDocumentName = filename;
+            tempDocumentUrl = downloadURL;
+  
+            // Call handleCreate after updating temp variables
+            await handleCreate();
+          } catch (error) {
+            console.error('Error getting download URL:', error);
+          }
+        }
+      );
     } catch (error) {
-        console.error('Error handling upload:', error);
+      console.error('Error handling upload:', error);
     }
-};
-
+  };
   
   
-   
- 
 
 
 const saveChanges = () => {
@@ -196,13 +189,14 @@ const saveChanges = () => {
       setTimeout(checkProgress, 100); // Check progress again after 100 milliseconds
     } else {
       // Progress reached 100%, show success alert
-      handleCreate()
       Alert.alert('Success', 'File Uploaded !!');
+      handleCreate(); // Move handleCreate here
     }
   };
 
   checkProgress(); // Start checking progress
 };
+
 
 
   const importDocument = async () => {

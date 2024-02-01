@@ -13,8 +13,8 @@ const SettingsScreen = ({selectedItem, setSelectedItem}) => {
   }
   const options = [
     { title: 'Profile', icon: 'person-outline', action: () => setSelectedItem('Profile') },
-    { title: 'Language', icon: 'language-outline', action: () => setSelectedItem('Language') },
-    { title: 'Contact Support', icon: 'chatbubble-ellipses-outline', action: () => setSelectedItem('ContactSupport') },
+    // { title: 'Language', icon: 'language-outline', action: () => setSelectedItem('Language') },
+    // { title: 'Contact Support', icon: 'chatbubble-ellipses-outline', action: () => setSelectedItem('ContactSupport') },
     { title: 'Logout', icon: 'exit-outline', action: () => Logout()  },
   ];
 

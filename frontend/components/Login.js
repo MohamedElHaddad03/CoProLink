@@ -162,7 +162,7 @@ console.log("BASE",BASEURL)
         body: JSON.stringify(newUser),
       });
     } catch (error2) {
-      console.error2('Error2 deleting user:', error2.message);
+      console.log('Error2 deleting user:', error2.message);
       alert(error2.message)
 
     }
