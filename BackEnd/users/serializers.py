@@ -51,25 +51,25 @@ class CombinedUserSerializer(serializers.ModelSerializer):
         instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.save()
 
-        profile.cin = profile_data.get(
-            'cin',
-            profile.cin
-        )
-        profile.telephone = profile_data.get(
-            'telephone',
-            profile.telephone
-        )
-        profile.role = profile_data.get(
-            'role',
-            profile.role
-         )
-        profile.id_cop = profile_data.get(
-            'id_cop',
-            profile.id_cop
-        )
+        # Vérifier si le numéro de téléphone a été modifié
+        new_telephone = profile_data.get('telephone', profile.telephone)
+        if new_telephone != profile.telephone:
+            # Vérifier si un autre utilisateur a déjà ce numéro de téléphone
+            existing_profile = Profile.objects.filter(telephone=new_telephone).exclude(user=instance)
+            if existing_profile.exists():
+                # Le numéro de téléphone est déjà utilisé par un autre profil
+                profile.telephone = profile.telephone
+            else:
+                # Mettre à jour le numéro de téléphone
+                profile.telephone = new_telephone
+
+        profile.cin = profile_data.get('cin', profile.cin)
+        profile.role = profile_data.get('role', profile.role)
+        profile.id_cop = profile_data.get('id_cop', profile.id_cop)
         profile.save()
 
         return instance
+
     
 class LoginSerializer(serializers.ModelSerializer):
       username=serializers.CharField(max_length=50)
