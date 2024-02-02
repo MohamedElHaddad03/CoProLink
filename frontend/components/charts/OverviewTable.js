@@ -44,7 +44,7 @@ const OverviewTable = () => {
     return chunkedArr;
   };
 
-  const rowsOfSeven = chunkArray(properties, 7);
+  const rowsOfSeven = chunkArray(properties, 3);
 
   const renderRow = (data, isCurrentMonth = false, index) => (
     <View key={isCurrentMonth ? `currentMonth-${index}` : `propertyNums-${index}`} style={[styles.tableRow, isCurrentMonth && styles.currentMonthRow]}>
@@ -86,12 +86,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b67bb',
   },
   cell: {
+    padding:5,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   propertyBox: {
-    wnumth: 30,
+   // wnumth: 30,
+    width:'auto',
     height: 30,
     borderRadius: 5,
     marginHorizontal: 2,

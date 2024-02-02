@@ -82,7 +82,6 @@ const formatDateFin = dateFin.toISOString().split('T')[0];
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Statut des paiements mensuels</Text>
       <ScrollView horizontal={true}>
 {monthlyData.length > 0 ? (<LineChart
         data={sampledata}
@@ -115,6 +114,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign:'center',
   },
   chart: {
     marginVertical: 0,

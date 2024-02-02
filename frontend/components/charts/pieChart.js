@@ -8,8 +8,11 @@ const DonutChart = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     //http://192.168.1.154:8001/api/interfaces/stats/paiementper/2023-01-01/2024-01-01
-    const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/stats/paiement/PieChart/2023');
-
+    const currentYear = new Date().getFullYear();
+    const apiEndpoint = `api/interfaces/stats/paiement/PieChart/${currentYear}`;
+    
+    const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure(apiEndpoint);
+    
     useEffect(() => {
         setError(fetchedError)
         setData3(fetchedData);
@@ -92,9 +95,7 @@ const pieData = Object.entries(fetchedData).map(([category, { montant_total }], 
                     borderRadius: 20,
                    // backgroundColor: '#34448B',
                 }}>
-                <Text style={{ color: 'black', fontSize: 16, fontWeight: 'bold' }}>
-                    Dépense Annuelle
-                </Text>
+                
                 <View style={{ padding: 20, alignItems: 'center' }}>
                     <PieChart
                         data={pieData}

@@ -101,7 +101,7 @@ const PaiementsManager = () => {
   };
 
   const renderItem = ({ item }) => {
-    const buttonLabel = item.etat ? 'Unvalidate' : 'Valider';
+    const buttonLabel = item.etat ? 'Invalider' : 'Valider';
     const buttonColor = item.etat ? '#FF6347' : '#65B741';
 
     return (

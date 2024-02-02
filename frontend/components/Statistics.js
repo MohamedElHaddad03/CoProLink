@@ -64,18 +64,25 @@ const Statistics = () => {
             {/* <PieChartComponent data={data} />*/}
             {/* <DoubleLineChart /> */}
             <View style={styles.chart}>
+            <Text style={{marginBottom:10, fontWeight:'500',fontSize:16,textAlign:'center'}}>Suivi des paiements</Text>
+
         <OverviewTable />
       </View>
 
       <View style={styles.chart}>
+        <Text style={{marginBottom:10, fontWeight:'500',fontSize:16,textAlign:'center'}}>Cotisations Mensuelles</Text>
         <BarsChart />
       </View>
 
       <View style={styles.chart}>
+      <Text style={{marginBottom:10, fontWeight:'500',fontSize:16,textAlign:'center'}}>Statut des paiements mensuels</Text>
+
         <DoubleLineChart />
       </View>
 
       <View style={[styles.chart,{marginBottom:100}]}>
+      <Text style={{marginBottom:10, fontWeight:'500',fontSize:16,textAlign:'center'}}>Dépenses Annuelles</Text>
+
         <DonutChart />
       </View>
       </ScrollView>
