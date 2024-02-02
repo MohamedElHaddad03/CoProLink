@@ -162,7 +162,7 @@ const ProfileScreen = () => {
   return (
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Profile</Text>
+        <Text style={styles.title}>Profil</Text>
       </View>
       <View style={styles.inputContainer}>
         <TextInput
@@ -217,7 +217,7 @@ const ProfileScreen = () => {
       />
       </View>
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={[styles.buttonText, styles.boldText]}>Save</Text>
+        <Text style={[styles.buttonText, styles.boldText]}>Enregistrer</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );

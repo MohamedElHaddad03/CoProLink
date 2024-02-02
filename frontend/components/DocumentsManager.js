@@ -342,7 +342,7 @@ const saveChanges = () => {
       <View style={styles.header}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search..."
+          placeholder="Rechercher..."
           value={searchQuery}
           onChangeText={setSearchQuery}
           onSubmitEditing={searchDocument}
@@ -350,7 +350,7 @@ const saveChanges = () => {
         />
         <TouchableOpacity style={styles.importButton} onPress={importDocument}>
           <MaterialIcons name="cloud-upload" size={24} color="#fff" />
-          <Text style={styles.importText}>Import</Text>
+          <Text style={styles.importText}>Importer</Text>
         </TouchableOpacity>
       </View>
       <KeyboardAvoidingView behavior='height'>

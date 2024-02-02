@@ -278,6 +278,8 @@ const UsersManagement = () => {
         });
 
         if (response2.ok) {
+          setShowModal(false)
+          Alert.alert('Success','Utilisateur ajouté avec succés')
           refetch();
         } else {
           throw new Error(`Failed to update prop: ${response2.statusText}`);
@@ -376,12 +378,12 @@ const UsersManagement = () => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>All Users</Text>
+        <Text style={styles.title}>Utilisateurs</Text>
       </View>
       <View style={styles.header}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search..."
+          placeholder="Rechercher..."
           value={searchQuery}
           onChangeText={setSearchQuery}
           onSubmitEditing={searchUser}
@@ -467,7 +469,7 @@ const UsersManagement = () => {
               onChangeText={(text) => handleInputChange('confirmPassword', text)}
             /> */}
             <TouchableOpacity style={styles.modalButton} onPress={() => addUser()}>
-              <Text style={styles.modalButtonText}>Add User</Text>
+              <Text style={styles.modalButtonText}>Ajouter Utilisateur</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal(false)}>
               <Text style={styles.modalButtonText}>Cancel</Text>
@@ -483,7 +485,7 @@ const UsersManagement = () => {
       >
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Modifier User</Text>
+            <Text style={styles.modalTitle}>Modifier Utilisateur</Text>
             <TextInput
               style={styles.modalInput}
               placeholder="CIN"
@@ -532,10 +534,10 @@ const UsersManagement = () => {
             <TouchableOpacity style={styles.modalButton} onPress={() => {
               handleUser(id_current_user);
             }}>
-              <Text style={styles.modalButtonText}>Modifier User</Text>
+              <Text style={styles.modalButtonText}>Modifier Utilisateur</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal2(false)}>
-              <Text style={styles.modalButtonText}>Cancel</Text>
+              <Text style={styles.modalButtonText}>Annuler</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>

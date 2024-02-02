@@ -94,9 +94,10 @@ const PaiementsManager = () => {
   const getMonthName = (dateString) => {
     const date = new Date(dateString);
     const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June', 'July',
-      'August', 'September', 'October', 'November', 'December'
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+      'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
     ];
+    
     return monthNames[date.getMonth()];
   };
 
@@ -137,7 +138,7 @@ const PaiementsManager = () => {
       <View style={styles.header}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search..."
+          placeholder="Rechercher..."
           value={searchQuery}
           onChangeText={setSearchQuery}
         />

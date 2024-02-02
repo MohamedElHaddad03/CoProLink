@@ -12,10 +12,10 @@ const SettingsScreen = ({selectedItem, setSelectedItem}) => {
     //setSelectedItem('Logout');
   }
   const options = [
-    { title: 'Profile', icon: 'person-outline', action: () => setSelectedItem('Profile') },
+    { title: 'Profil', icon: 'person-outline', action: () => setSelectedItem('Profile') },
     // { title: 'Language', icon: 'language-outline', action: () => setSelectedItem('Language') },
     // { title: 'Contact Support', icon: 'chatbubble-ellipses-outline', action: () => setSelectedItem('ContactSupport') },
-    { title: 'Logout', icon: 'exit-outline', action: () => Logout()  },
+    { title: 'Déconnexion', icon: 'exit-outline', action: () => Logout()  },
   ];
 
 

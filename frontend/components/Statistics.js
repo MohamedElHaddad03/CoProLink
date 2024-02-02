@@ -60,7 +60,7 @@ const Statistics = () => {
     return (
         <View style={styles.container}>
             <ScrollView>
-            <Text style={styles.title}>Statistics</Text>
+            <Text style={styles.title}>Statistiques</Text>
             {/* <PieChartComponent data={data} />*/}
             {/* <DoubleLineChart /> */}
             <View style={styles.chart}>

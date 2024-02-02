@@ -3,8 +3,10 @@ import { View, Text, Modal, TouchableOpacity, StyleSheet, TextInput  } from 'rea
 import {Picker} from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import getBaseUrl from '../../config';
+import { useAuth } from '../../Context/AuthContext';
 export  const  DepensePopUp = ({isModalVisible,toggleModal,refetch}) => {
   const [BASEURL,setBaseUrl]=useState('');
+  const {user}=useAuth();
 
   useEffect(() => {
     const fetchBaseUrl = async () => {
@@ -47,34 +49,26 @@ const [selectedCategory, setSelectedCategory] = useState('');
       date_dep: formattedDate,
       id_cop: 1,
     };
-    console.log(newDepense);
+    console.error(newDepense);
 
     try {
-      const response = await fetch(BASEURL+'/api/interfaces/depense/create/', {
+      const response = await fetch(`${BASEURL}/api/interfaces/depense/create/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: "Token " + user.Token,
         },
         body: JSON.stringify(newDepense),
       });
 
       if (response.ok) {
-        // Alert.alert(
-        //     'Success',
-        //     'User deleted successfully',
-        //     [
-        //       {
-        //         text: 'Cancel',
-        //         style: 'cancel',
-        //       },
-        //     ],
-        //     { cancelable: true }
-        //   );
+        refetch();
+        
       } else {
-        throw new Error('Failed to delete user');
+        throw new Error('Failed to add dep');
       }
     } catch (error) {
-      console.error('Error deleting user:', error.message);
+      console.error('Error add dep:', error.message);
     }
 
 
@@ -137,7 +131,6 @@ const [selectedCategory, setSelectedCategory] = useState('');
               maxLength={150}
               style={[styles.input, { maxWidth: '100%' }]}
             />
-            <Text style={{ marginTop: 20, fontSize: 21, fontWeight: 'bold' }}>Catégorie :</Text>
             <View style={styles.btnContainer}>
               <TouchableOpacity onPress={HandleAddDepense} style={[styles.buttons, { backgroundColor: '#65B741' }]}>
                 <Text style={styles.buttonText}>Ajouter</Text>

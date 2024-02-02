@@ -87,7 +87,7 @@ const LoginScreen = () => {
     try {
       login(username, password);
       if (error) {
-        setError2('Login failed !');
+        setError2('Connexion échouée !');
       }
       else setError2('');
 
