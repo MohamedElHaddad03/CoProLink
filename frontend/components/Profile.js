@@ -8,20 +8,20 @@ import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import getBaseUrl from '../config';
 const ProfileScreen = () => {
-  const [BASEURL,setBaseUrl]=useState('');
+  const [BASEURL, setBaseUrl] = useState('');
 
   useEffect(() => {
     const fetchBaseUrl = async () => {
-        try {
-            const BASEURL = await getBaseUrl();
-            setBaseUrl(BASEURL);
-        } catch (error) {
-            console.error("Error fetching BASEURL:", error);
-        }
+      try {
+        const BASEURL = await getBaseUrl();
+        setBaseUrl(BASEURL);
+      } catch (error) {
+        console.error("Error fetching BASEURL:", error);
+      }
     };
 
     fetchBaseUrl(); // Call the async function immediately
-}, []);
+  }, []);
   const [prenom, setPrenom] = useState('');
   const [CIN, setCIN] = useState('');
   const [nom, setNom] = useState('');
@@ -95,7 +95,7 @@ const ProfileScreen = () => {
           try {
             const options = {
               method: 'PUT',
-              url: `${BASEURL}/api/users/${user.User.id}/`,
+              url: `${BASEURL}/api/users/update/${user.User.id}/`,
               data: {
                 "id": user.User.id,
                 "username": username,
@@ -117,7 +117,7 @@ const ProfileScreen = () => {
 
             const response = await axios.request(options);
             console.log(response.data);
-           
+
             saveChanges();
           } catch (error) {
             if (error.response) {
@@ -173,48 +173,48 @@ const ProfileScreen = () => {
         // Disabled CIN input
         />
         <MaterialCommunityIcons name="lock" size={24} color="#3b67bb" style={styles.lockIcon} />
-      
-      <TextInput
-        style={[styles.input, { borderBottomWidth: activeInput === 'Prenom' ? 1 : 0 }]}
-        placeholder="Prenom*"
-        value={prenom}
-        onChangeText={(text) => setPrenom(text)}
-        backgroundColor="#3b67bb20"
-        onFocus={() => handleFocus('Prenom')}
-        onBlur={handleBlur}
-      />
-      <TextInput
-        style={[styles.input, { borderBottomWidth: activeInput === 'Nom' ? 1 : 0 }]} placeholder="Nom*"
-        value={nom}
-        onChangeText={(text) => setNom(text)}
-        backgroundColor="#3b67bb20"
-        onFocus={() => handleFocus('Nom')}
-        onBlur={handleBlur}
-      />
-      <TextInput
-        style={[styles.input, { borderBottomWidth: activeInput === 'Email' ? 1 : 0 }]} placeholder="Email*"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-        backgroundColor="#3b67bb20"
-        onFocus={() => handleFocus('Email')}
-        onBlur={handleBlur}
-      />
-      <TextInput
-        style={[styles.input, { borderBottomWidth: activeInput === 'Phone' ? 1 : 0 }]} placeholder="Phone*"
-        value={phone}
-        onChangeText={(text) => setPhone(text)}
-        backgroundColor="#3b67bb20"
-        onFocus={() => handleFocus('Phone')}
-        onBlur={handleBlur}
-      />
-      <TextInput
-        style={[styles.input, { borderBottomWidth: activeInput === 'Username' ? 1 : 0 }]} placeholder="Username*"
-        value={username}
-        onChangeText={(text) => setUsername(text)}
-        backgroundColor="#3b67bb20"
-        onFocus={() => handleFocus('Username')}
-        onBlur={handleBlur}
-      />
+
+        <TextInput
+          style={[styles.input, { borderBottomWidth: activeInput === 'Prenom' ? 1 : 0 }]}
+          placeholder="Prenom*"
+          value={prenom}
+          onChangeText={(text) => setPrenom(text)}
+          backgroundColor="#3b67bb20"
+          onFocus={() => handleFocus('Prenom')}
+          onBlur={handleBlur}
+        />
+        <TextInput
+          style={[styles.input, { borderBottomWidth: activeInput === 'Nom' ? 1 : 0 }]} placeholder="Nom*"
+          value={nom}
+          onChangeText={(text) => setNom(text)}
+          backgroundColor="#3b67bb20"
+          onFocus={() => handleFocus('Nom')}
+          onBlur={handleBlur}
+        />
+        <TextInput
+          style={[styles.input, { borderBottomWidth: activeInput === 'Email' ? 1 : 0 }]} placeholder="Email*"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+          backgroundColor="#3b67bb20"
+          onFocus={() => handleFocus('Email')}
+          onBlur={handleBlur}
+        />
+        <TextInput
+          style={[styles.input, { borderBottomWidth: activeInput === 'Phone' ? 1 : 0 }]} placeholder="Phone*"
+          value={phone}
+          onChangeText={(text) => setPhone(text)}
+          backgroundColor="#3b67bb20"
+          onFocus={() => handleFocus('Phone')}
+          onBlur={handleBlur}
+        />
+        <TextInput
+          style={[styles.input, { borderBottomWidth: activeInput === 'Username' ? 1 : 0 }]} placeholder="Username*"
+          value={username}
+          onChangeText={(text) => setUsername(text)}
+          backgroundColor="#3b67bb20"
+          onFocus={() => handleFocus('Username')}
+          onBlur={handleBlur}
+        />
       </View>
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={[styles.buttonText, styles.boldText]}>Enregistrer</Text>
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     width: '80%',
-    top: StatusBar.currentHeight +10,
+    top: StatusBar.currentHeight + 10,
     marginLeft: '10%',
   },
   titleContainer: {
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     position: 'absolute',
-    top:'7%',
+    top: '7%',
   },
   title: {
     fontSize: 24,

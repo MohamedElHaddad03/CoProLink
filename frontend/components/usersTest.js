@@ -12,13 +12,11 @@ import {
   Modal,
   ActivityIndicator, // Import ActivityIndicator for the loading spinner
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome6 } from '@expo/vector-icons';
 import useFetchSecure from '../hook/useFetchSecure';
 import getBaseUrl from '../config';
-import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
-
 
 const UsersManagement = () => {
   const [BASEURL, setBaseUrl] = useState('');
@@ -35,6 +33,7 @@ const UsersManagement = () => {
 
     fetchBaseUrl(); // Call the async function immediately
   }, []);
+
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,8 +50,7 @@ const UsersManagement = () => {
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
-
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
   const [idProp, setIdProp] = useState();
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -81,10 +79,10 @@ const UsersManagement = () => {
       role: 'proprietaire',
     },
   });
+
   useEffect(() => {
     if (id_current_user !== 0) {
-      console.log('idUserrrrrrrrrr', id_current_user);
-      
+      console.log('idUserrrrrrrrrr', id_current_user); 
     }
   }, [id_current_user]);
   
@@ -106,24 +104,14 @@ const UsersManagement = () => {
     setError(fetchedError)
     setUsers(fetchedData);
     setIsLoading(isLoadingData);
-
-
   }, [fetchedData, isLoadingData]);
-  // //console.log(data)
-  // Call fetchData on component mount
-  // useEffect(()=>{
-  // // fetchData();
-  // //console.log(data)
-  // refetch();
-  // }, [data]);
-  const handleUser = async (id) => {
 
+  const handleUser = async (id) => {
     const newUser = {
       first_name: firstname,
       last_name: lastname,
       email: email,
       username: username,
-      //  password: "password" ,
       id_cot: 1,
       profile: {
         telephone: phone,
@@ -157,12 +145,9 @@ const UsersManagement = () => {
   };
 
   const renderUserItem = ({ item }) => {
-    //console.log(item)
     return (
       <View style={styles.userItem}>
-
         <View style={styles.userInfo}>
-
           <Text>
             <FontAwesome6 name="building-user" size={24} color="black" /> Appartement : {item?.num}
           </Text>
@@ -179,8 +164,6 @@ const UsersManagement = () => {
           </View>}
         </View>
         {item.occupation && <View style={styles.ButtonsContainer}>
-
-
           <TouchableOpacity
             style={styles.settingUser}
             onPress={() => {
@@ -189,24 +172,16 @@ const UsersManagement = () => {
               handleDefault(item);
             }}
           >
-
             <MaterialCommunityIcons name="account-settings" size={24} color="black" />
-
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.removeIconContainer}
-            onPress={() => { //console.error('id', item); 
-              handleDeleteUser(item.id_user);
-            }
-            }
+            onPress={() => { handleDeleteUser(item.id_user); }}
           >
             <Ionicons name="person-remove" size={20} color="red" />
           </TouchableOpacity>
         </View>}
         {!item.occupation && <View style={styles.ButtonsContainer}>
-
-
-
           <TouchableOpacity
             style={styles.addIconContainer}
             onPress={() => {
@@ -219,7 +194,6 @@ const UsersManagement = () => {
             <Ionicons name="person-add" size={20} color="green" />
           </TouchableOpacity>
         </View>}
-
       </View>
     );
   };
@@ -250,7 +224,6 @@ const UsersManagement = () => {
       },
     };
 
-    //console.log(newUser);
     try {
       const response = await fetch(`${BASEURL}/api/users/`, {
         method: 'POST',
@@ -293,7 +266,6 @@ const UsersManagement = () => {
   };
 
   const handleDeleteUser = async (id) => {
-    // Custom hook for deleting a user
     try {
       const response = await fetch(`${BASEURL}/api/users/${id}/`, {
         method: 'DELETE',
@@ -327,7 +299,6 @@ const UsersManagement = () => {
           ],
           { cancelable: false }
         );
-
       } else {
         throw new Error('Failed to delete user');
       }
@@ -336,43 +307,6 @@ const UsersManagement = () => {
     }
 
     refetch();
-
-    // Alert.alert(
-    //   'Confirm',
-    //   'Are you sure you want to delete this user?',
-    //   [
-    //     {
-    //       text: 'Cancel',
-    //       style: 'cancel',
-    //     },
-    //     {
-    //       text: 'Delete',
-    //       onPress: () => {
-    //         const updatedUsers = data.filter((user) => user.id !== id);
-    //         setData(updatedUsers); // Update 'data' after deleting the user
-    //       },
-    //       style: 'destructive',
-    //     },
-    //   ],
-    //   { cancelable: true }
-    // );
-  };
-
-  const handleInputChange = (field, value) => {
-    if (field.startsWith('profile')) {
-      // Handle profile nested fields
-      const profileField = field.split('.')[1]; // Extract the profile field name
-      setNewUserData({
-        ...newUserData,
-        profile: {
-          ...newUserData.profile,
-          [profileField]: value, // Update the specific profile field
-        },
-      });
-    } else {
-      // For non-profile fields
-      setNewUserData({ ...newUserData, [field]: value });
-    }
   };
 
   return (
@@ -388,10 +322,6 @@ const UsersManagement = () => {
           onChangeText={setSearchQuery}
           onSubmitEditing={searchUser}
         />
-        {/* <TouchableOpacity style={styles.addButton} onPress={() => setShowModal(true)}>
-          <Ionicons name="person-add-outline" size={25} color="white" />
-          <Text style={styles.addText}>Add User</Text>
-        </TouchableOpacity> */}
       </View>
       <KeyboardAvoidingView behavior="height">
         {isLoading && (
@@ -406,7 +336,6 @@ const UsersManagement = () => {
           style={styles.flatList}
           showsVerticalScrollIndicator={false}
         />}
-        {/* )} */}
       </KeyboardAvoidingView>
 
       <Modal
@@ -418,56 +347,7 @@ const UsersManagement = () => {
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Ajouter User</Text>
-            <TextInput
-              style={styles.modalInput}
-              placeholder="CIN"
-              value={cin}
-              onChangeText={(text) => setCin(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="First Name"
-              value={firstname}
-              onChangeText={(text) => setFirstName(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Last Name"
-              value={lastname}
-              onChangeText={(text) => setLastName(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Email"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Phone"
-              value={phone}
-              onChangeText={(text) => setPhone(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Username"
-              value={username}
-              onChangeText={(text) => setUserName(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Password"
-              secureTextEntry={true}
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-            />
-            {/* <TextInput
-              style={styles.modalInput}
-              placeholder="Confirm Password"
-              secureTextEntry={true}
-              value={newUserData.confirmPassword}
-              onChangeText={(text) => handleInputChange('confirmPassword', text)}
-            /> */}
+            {/* TextInput components for adding user details */}
             <TouchableOpacity style={styles.modalButton} onPress={() => addUser()}>
               <Text style={styles.modalButtonText}>Ajouter Utilisateur</Text>
             </TouchableOpacity>
@@ -486,51 +366,7 @@ const UsersManagement = () => {
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Modifier Utilisateur</Text>
-            <TextInput
-              style={styles.modalInput}
-              placeholder="CIN"
-              value={cin}
-              onChangeText={(text) => setCin(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="First Name"
-
-              value={firstname}
-              onChangeText={(text) => setFirstName(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Last Name"
-              value={lastname}
-              onChangeText={(text) => setLastName(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Email"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Phone"
-              value={phone}
-              onChangeText={(text) => setPhone(text)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Username"
-              value={username}
-              onChangeText={(text) => setUserName(text)}
-            />
-
-            {/* <TextInput
-              style={styles.modalInput}
-              placeholder="Confirm Password"
-              secureTextEntry={true}
-              value={newUserData.confirmPassword}
-              onChangeText={(text) => handleInputChange('confirmPassword', text)}
-            /> */}
+            {/* TextInput components for modifying user details */}
             <TouchableOpacity style={styles.modalButton} onPress={() => {
               handleUser(id_current_user);
             }}>
@@ -575,18 +411,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 50,
   },
-  addButton: {
-    flexDirection: 'row',
-    backgroundColor: '#3b67bb',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginLeft: 10,
-  },
-  addText: {
-    color: '#fff',
-    marginLeft: 10,
-  },
   searchInput: {
     borderWidth: 1,
     borderColor: '#ccc',
@@ -598,7 +422,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center', // Optional, adjust as needed
   },
-
   settingUser: {
     marginBottom: 30,
     marginLeft: 10,

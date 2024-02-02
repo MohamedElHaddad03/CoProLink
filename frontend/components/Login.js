@@ -191,8 +191,8 @@ const LoginScreen = () => {
       username: usernameSU,
       password: passwordSU,
       email: email,
-      firstname: firstname,
-      lastname: lastname,
+      first_name: firstname,
+      lastn_ame: lastname,
       profile: {
         cin: cin,
         telephone: phone,
