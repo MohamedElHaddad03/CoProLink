@@ -89,9 +89,9 @@ const [selectedCategory, setSelectedCategory] = useState('');
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <TouchableOpacity onPress={toggleModal} style={styles.close}>
+            {user.User?.profile?.role=="syndic"&&<TouchableOpacity onPress={toggleModal} style={styles.close}>
               <Ionicons name="close" size={30} color="red" />
-            </TouchableOpacity>
+            </TouchableOpacity>}
             <Text style={{ marginTop: 20, fontSize: 21, fontWeight: 'bold' }}>Depense :</Text>
             <TextInput
               id="Name"

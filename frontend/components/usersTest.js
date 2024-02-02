@@ -168,7 +168,7 @@ const UsersManagement = () => {
           </Text>
           {item.occupation && <View>
             <Text>
-              {item.user?.first_name} : {item.user?.last_name}
+              {item.user?.first_name}  {item.user?.last_name}
             </Text>
             <Text>
               Email : {item.user?.email}
@@ -417,7 +417,7 @@ const UsersManagement = () => {
       >
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add User</Text>
+            <Text style={styles.modalTitle}>Ajouter User</Text>
             <TextInput
               style={styles.modalInput}
               placeholder="CIN"

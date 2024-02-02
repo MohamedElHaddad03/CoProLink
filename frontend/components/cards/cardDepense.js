@@ -2,10 +2,13 @@ import { Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View } 
 import { Ionicons } from '@expo/vector-icons';
 import getBaseUrl from "../../config";
 import { useEffect,useState } from "react";
+import { useAuth } from "../../Context/AuthContext";
 
 
 const CardDepense = ({ item,refetch }) => {
   const [BASEURL,setBaseUrl]=useState('');
+  const {user}=useAuth();
+
 
   useEffect(() => {
     const fetchBaseUrl = async () => {
@@ -84,9 +87,9 @@ const handleDeleteDepense = async (id) => {
         {/* <View style={styles.cardImage}> */}
             
             {/* </View> */}
-            <TouchableOpacity onPress={() => handleDeleteDepense(item.id_depense)}>
+            {user.User?.profile?.role=="syndic"&&<TouchableOpacity onPress={() => handleDeleteDepense(item.id_depense)}>
                   <Ionicons name="trash-bin" size={24} color="red" />
-                </TouchableOpacity>
+                </TouchableOpacity>}
         
       </View>
       <View style={styles.divider} />
