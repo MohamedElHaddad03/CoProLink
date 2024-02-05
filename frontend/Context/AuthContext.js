@@ -1,38 +1,48 @@
-// AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import getBaseUrl from '../config';
-import { err } from 'react-native-svg';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [BASEURL,setBaseUrl]=useState('');
-
-  useEffect(() => {
-    const fetchBaseUrl = async () => {
-        try {
-            const BASEURL = await getBaseUrl();
-            setBaseUrl(BASEURL);
-        } catch (error) {
-            console.error("Error fetching BASEURL:", error);
-        }
-    };
-
-    fetchBaseUrl(); // Call the async function immediately
-}, []);
-console.log('BASE2',BASEURL)
+  const [BASEURL, setBaseUrl] = useState('');
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
   const [user, setUser] = useState(null);
-  // const [cryptedUser,setCryptedUser] =useState()
-  const login = async (username, password) => {
-    const userProps = {
-      username: username,
-      password: password
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+      try {
+        const BASEURL = await getBaseUrl();
+        setBaseUrl(BASEURL);
+      } catch (error) {
+        console.error("Error fetching BASEURL:", error);
+      }
     };
 
+    fetchBaseUrl(); // Call the async function immediately
+  }, []);
+
+  useEffect(() => {
+    // Check if user is authenticated from local storage
+    const checkAuthState = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('userData');
+        if (userData) {
+          setUser(JSON.parse(userData));
+          setAuthenticated(true);
+        }
+      } catch (error) {
+        console.error("Error checking auth state:", error);
+      }
+    };
+
+    checkAuthState();
+  }, []);
+
+  const login = async (username, password) => {
     try {
       setIsLoading(true);
       const response = await axios.post(BASEURL + '/login/', {
@@ -40,11 +50,13 @@ console.log('BASE2',BASEURL)
         password: password
       });
 
-      setUser(response.data); // Assuming that the server returns user data including token and role
+      setUser(response.data);
       setAuthenticated(true);
-      console.log("context :", user.User)
+      
+      // Save user data to local storage
+      await AsyncStorage.setItem('userData', JSON.stringify(response.data));
     } catch (error) {
-      console.log(error)
+      console.log(error);
       setError(error);
     } finally {
       setIsLoading(false);
@@ -52,19 +64,13 @@ console.log('BASE2',BASEURL)
   };
 
   const logout = async () => {
-    const options = {
-      method: 'GET',
-      url: BASEURL + '/logout/',
-      params: {},
-      // Add other options as needed (headers, data for POST/PUT, etc.)
-      headers: {
-        Authorization: "Token " + user.Token
-      },
-    };
-    const response = await axios.request(options);
+    try {
+      await AsyncStorage.removeItem('userData');
+    } catch (error) {
+      console.error("Error removing user data from storage:", error);
+    }
     setAuthenticated(false);
     setUser(null);
-    console.log('logout:', isAuthenticated, user)
   };
 
   return (

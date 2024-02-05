@@ -8,10 +8,10 @@ export default function App() {
   Platform.OS === "android" && StatusBar.setBackgroundColor("transparent");
   Platform.OS === "android" && StatusBar.setTranslucent(true);
   return (
-    <GestureHandlerRootView style={{ flex: 1,top:0 }}>
+    <GestureHandlerRootView style={{ flex: 1, top: 0 }}>
       <AuthProvider>
-      <MainScreen />
-    </AuthProvider>
+        <MainScreen />
+      </AuthProvider>
 
     </GestureHandlerRootView>
   );
@@ -19,6 +19,6 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    top:StatusBar.currentHeight,
+    top: StatusBar.currentHeight,
   },
 });

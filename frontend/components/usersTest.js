@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Picker } from '@react-native-picker/picker';
+
 import {
   View,
   Text,
@@ -53,6 +55,7 @@ const UsersManagement = () => {
   const [users1, setUsers1] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
+  const [showModal3, setShowModal3] = useState(false);
 
   const [error, setError] = useState(null);
   const [idProp, setIdProp] = useState();
@@ -68,6 +71,18 @@ const UsersManagement = () => {
   const [passwordSU, setPasswordSU] = useState('');
   const [profile, setProfile] = useState('');
   const [error2, setError2] = useState('');
+  const [montantNormal, setMontantNormal] = useState(0);
+  const [montantBuisness, setMontantBuisness] = useState(0);
+  const [montantExceptionnel, setMontantExcetionnel] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('Cotisation Normale');
+
+  const categories = [
+    'Cotisation Normale',
+    'Cotisation Buisness',
+    'Cotisation Exceptionnelle',
+
+  ];
+
   const [id_current_user, setIdUser] = useState(0);
 
   const [newUserData, setNewUserData] = useState({
@@ -86,10 +101,10 @@ const UsersManagement = () => {
   useEffect(() => {
     if (id_current_user !== 0) {
       console.log('idUserrrrrrrrrr', id_current_user);
-      
+
     }
   }, [id_current_user]);
-  
+
   // Replace the axios.request options with the useFetch hook
 
   const handleDefault = (item) => {
@@ -170,9 +185,11 @@ const UsersManagement = () => {
             <FontAwesome6 name="building-user" size={24} color="black" /> Appartement : {item?.num}
           </Text>
           {item.occupation && <View>
+
             <Text>
-              {item.user?.first_name}  {item.user?.last_name}
+              Nom : {item.user?.first_name}  {item.user?.last_name}
             </Text>
+            <Text>Statut :  </Text>
             <Text>
               Email : {item.user?.email}
             </Text>
@@ -291,7 +308,7 @@ const UsersManagement = () => {
 
         if (response2.ok) {
           setShowModal(false)
-          Alert.alert('Success','Utilisateur ajouté avec succés')
+          Alert.alert('Success', 'Utilisateur ajouté avec succés')
           refetch();
         } else {
           throw new Error(`Failed to update prop: ${response2.statusText}`);
@@ -389,12 +406,13 @@ const UsersManagement = () => {
 
   return (
     <View style={styles.container}>
-      
+
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Utilisateurs</Text>
       </View>
-      <View style={styles.header}>
       
+      <View style={[styles.header]}>
+
         <TextInput
           style={styles.searchInput}
           placeholder="Rechercher..."
@@ -404,12 +422,20 @@ const UsersManagement = () => {
         />
 
       </View>
-      <TouchableOpacity style={styles.ButtonsContainer}>
-        <Text>
-          Cotisation
-        </Text>
-      </TouchableOpacity>
-      <KeyboardAvoidingView behavior="height">
+
+      <KeyboardAvoidingView behavior="height" >
+        <TouchableOpacity onPress={() => setShowModal3(true)} style={styles.ButtonCotisation}>
+          <Text style={styles.buttonText}>
+            Cotisation
+          </Text>
+          <Ionicons
+            name="add-circle-outline"
+            size={30}
+            color="white"
+            style={{ marginLeft: 7 }}
+          // Change 'true' to {true}
+          />
+        </TouchableOpacity>
         {isLoading && (
           <ActivityIndicator size="large" color="#3b67bb" />
         )}
@@ -487,6 +513,7 @@ const UsersManagement = () => {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -523,8 +550,9 @@ const UsersManagement = () => {
             />
             <TextInput
               style={styles.modalInput}
-              placeholder="Phone"
+              placeholder="Téléphone"
               value={phone}
+              keyboardType="numeric"
               onChangeText={(text) => setPhone(text)}
             />
             <TextInput
@@ -533,7 +561,17 @@ const UsersManagement = () => {
               value={username}
               onChangeText={(text) => setUserName(text)}
             />
-
+            <Picker
+              selectedValue={selectedCategory}
+              onValueChange={(itemValue, itemIndex) => setSelectedCategory(itemValue)}
+              style={styles.input}
+              itemStyle={styles.pickerItem} // Style des éléments de la liste déroulante
+              mode="dropdown" // Mode de la liste déroulante
+            >
+              {categories.map((category, index) => (
+                <Picker.Item key={index} label={category} value={category} />
+              ))}
+            </Picker>
 
             <TouchableOpacity style={styles.modalButton} onPress={() => {
               handleUser(id_current_user);
@@ -541,6 +579,71 @@ const UsersManagement = () => {
               <Text style={styles.modalButtonText}>Modifier Utilisateur</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal2(false)}>
+              <Text style={styles.modalButtonText}>Annuler</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showModal3}
+        onRequestClose={() => setShowModal3(false)}
+      >
+        <KeyboardAvoidingView style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Modifier les cotisations</Text>
+            <Picker
+              selectedValue={selectedCategory}
+              onValueChange={(itemValue, itemIndex) => setSelectedCategory(itemValue)}
+              style={styles.input}
+              itemStyle={styles.pickerItem} // Style des éléments de la liste déroulante
+              mode="dropdown" // Mode de la liste déroulante
+            >
+              {categories.map((category, index) => (
+                <Picker.Item key={index} label={category} value={category} />
+              ))}
+            </Picker>
+
+            {selectedCategory === 'Cotisation Normale' && <View>
+              <Text >Modifier la cotisation normale</Text>
+              <TextInput
+
+                style={styles.modalInput}
+                keyboardType="numeric"
+                placeholder="Cotisation normale"
+                value={montantNormal}
+                onChangeText={(text) => setMontantNormal(text)}
+              />
+            </View>}
+            {selectedCategory === 'Cotisation Buisness' && <View>
+              <Text >Modifier la cotisation buisness</Text>
+
+              <TextInput
+                style={styles.modalInput}
+                keyboardType="numeric"
+                placeholder="Cotisation buisness"
+                value={montantBuisness}
+                onChangeText={(text) => setMontantBuisness(text)}
+              />
+            </View>}
+            {selectedCategory === 'Cotisation Exceptionnelle' && <View>
+              <Text >Modifier la cotisation exceptionnelle</Text>
+
+              <TextInput
+                style={styles.modalInput}
+                keyboardType="numeric"
+                placeholder="Cotisation exceptionnelle"
+                value={montantExceptionnel}
+                onChangeText={(text) => setMontantExcetionnel(text)}
+              />
+            </View>}
+
+
+            <TouchableOpacity style={styles.modalButton} onPress={() => addUser()}>
+              <Text style={styles.modalButtonText}>Confirmer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal3(false)}>
               <Text style={styles.modalButtonText}>Annuler</Text>
             </TouchableOpacity>
           </View>
@@ -554,6 +657,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     flex: 1,
+    flexDirection:'column',
     padding: 20,
     backgroundColor: '#fff',
     alignSelf: 'center',
@@ -564,16 +668,18 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
   },
   titleContainer: {
-    top: '1%',
+    top: StatusBar.currentHeight ,
     alignSelf: 'center',
     alignItems: 'center',
-    position: 'absolute',
+ //   position: 'absolute',
   },
   title: {
     fontSize: 24,
+   // marginBottom:125,
     fontWeight: '300',
   },
   header: {
+   // top:100,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
@@ -618,8 +724,39 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-between', // Aligns items along the main axis with space in between
   },
+  ButtonCotisation: {
+    width: 'auto',
+    backgroundColor: '#115E83',
+    paddingHorizontal: 50,
+    paddingVertical: 10,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // Centrer horizontalement
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
   userInfo: {
+    fontSize: 15,
     flex: 1, // Takes remaining space in the row
+  },
+  input: {
+    height: 40,
+    borderColor: 'black',
+    borderWidth: 10,
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    marginBottom: 10, // Ajoute un espace en bas du composant
+    backgroundColor: '#00000010', // Couleur de fond du composant
+  },
+  pickerItem: {
+    fontSize: 16, // Taille de la police pour les éléments de la liste déroulante
+    color: 'black', // Couleur du texte des éléments de la liste déroulante
   },
   removeIconContainer: {
     marginLeft: 10, // Provides some spacing between user info and remove icon
@@ -630,8 +767,10 @@ const styles = StyleSheet.create({
   flatList: {
     alignSelf: 'center',
     width: '100%',
-    maxHeight: '85%',
+    maxHeight: '80%',
     marginTop: 20,
+    paddingBottom:100,
+    
   },
   modalContainer: {
     flex: 1,
@@ -656,7 +795,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+
     padding: 8,
+    paddingTop: 10,
     marginBottom: 15,
   },
   modalButton: {
