@@ -121,6 +121,7 @@ const {user}=useAuth();
           data={categories}
           renderItem={({ item: category }) => renderCategory(category)}
           keyExtractor={(category) => category}
+          showsVerticalScrollIndicator={false}
         />
       )}
     </View>
