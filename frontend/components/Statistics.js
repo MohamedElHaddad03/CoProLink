@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'center',
         width: '80%',
-        top: '10%',
+        top: StatusBar.currentHeight,
         left: '5%',
         height: Dimensions.get('window').height,
     },

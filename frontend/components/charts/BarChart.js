@@ -7,23 +7,23 @@ import useFetchSecure from '../../hook/useFetchSecure';
 
 const BarsChart = () => {
 
-const [data3,setData3]=useState([]);
-const [isLoading, setIsLoading] = useState(false);
+  const [data3, setData3] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-//http://192.168.1.154:8001/api/interfaces/stats/paiementper/2023-01-01/2024-01-01
-const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/stats/paiement/chart');
+  //http://192.168.1.154:8001/api/interfaces/stats/paiementper/2023-01-01/2024-01-01
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/stats/paiement/chart');
 
-    useEffect(() => {
-        setError(fetchedError)
-        setData3(fetchedData);
-        setIsLoading(isLoadingData);
+  useEffect(() => {
+    setError(fetchedError)
+    setData3(fetchedData);
+    setIsLoading(isLoadingData);
 
 
-    }, [fetchedData, isLoadingData]);
+  }, [fetchedData, isLoadingData]);
 
-    useEffect(()=>{
-        refetch();
-    },[])
+  useEffect(() => {
+    refetch();
+  }, [])
   // const data = [{value: 250, label: 'M'},
   // {value: 500, label: 'T', frontColor: '#177AD5'},
   // {value: 745, label: 'W', frontColor: '#177AD5'},
@@ -34,14 +34,16 @@ const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetc
   const data = data3.map(({ mois, montant_total }) => ({
     value: parseFloat(montant_total),
     label: getMonthLabel(mois), // Assuming you have a function to get the label for the month
-    frontColor: mois%2===0 ? '#177AD590' : "#607D8B90",
+    frontColor: mois % 2 === 0 ? '#177AD590' : "#607D8B90",
   }));
   function getMonthLabel(month) {
+
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
+      'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
     ];
-  
+
+
     return months[month - 1] || '';
   }
   return (<BarChart
@@ -64,16 +66,16 @@ const DonutChart = () => {
 
   const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }]
   return (<PieChart data={data}
- 
-      showText
-      textColor="black"
-      radius={150}
-      textSize={20}
-      focusOnPress
-      showValuesAsLabels
-      showTextBackground
-      textBackgroundRadius={26}
-       />)
+
+    showText
+    textColor="black"
+    radius={150}
+    textSize={20}
+    focusOnPress
+    showValuesAsLabels
+    showTextBackground
+    textBackgroundRadius={26}
+  />)
 };
 
 // <LineChart data = {data} />

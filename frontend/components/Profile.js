@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, StatusBar, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
@@ -32,69 +32,69 @@ const ProfileScreen = () => {
   const [activeInput, setActiveInput] = useState('');
   const [data, setData] = useState(null); // Initialize 'data' state
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [saved, setSaved] = useState(false)
   const { user } = useAuth();
-  //const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure(`api/users/${user.User.id}`);
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure(`api/users/${user.User.id}`);
 
-
-
-
-  // useEffect(() => {
-  //   setError(fetchedError);
-  //   setData(fetchedData);
-  //   setIsLoading(isLoadingData);
-
-  //   if (fetchedData) {
-  //     setEmail(fetchedData.email);
-  //     setNom(fetchedData.last_name);
-  //     setPrenom(fetchedData.first_name);
-
-  //     if (fetchedData.profile) {
-  //       setPhone(fetchedData.profile.telephone);
-  //       setCIN(fetchedData.profile.cin);
-  //     }
-
-  //     setUsername(fetchedData.username);
-  //   }
-  // }, [fetchedData, isLoadingData, fetchedError]);
-
-  // useEffect(() => {
-
-  //     refetch();
-
-  // }, []);
 
 
 
   useEffect(() => {
-    console.log("test user", user);
-    setEmail(user.User.email);
-    setNom(user.User.last_name);
-    setPrenom(user.User.first_name);
+    setError(fetchedError);
+    setData(fetchedData);
+    setIsLoading(isLoadingData);
 
-    if (user.User.profile) {
-      setPhone(user.User.profile.telephone);
-      setCIN(user.User.profile.cin);
+    if (fetchedData) {
+      setEmail(fetchedData.email);
+      setNom(fetchedData.last_name);
+      setPrenom(fetchedData.first_name);
+
+      if (fetchedData.profile) {
+        setPhone(fetchedData.profile.telephone);
+        setCIN(fetchedData.profile.cin);
+      }
+
+      setUsername(fetchedData.username);
     }
+  }, [fetchedData, isLoadingData, fetchedError]);
 
-    setUsername(user.User.username);
-    console.log(username, nom)
+  useEffect(() => {
 
-  }, [user]);
+    refetch();
+
+  }, []);
+
+
+
+  // useEffect(() => {
+  //   console.log("test user", user);
+  //   setEmail(user.User.email);
+  //   setNom(user.User.last_name);
+  //   setPrenom(user.User.first_name);
+
+  //   if (user.User.profile) {
+  //     setPhone(user.User.profile.telephone);
+  //     setCIN(user.User.profile.cin);
+  //   }
+
+  //   setUsername(user.User.username);
+  //   console.log(username, nom)
+
+  // }, [user]);
 
 
 
   const handleSave = async () => {
-    Alert.alert('Confirmation', 'Save changes?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert('Confirmation', 'Enregistrer les modifications?', [
+      { text: 'Annuler', style: 'cancel' },
       {
-        text: 'Save',
+        text: 'Enregistrer',
         onPress: async () => {
           try {
             const options = {
-              method: 'PUT',
+              method: 'PATCH',
               url: `${BASEURL}/api/users/update/${user.User.id}/`,
               data: {
                 "id": user.User.id,
@@ -117,8 +117,10 @@ const ProfileScreen = () => {
 
             const response = await axios.request(options);
             console.log(response.data);
-
             saveChanges();
+
+
+
           } catch (error) {
             if (error.response) {
               // The request was made, but the server responded with a status code
@@ -148,7 +150,7 @@ const ProfileScreen = () => {
 
 
   const saveChanges = () => {
-    Alert.alert('Success', 'Changes saved successfully!');
+    Alert.alert('Succès', 'Modifications enregistrées avec succès!');
   };
 
   const handleFocus = (inputName) => {
@@ -163,7 +165,12 @@ const ProfileScreen = () => {
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Profil</Text>
+        
       </View>
+      {isLoading && (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+      {!isLoading && <>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -218,7 +225,7 @@ const ProfileScreen = () => {
       </View>
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={[styles.buttonText, styles.boldText]}>Enregistrer</Text>
-      </TouchableOpacity>
+      </TouchableOpacity></>}
     </KeyboardAvoidingView>
   );
 };
@@ -231,15 +238,16 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     width: '80%',
-    top: StatusBar.currentHeight + 10,
+    top: StatusBar.currentHeight,
     marginLeft: '10%',
   },
   titleContainer: {
     top: 0,
+    paddingBottom: '15%', //padding = 0 si le clavier est ouvert
     alignSelf: 'center',
     alignItems: 'center',
-    position: 'absolute',
-    top: '7%',
+    // position: 'absolute',
+    // top: '7%',
   },
   title: {
     fontSize: 24,
@@ -281,8 +289,9 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: '#3b67bb',
     padding: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
-    width: '40%',
+    width: 'auto',
     alignSelf: 'center',
     marginTop: 20,
   },

@@ -4,7 +4,7 @@ import { AuthProvider, useAuth } from './Context/AuthContext'; // Assurez-vous d
 import LoginScreen from './components/Login';
 import ProfileScreen from './components/Profile';
 import Sidebar from './components/sideBar';
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, StatusBar, View } from 'react-native';
 import ControllerComponent from './components/Controller';
 import SidebarAdmin from './components/sideBarAdmin';
 import SidebarUser from './components/sideBarUser';
@@ -19,7 +19,7 @@ console.log("main",isAuthenticated)
 
   return (
     
-      <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
+      <View style={{ top:0,flex: 1, flexDirection: 'column' }}>
 
         {isAuthenticated   ? (
           <>
@@ -40,7 +40,7 @@ console.log("main",isAuthenticated)
           <LoginScreen />
         )}
        
-      </SafeAreaView>
+      </View>
       
   );
 };

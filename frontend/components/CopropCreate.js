@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, StatusBar } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 import useFetchSecure from '../hook/useFetchSecure';
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     width: '80%',
-    top: '10%',
+    top: StatusBar.currentHeight,
     marginLeft: '10%',
   },
   titleContainer: {

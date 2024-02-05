@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "coprolink",
-    "slug": "coprolink",
+    "name": "Coprolink",
+    "slug": "Coprolink",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/Logo_CoProLink_Text.png",
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/images/Logo_CoProLink_Text.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.ana20035.coprolink"

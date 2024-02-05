@@ -10,13 +10,16 @@ import {
   Dimensions,
   Alert,
   Modal,
-  ActivityIndicator, // Import ActivityIndicator for the loading spinner
+  ActivityIndicator,
+  StatusBar, // Import ActivityIndicator for the loading spinner
 } from 'react-native';
-import { Ionicons, FontAwesome6 } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import useFetchSecure from '../hook/useFetchSecure';
 import getBaseUrl from '../config';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
+
 
 const UsersManagement = () => {
   const [BASEURL, setBaseUrl] = useState('');
@@ -33,7 +36,6 @@ const UsersManagement = () => {
 
     fetchBaseUrl(); // Call the async function immediately
   }, []);
-
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -48,9 +50,11 @@ const UsersManagement = () => {
   });
   const [data, setData] = useState(null); // Initialize 'data' state
   const [users, setUsers] = useState([]);
+  const [users1, setUsers1] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
-  const [error, setError] = useState('');
+
+  const [error, setError] = useState(null);
   const [idProp, setIdProp] = useState();
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -79,10 +83,10 @@ const UsersManagement = () => {
       role: 'proprietaire',
     },
   });
-
   useEffect(() => {
     if (id_current_user !== 0) {
-      console.log('idUserrrrrrrrrr', id_current_user); 
+      console.log('idUserrrrrrrrrr', id_current_user);
+      
     }
   }, [id_current_user]);
   
@@ -104,14 +108,25 @@ const UsersManagement = () => {
     setError(fetchedError)
     setUsers(fetchedData);
     setIsLoading(isLoadingData);
-  }, [fetchedData, isLoadingData]);
+    setUsers1(fetchedData);
 
+
+  }, [fetchedData, isLoadingData]);
+  // //console.log(data)
+  // Call fetchData on component mount
+  // useEffect(()=>{
+  // // fetchData();
+  // //console.log(data)
+  // refetch();
+  // }, [data]);
   const handleUser = async (id) => {
+
     const newUser = {
       first_name: firstname,
       last_name: lastname,
       email: email,
       username: username,
+      //  password: "password" ,
       id_cot: 1,
       profile: {
         telephone: phone,
@@ -145,9 +160,12 @@ const UsersManagement = () => {
   };
 
   const renderUserItem = ({ item }) => {
+    //console.log(item)
     return (
       <View style={styles.userItem}>
+
         <View style={styles.userInfo}>
+
           <Text>
             <FontAwesome6 name="building-user" size={24} color="black" /> Appartement : {item?.num}
           </Text>
@@ -164,6 +182,8 @@ const UsersManagement = () => {
           </View>}
         </View>
         {item.occupation && <View style={styles.ButtonsContainer}>
+
+
           <TouchableOpacity
             style={styles.settingUser}
             onPress={() => {
@@ -172,16 +192,24 @@ const UsersManagement = () => {
               handleDefault(item);
             }}
           >
+
             <MaterialCommunityIcons name="account-settings" size={24} color="black" />
+
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.removeIconContainer}
-            onPress={() => { handleDeleteUser(item.id_user); }}
+            onPress={() => { //console.error('id', item); 
+              handleDeleteUser(item.id_user);
+            }
+            }
           >
             <Ionicons name="person-remove" size={20} color="red" />
           </TouchableOpacity>
         </View>}
         {!item.occupation && <View style={styles.ButtonsContainer}>
+
+
+
           <TouchableOpacity
             style={styles.addIconContainer}
             onPress={() => {
@@ -194,17 +222,28 @@ const UsersManagement = () => {
             <Ionicons name="person-add" size={20} color="green" />
           </TouchableOpacity>
         </View>}
+
       </View>
     );
   };
 
   const searchUser = () => {
-    const filteredUsers = data.filter(
-      (user) =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.lastname.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setData(filteredUsers);
+    if (searchQuery.trim() === '') {
+      // If the search query is empty, reset the users to the original data
+      setUsers(fetchedData);
+    } else {
+      const filteredUsers = users1.filter(item => {
+        if (item.occupation && item.user) {
+          const fullName = `${item.user.first_name} ${item.user.last_name}`;
+          return (
+            fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.user.email.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
+        return false;
+      });
+      setUsers(filteredUsers);
+    }
   };
 
   const addUser = async () => {
@@ -266,6 +305,7 @@ const UsersManagement = () => {
   };
 
   const handleDeleteUser = async (id) => {
+    // Custom hook for deleting a user
     try {
       const response = await fetch(`${BASEURL}/api/users/${id}/`, {
         method: 'DELETE',
@@ -275,7 +315,7 @@ const UsersManagement = () => {
         if (response.ok) {
           const responseData = await response.json();
           const response2 = await fetch(`${BASEURL}/api/interfaces/prop/update/${idProp}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Token ' + user.Token,
@@ -299,6 +339,7 @@ const UsersManagement = () => {
           ],
           { cancelable: false }
         );
+
       } else {
         throw new Error('Failed to delete user');
       }
@@ -307,6 +348,43 @@ const UsersManagement = () => {
     }
 
     refetch();
+
+    // Alert.alert(
+    //   'Confirm',
+    //   'Are you sure you want to delete this user?',
+    //   [
+    //     {
+    //       text: 'Cancel',
+    //       style: 'cancel',
+    //     },
+    //     {
+    //       text: 'Delete',
+    //       onPress: () => {
+    //         const updatedUsers = data.filter((user) => user.id !== id);
+    //         setData(updatedUsers); // Update 'data' after deleting the user
+    //       },
+    //       style: 'destructive',
+    //     },
+    //   ],
+    //   { cancelable: true }
+    // );
+  };
+
+  const handleInputChange = (field, value) => {
+    if (field.startsWith('profile')) {
+      // Handle profile nested fields
+      const profileField = field.split('.')[1]; // Extract the profile field name
+      setNewUserData({
+        ...newUserData,
+        profile: {
+          ...newUserData.profile,
+          [profileField]: value, // Update the specific profile field
+        },
+      });
+    } else {
+      // For non-profile fields
+      setNewUserData({ ...newUserData, [field]: value });
+    }
   };
 
   return (
@@ -322,13 +400,14 @@ const UsersManagement = () => {
           onChangeText={setSearchQuery}
           onSubmitEditing={searchUser}
         />
+
       </View>
       <KeyboardAvoidingView behavior="height">
         {isLoading && (
           <ActivityIndicator size="large" color="#3b67bb" />
         )}
         {!isLoading && <FlatList
-          data={users.length > 0 ? users : data}
+          data={users}
           keyExtractor={(item) => item.id}
           renderItem={renderUserItem}
           numColumns={1}
@@ -336,6 +415,7 @@ const UsersManagement = () => {
           style={styles.flatList}
           showsVerticalScrollIndicator={false}
         />}
+
       </KeyboardAvoidingView>
 
       <Modal
@@ -347,7 +427,50 @@ const UsersManagement = () => {
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Ajouter User</Text>
-            {/* TextInput components for adding user details */}
+            <TextInput
+              style={styles.modalInput}
+              placeholder="CIN"
+              value={cin}
+              onChangeText={(text) => setCin(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="First Name"
+              value={firstname}
+              onChangeText={(text) => setFirstName(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Last Name"
+              value={lastname}
+              onChangeText={(text) => setLastName(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Phone"
+              value={phone}
+              onChangeText={(text) => setPhone(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Username"
+              value={username}
+              onChangeText={(text) => setUserName(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Password"
+              secureTextEntry={true}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+            />
+
             <TouchableOpacity style={styles.modalButton} onPress={() => addUser()}>
               <Text style={styles.modalButtonText}>Ajouter Utilisateur</Text>
             </TouchableOpacity>
@@ -366,7 +489,45 @@ const UsersManagement = () => {
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Modifier Utilisateur</Text>
-            {/* TextInput components for modifying user details */}
+            <TextInput
+              style={styles.modalInput}
+              placeholder="CIN"
+              value={cin}
+              onChangeText={(text) => setCin(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="First Name"
+
+              value={firstname}
+              onChangeText={(text) => setFirstName(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Last Name"
+              value={lastname}
+              onChangeText={(text) => setLastName(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Phone"
+              value={phone}
+              onChangeText={(text) => setPhone(text)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Username"
+              value={username}
+              onChangeText={(text) => setUserName(text)}
+            />
+
+
             <TouchableOpacity style={styles.modalButton} onPress={() => {
               handleUser(id_current_user);
             }}>
@@ -391,7 +552,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     width: '80%',
-    top: '10%',
+    top: StatusBar.currentHeight,
     left: '5%',
     height: Dimensions.get('window').height,
   },
@@ -411,6 +572,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 50,
   },
+  addButton: {
+    flexDirection: 'row',
+    backgroundColor: '#3b67bb',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  addText: {
+    color: '#fff',
+    marginLeft: 10,
+  },
   searchInput: {
     borderWidth: 1,
     borderColor: '#ccc',
@@ -422,6 +595,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center', // Optional, adjust as needed
   },
+
   settingUser: {
     marginBottom: 30,
     marginLeft: 10,
@@ -463,7 +637,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     width: '80%',
-    Height: '75%',
+    height: 'auto',
   },
   modalTitle: {
     fontSize: 20,

@@ -6,24 +6,21 @@ import * as FileSystem from 'expo-file-system';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { app } from '../firebase'; // Import the firebase app instance
 import * as Permissions from 'expo-permissions';
+import * as MediaLibrary from 'expo-media-library';
+
 import useFetchSecure from '../hook/useFetchSecure';
 import getBaseUrl from '../config';
 import { useAuth } from '../Context/AuthContext';
 import axios from 'axios';
 
 const checkPermissions = async () => {
-  // Check if permission is granted
-  // const { status } = await Permissions.getAsync(Permissions.MEDIA_LIBRARY);
+  //Check if permission is granted
+  const { status } = await MediaLibrary.requestPermissionsAsync();
 
-  // if (status !== 'granted') {
-  //   // If permission is not granted, request it
-  //   const { status: newStatus } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-
-  //   if (newStatus !== 'granted') {
-  //     console.log('Permission denied');
-  //     return false;
-  //   }
-  // }
+  if (status !== 'granted') {
+    console.log('Permission denied');
+    return false;
+  }
 
   return true;
 };
@@ -49,25 +46,26 @@ const getBlobFroUri = async (uri) => {
 //const documentBlob = await getBlobFroUri(image)
 
 const DocumentsManager = () => {
-  const [BASEURL,setBaseUrl]=useState('');
+  const [BASEURL, setBaseUrl] = useState('');
 
   useEffect(() => {
     const fetchBaseUrl = async () => {
-        try {
-            const BASEURL = await getBaseUrl();
-            setBaseUrl(BASEURL);
-        } catch (error) {
-            console.error("Error fetching BASEURL:", error);
-        }
+      try {
+        const BASEURL = await getBaseUrl();
+        setBaseUrl(BASEURL);
+      } catch (error) {
+        console.error("Error fetching BASEURL:", error);
+      }
     };
 
     fetchBaseUrl(); // Call the async function immediately
-}, []);
+  }, []);
   const [documents, setDocuments] = useState([]);
   const [documentsFilter, setDocumentsfilter] = useState([]);
   const [documentName, setDocumentName] = useState('');
   const [documentUrl, setDocumentUrl] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [data1, setData1] = useState({});
   const [data, setData] = useState(null); // Initialize 'data' state
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,6 +80,8 @@ const DocumentsManager = () => {
     setError(fetchedError)
     setDocuments(fetchedData);
     setIsLoading(isLoadingData);
+    setData1(fetchedData);
+
 
 
   }, [fetchedData, isLoadingData]);
@@ -104,7 +104,7 @@ const DocumentsManager = () => {
     }
     return 'insert-drive-file'; // Default icon if filename is undefined
   };
-  
+
   let tempDocumentName = '';
   let tempDocumentUrl = '';
 
@@ -135,19 +135,19 @@ const DocumentsManager = () => {
     const sanitizedStr = truncatedFilenamePart + extensionPart;
 
     return sanitizedStr;
-}
+  }
 
 
-  
+
   const handleCreate = async () => {
     try {
       // Check if temp variables are filled
       if (tempDocumentName && tempDocumentUrl) {
         console.error("create :" + tempDocumentName + " ," + tempDocumentUrl + "," + user.User.profile.id_cop);
         const maxLength = 30;
-          tempDocumentName = sanitizeFilename(tempDocumentName, maxLength);
-          console.error(tempDocumentName)
-          const NewDocument = {
+        tempDocumentName = sanitizeFilename(tempDocumentName, maxLength);
+        console.error(tempDocumentName)
+        const NewDocument = {
           nomdoc: tempDocumentName,
           url: tempDocumentUrl,
           id_cop: user.User.profile.id_cop,
@@ -160,14 +160,14 @@ const DocumentsManager = () => {
             Authorization: "Token " + user.Token,
           },
         };
-  
+
         const response = await axios.request(options);
         console.log("data", response.data);
-  
+
         // Reset temp variables after successful create
         tempDocumentName = '';
         tempDocumentUrl = '';
-  
+
         refetch();
       } else {
         console.log('Temp variables are not filled. Skipping create.');
@@ -182,7 +182,7 @@ const DocumentsManager = () => {
     try {
       const storageRef = ref(storage, `documents/${user.User.profile.id_cop}/${filename}`);
       const uploadTask = uploadBytesResumable(storageRef, document);
-  
+
       uploadTask.on(
         'state_changed',
         (snapshot) => {
@@ -197,11 +197,11 @@ const DocumentsManager = () => {
           try {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             console.log('Document uploaded successfully. Download URL:', downloadURL);
-  
+
             // Update temp variables
             tempDocumentName = filename;
             tempDocumentUrl = downloadURL;
-  
+
             // Call handleCreate after updating temp variables
             await handleCreate();
           } catch (error) {
@@ -213,31 +213,31 @@ const DocumentsManager = () => {
       console.error('Error handling upload:', error);
     }
   };
-  
-  
 
 
-const saveChanges = () => {
-  const checkProgress = () => {
-    if (uploadProgress < 100) {
-      setTimeout(checkProgress, 100); // Check progress again after 100 milliseconds
-    } else {
-      // Progress reached 100%, show success alert
-      Alert.alert('Success', 'File Uploaded !!');
-      handleCreate(); // Move handleCreate here
-    }
+
+
+  const saveChanges = () => {
+    const checkProgress = () => {
+      if (uploadProgress < 100) {
+        setTimeout(checkProgress, 100); // Check progress again after 100 milliseconds
+      } else {
+        // Progress reached 100%, show success alert
+        Alert.alert('Success', 'File Uploaded !!');
+        handleCreate(); // Move handleCreate here
+      }
+    };
+
+    checkProgress(); // Start checking progress
   };
-
-  checkProgress(); // Start checking progress
-};
 
 
 
   const importDocument = async () => {
     try {
       const hasPermissions = await checkPermissions();
-  
-      if (hasPermissions || !hasPermissions) {
+
+      if (hasPermissions) {
         const result = await DocumentPicker.getDocumentAsync({
           type: [
             'application/pdf',
@@ -247,17 +247,17 @@ const saveChanges = () => {
           ],
           copyToCacheDirectory: true,
         });
-  
+
         console.log('Document Picker Result:', result);
-  
+
         if (!result.cancelled) {
           const blob = await getBlobFroUri(result.assets[0].uri);
-  
+
           await handleUpload(blob, result.assets[0].name); // Wait for the upload to complete
-  
+
           // Save changes and call handleCreate after the upload is complete
           saveChanges();
-        //  handleCreate();
+          //  handleCreate();
         } else {
           console.log('Document picking cancelled by the user');
         }
@@ -268,8 +268,8 @@ const saveChanges = () => {
       console.error('Error picking a document', error);
     }
   };
-  
-  
+
+
 
 
 
@@ -321,11 +321,9 @@ const saveChanges = () => {
 
 
   const searchDocument = () => {
-    const filteredUsers = documents.filter(
+    const filteredUsers = data1.filter(
       (doc) =>
         doc.nomdoc.toLowerCase().includes(searchQuery.toLowerCase())
-      //||
-      //  doc.lastname.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setDocuments(filteredUsers);
     if (!searchQuery) {
@@ -348,24 +346,24 @@ const saveChanges = () => {
           onSubmitEditing={searchDocument}
           onPointerLeave={() => refetch()}
         />
-        <TouchableOpacity style={styles.importButton} onPress={importDocument}>
+        {user.User.profile.role === 'syndic' && <TouchableOpacity style={styles.importButton} onPress={importDocument}>
           <MaterialIcons name="cloud-upload" size={24} color="#fff" />
           <Text style={styles.importText}>Importer</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
       <KeyboardAvoidingView behavior='height'>
-      <View style={styles.progressBarContainer}>
-  {uploadProgress >0 && uploadProgress <= 99 &&<ProgressBarAndroid
-    styleAttr="Horizontal"
-    indeterminate={false}
-    progress={uploadProgress / 100}
-    style={styles.progressBar}
-  />}
-</View>
-{isLoading && (
-        <ActivityIndicator size="large" color="#0000ff" />
-      )}
-       {!isLoading && <View style={styles.Flatlist} >
+        <View style={styles.progressBarContainer}>
+          {uploadProgress > 0 && uploadProgress <= 99 && <ProgressBarAndroid
+            styleAttr="Horizontal"
+            indeterminate={false}
+            progress={uploadProgress / 100}
+            style={styles.progressBar}
+          />}
+        </View>
+        {isLoading && (
+          <ActivityIndicator size="large" color="#0000ff" />
+        )}
+        {!isLoading && <View style={styles.Flatlist} >
           <FlatList
             data={documents}
             keyExtractor={(item, index) => index.toString()}
@@ -374,6 +372,7 @@ const saveChanges = () => {
             onRefresh={refreshDocuments}
             refreshing={false}
             showsVerticalScrollIndicator={false}
+            style={{ paddingBottom: 100 }}
           />
         </View>}
 
@@ -447,6 +446,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   Flatlist: {
+    // paddingBottom:100,
     alignSelf: 'center',
     width: '100%',
     maxHeight: '85%',

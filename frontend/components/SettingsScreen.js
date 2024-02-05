@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../Context/AuthContext';
 
@@ -37,6 +37,7 @@ const SettingsScreen = ({selectedItem, setSelectedItem}) => {
 
 const styles = StyleSheet.create({
   container: {
+    top:StatusBar.currentHeight,
     flex: 1,
     justifyContent: 'center',
     alignSelf: 'center',

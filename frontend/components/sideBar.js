@@ -111,10 +111,9 @@ const styles = StyleSheet.create({
     zIndex:99999,
   //  padding: 10,
     position: 'absolute', // Use absolute positioning for overlay
-   // top: 0,
+    top: StatusBar.currentHeight+ 0,
    paddingTop:10 ,
     left: 0,
-    top:StatusBar.currentHeight,
     flexDirection: 'column',
     alignItems: 'flex-start',
     // Adjust the width of the sidebar as needed

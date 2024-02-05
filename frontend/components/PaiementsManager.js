@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Dimensions, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Dimensions, Alert, ActivityIndicator, StatusBar } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import useFetch from '../hook/useFetch';
 import useFetchSecure from '../hook/useFetchSecure';
@@ -22,6 +22,7 @@ const PaiementsManager = () => {
   }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState({});
+  const [data1, setData1] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   //   { id: '1', property: 'Propriété 1', date: 'Janvier 2024' , price: '1000 DH'},
@@ -42,16 +43,16 @@ const PaiementsManager = () => {
     setError(fetchedError)
     setData(fetchedData);
     setIsLoading(isLoadingData);
-
+    setData1(fetchedData);
 
   }, [fetchedData, isLoadingData]);
   console.log(data);
 
 
-  const confirmPayment = (id_pay) => {
+  const confirmPayment = (id_pay,num) => {
     Alert.alert(
       'Confirmation',
-      `Confirmer le paiement pour ${id_pay}?`,
+      `Changer l'état du paiement pour ${num}?`,
       [
         {
           text: 'Annuler',
@@ -59,7 +60,7 @@ const PaiementsManager = () => {
         },
         {
           text: 'Confirmer',
-          onPress: () => { handlePaymentConfirmation(id_pay), alert('Paiement confirmé') },
+          onPress: () => { handlePaymentConfirmation(id_pay), alert('Etat changé') },
         },
       ],
       { cancelable: true }
@@ -111,10 +112,10 @@ const PaiementsManager = () => {
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <View>
-            <Text style={styles.cardTitle}>Proprieté : {item.id_prop}</Text>
+            <Text style={styles.cardTitle}>Proprieté : {item.num}</Text>
             <Text style={styles.cardSubtitle}>Date: {getMonthName(item.date_creation)}</Text>
           </View>
-          <TouchableOpacity onPress={() => handlePaymentConfirmation(item.id_pay)} style={[styles.confirmButton, { backgroundColor: buttonColor }]}>
+          <TouchableOpacity onPress={() => confirmPayment(item.id_pay, item.num)} style={[styles.confirmButton, { backgroundColor: buttonColor }]}>
             <Text style={styles.buttonText}>{buttonLabel}</Text>
           </TouchableOpacity>
         </View>
@@ -127,8 +128,22 @@ const PaiementsManager = () => {
 
   };
   const searchPaiement = () => {
-
+    if (searchQuery.trim() === '') {
+      // If the search query is empty, reset the payments to the original data
+      setData(fetchedData);
+    } else {
+      const filteredPaiements = data1.filter(item => {
+        const monthName = getMonthName(item.date_creation);
+        return (
+          monthName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.num.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      });
+  
+      setData(filteredPaiements);
+    }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -141,6 +156,7 @@ const PaiementsManager = () => {
           placeholder="Rechercher..."
           value={searchQuery}
           onChangeText={setSearchQuery}
+          onSubmitEditing={searchPaiement}
         />
       </View>
       {isLoading && (
@@ -168,7 +184,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     width: '80%',
-    top: '10%',
+    top: StatusBar.currentHeight,
     left: '5%',
     height: Dimensions.get('window').height,
   },

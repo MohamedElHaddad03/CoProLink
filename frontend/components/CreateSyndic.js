@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         width: '80%',
         marginLeft: '10%',
-        top:StatusBar.currentHeight +10,
+        top:StatusBar.currentHeight ,
     },
     titleContainer: {
         top: '2%',
