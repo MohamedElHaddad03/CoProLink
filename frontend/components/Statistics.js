@@ -59,7 +59,7 @@ const Statistics = () => {
 //   ];
     return (
         <View style={styles.container}>
-            <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.title}>Statistiques</Text>
             {/* <PieChartComponent data={data} />*/}
             {/* <DoubleLineChart /> */}
