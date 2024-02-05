@@ -72,6 +72,17 @@ const handleItemClick = (item) => {
           <Text style={[styles.sidebarText, { color: iconColor }]}>Dépenses</Text>
         )}
       </TouchableOpacity>
+      
+      <TouchableOpacity style={[
+    styles.sidebarItem,
+    selectedItem === 'UserStatistics' && {backgroundColor:bgColorOpen},
+  ]} onPress={() => handleItemClick('UserStatistics')}>
+      <Ionicons name={ selectedItem === "UserStatistics"? "stats-chart":"stats-chart-outline"} size={26} color={iconColor} />
+
+        {isSidebarOpen && (
+          <Text style={[styles.sidebarText, { color: iconColor }]}>Statistiques</Text>
+        )}
+      </TouchableOpacity>
       {/* <TouchableOpacity style={[
     styles.sidebarItem,
     selectedItem === 'Paiement' && {backgroundColor:bgColorOpen},

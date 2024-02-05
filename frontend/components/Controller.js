@@ -13,6 +13,7 @@ import { useAuth } from '../Context/AuthContext';
 import { Text, View } from 'react-native';
 import CopropCreate from './CopropCreate';
 import CreateSyndic from './CreateSyndic';
+import UserStatistics from './UserStatistics';
 
 const LazyStatistics = () => {
   return (
@@ -45,8 +46,10 @@ const ControllerComponent = ({ selectedItem, setSelectedItem }) => {
     // return <CreateSyndic/>
     case 'Coprop':
       return <CopropCreate ></CopropCreate>
-      case 'Syndic':
+    case 'Syndic':
       return <CreateSyndic ></CreateSyndic>
+    case 'UserStatistics':
+      return <UserStatistics ></UserStatistics>
     default:
       return <LoginScreen />;
   }
