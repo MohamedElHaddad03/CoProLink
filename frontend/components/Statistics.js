@@ -65,7 +65,6 @@ const Statistics = () => {
             {/* <DoubleLineChart /> */}
             <View style={styles.chart}>
             <Text style={{marginBottom:10, fontWeight:'500',fontSize:16,textAlign:'center'}}>Suivi des paiements</Text>
-
         <OverviewTable />
       </View>
 

@@ -389,10 +389,12 @@ const UsersManagement = () => {
 
   return (
     <View style={styles.container}>
+      
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Utilisateurs</Text>
       </View>
       <View style={styles.header}>
+      
         <TextInput
           style={styles.searchInput}
           placeholder="Rechercher..."
@@ -402,6 +404,11 @@ const UsersManagement = () => {
         />
 
       </View>
+      <TouchableOpacity style={styles.ButtonsContainer}>
+        <Text>
+          Cotisation
+        </Text>
+      </TouchableOpacity>
       <KeyboardAvoidingView behavior="height">
         {isLoading && (
           <ActivityIndicator size="large" color="#3b67bb" />
