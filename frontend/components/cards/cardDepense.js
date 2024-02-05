@@ -8,6 +8,7 @@ import { useAuth } from "../../Context/AuthContext";
 const CardDepense = ({ item,refetch }) => {
   const [BASEURL,setBaseUrl]=useState('');
   const {user}=useAuth();
+  const [showEyeIcon, setShowEyeIcon] = useState(true);
 
 
   useEffect(() => {
@@ -72,6 +73,17 @@ const handleDeleteDepense = async (id) => {
     // );
   };
 
+  const handleEyeIconPress = (idDepense) => {
+    handleVisibleDepense(idDepense);
+    setShowEyeIcon(!showEyeIcon);
+  };
+
+
+  const handleVisibleDepense = async (id_depense) => {
+    handleEyeIconPress();
+  
+  };
+
     return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -87,9 +99,21 @@ const handleDeleteDepense = async (id) => {
         {/* <View style={styles.cardImage}> */}
             
             {/* </View> */}
-            {user.User?.profile?.role=="syndic"&&<TouchableOpacity onPress={() => handleDeleteDepense(item.id_depense)}>
-                  <Ionicons name="trash-bin" size={24} color="red" />
-                </TouchableOpacity>}
+            <View>
+            {user.User?.profile?.role === "syndic" && (
+              <TouchableOpacity onPress={() => {handleVisibleDepense(item.id_depense)}}>
+                <Ionicons name={showEyeIcon ? "eye-outline" : "eye-off-outline"} size={22} color="black" style={{marginBottom:'175%'}} />
+              </TouchableOpacity>
+            )}
+
+            {user.User?.profile?.role === "syndic" && (
+              <TouchableOpacity onPress={() => handleDeleteDepense(item.id_depense)}>
+                <Ionicons name="trash-bin" size={22} color="red" />
+              </TouchableOpacity>
+            )}
+
+            
+          </View>
         
       </View>
       <View style={styles.divider} />

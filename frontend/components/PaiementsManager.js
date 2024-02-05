@@ -21,6 +21,7 @@ const PaiementsManager = () => {
     fetchBaseUrl(); // Call the async function immediately
   }, []);
   const [searchQuery, setSearchQuery] = useState('');
+  const [montantPayer, setMontantPayer] = useState('');
   const [data, setData] = useState({});
   const [data1, setData1] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -102,6 +103,10 @@ const PaiementsManager = () => {
     return monthNames[date.getMonth()];
   };
 
+  const handlePaiement = async (id_pay,num) => {
+    confirmPayment(id_pay,num);
+  };
+
   const renderItem = ({ item }) => {
     const buttonLabel = item.etat ? 'Invalider' : 'Valider';
     const buttonColor = item.etat ? '#FF6347' : '#65B741';
@@ -115,13 +120,21 @@ const PaiementsManager = () => {
             <Text style={styles.cardTitle}>Proprieté : {item.num}</Text>
             <Text style={styles.cardSubtitle}>Date: {getMonthName(item.date_creation)}</Text>
           </View>
-          <TouchableOpacity onPress={() => confirmPayment(item.id_pay, item.num)} style={[styles.confirmButton, { backgroundColor: buttonColor }]}>
-            <Text style={styles.buttonText}>{buttonLabel}</Text>
-          </TouchableOpacity>
         </View>
-        <View style={styles.divider} />
+        {/* <View style={styles.divider} /> */}
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start',backgroundColor:'#ffffff'}}>
+          <TextInput
+                  style={styles.MontantInput}
+                  placeholder="Entrer un montant"
+                  value={montantPayer}
+                  onChangeText={setMontantPayer}
+                />
+                <TouchableOpacity style={styles.confirmButton} onPress={()=>handlePaiement(item.id_pay,item.num)}>
+          <Text style={styles.buttonText}>Confirmer</Text>
+                </TouchableOpacity>
+        </View>
         <View style={styles.amountSection}>
-          <Text style={styles.amountText}>Montant: <Text style={styles.amountValue}>{item.montant}</Text></Text>
+          <Text style={styles.amountText}>Total à payer: <Text style={styles.amountValue}>{item.montant}</Text></Text>
         </View>
       </View>
     );
@@ -211,6 +224,13 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
   },
+  MontantInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    width: '60%',
+    height: '80%',
+  },
   Flatlist: {
     alignSelf: 'center',
     width: '100%',
@@ -222,7 +242,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 10,
     marginBottom: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#ffffff',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -247,26 +267,33 @@ const styles = StyleSheet.create({
   confirmButton: {
     paddingVertical: 10,
     paddingHorizontal: 15,
-    borderRadius: 5,
-    elevation: 5,
+    backgroundColor: '#65B741',
+    width: '40%',
+    height: '80%',
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    textAlign: 'center', 
+    flex: 1, 
+    textAlignVertical: 'center',
   },
+  
   divider: {
     height: 1,
     backgroundColor: '#ccc',
   },
   amountSection: {
-    padding: 10,
+    padding: 7,
     backgroundColor: '#ffffff',
-    borderRadius: 10,
-    flexDirection: 'row',
+    borderBottomStartRadius: 10,
+    borderBottomEndRadius: 10,
   },
   amountText: {
     fontSize: 16,
     color: '#444',
+    bottom: 5,
+    left: 5,
   },
   amountValue: {
     color: '#65B741',
