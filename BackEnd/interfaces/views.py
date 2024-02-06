@@ -1,6 +1,7 @@
 from datetime import timezone
 from datetime import datetime
 from django.shortcuts import get_object_or_404, render
+from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -57,7 +58,7 @@ def ValiderPay(request, id_prop, montant_recu):
     anciens_paiements = Paiement.objects.filter(
     id_prop=propriete,
     etat=False
-).order_by('-date_creation')
+).order_by('date_creation')
     nb = montant_recu // propriete.id_cot.montant
     count_anciens_paiements = anciens_paiements.count()
 
@@ -66,14 +67,20 @@ def ValiderPay(request, id_prop, montant_recu):
             paiement.etat = True
             paiement.save()
     else:
-        anciens_paiements.update(etat=True)
+        today = datetime.now().date()
+        anciens_paiements.update(date_paiement=today,etat=True)
 
         nb_prochains_paiements = int(nb - count_anciens_paiements)
         montant_cotisation = propriete.id_cot.montant
-        for _ in range(nb_prochains_paiements):
+
+        
+        first_payment_date = (today + relativedelta(months=1)).replace(day=1)
+        for i in range(nb_prochains_paiements):
+            payment_date = first_payment_date + relativedelta(months=i)
             Paiement.objects.create(
                 montant=montant_cotisation,
-                date_creation=datetime.now().date(),
+                date_creation=payment_date,
+                date_paiement=today,
                 etat=True,
                 id_cot=propriete.id_cot,
                 id_prop=propriete
@@ -252,7 +259,7 @@ def CreateCopro(request):
                 id_user=None,
                 occupation=False,
                 id_cop=copro,
-                id_cot=None,
+                id_cot=get_object_or_404(Cotisation,type_cot="Normale", id_cop=copro),
             )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
