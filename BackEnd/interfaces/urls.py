@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path("paiement/vpay/<int:id_prop>/<int:montant_recu>", views.ValiderPay, name="ValiderPay"),
     path("paiement", views.ListerPaiement, name="ListerPaiement"),
+    path("paiementperso/<str:annee>",views.PaiementPerso,name="PaiementPerso"),
     path("stats/paiementmens",views.ListerPaiementStatsMens,name="ListerPaiementStatsMens"),
     path("stats/paiementann",views.ListerPaiementStatsAnn,name="ListerPaiementStatsAnn"),
     path("stats/paiementper/<str:prem>/<str:sec>",views.ListerPaiementStatsPer,name="ListerPaiementStatsPer"),
@@ -31,5 +32,9 @@ urlpatterns = [
     path('generate_pdf/<int:paiement_id>/<uidb64>/<token>/', views.GeneratePDFView.as_view(), name='generate_pdf'),
     path('depense/Vis/<int:id_dep>',views.depenseVis, name="depenseVis"),
     path('depense/Invis/<int:id_dep>',views.depenseInvis, name="depenseInvis"),
+    path('cotisation/update/<int:pk>/', views.update_cotisation, name='update_cotisation'),
+    path("cotisations", views.ListCotisation, name="ListCotisation"),
+
+
 
 ]

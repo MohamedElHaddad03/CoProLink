@@ -20,6 +20,7 @@ from rest_framework import serializers
 
 from .serializers import (
     CoproprieteSerializer,
+    CotisationSerializer,
     DepenseSerializer,
     DocumentSerializer,
     MontantTotMoisSerializer,
@@ -209,12 +210,41 @@ def CreateProp(request):
     return Response(prop)
 
 
+def create_cotisation(copro):
+    now=datetime.now().date()
+
+    cotisation1 = Cotisation.objects.create(montant=200, type_cot="Normale", id_cop=copro, date_creation=now)
+    cotisation2 = Cotisation.objects.create(montant=400, type_cot="Business", id_cop=copro, date_creation=now)
+    cotisation3 = Cotisation.objects.create(montant=500, type_cot="Exceptionnelle", id_cop=copro, date_creation=now)
+
+    return [cotisation1, cotisation2, cotisation3]
+
+from datetime import datetime
+
+@api_view(['PUT'])
+def update_cotisation(request, pk):
+    try:
+        cotisation = Cotisation.objects.get(pk=pk)
+    except Cotisation.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        now = datetime.now()
+        request.data['date_creation'] = now.date()
+        serializer = CotisationSerializer(cotisation, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(["POST"])
 def CreateCopro(request):
     serializer = CoproprieteSerializer(data=request.data)
     utilisateur=request.user
     if serializer.is_valid() and utilisateur.profile.role == "admin":
         copro = serializer.save()
+        create_cotisation(copro)
         nbpro = serializer.validated_data.get("nb_props")
         for i in range(nbpro):
             Propriete.objects.create(
@@ -400,3 +430,17 @@ def PieChart(request,annee):
     }
 
     return Response(serialized_depenses_par_categorie)
+
+
+@api_view(["GET"])
+def PaiementPerso(request,annee):
+    user = request.user
+    pay = Paiement.objects.filter(id_prop__id_user=user.id, date_creation__year=annee)
+    serializer = PaiementSerializer(pay, many=True)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+def ListCotisation(request):
+    cot= Cotisation.objects.filter(id_cop=request.user.profile.id_cop)
+    serializer=CotisationSerializer(cot, many=True)
+    return Response(serializer.data)
