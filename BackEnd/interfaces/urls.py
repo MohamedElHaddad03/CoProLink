@@ -4,7 +4,7 @@ from . import views
 
 
 urlpatterns = [
-    path("paiement/vrpay/<int:id_pay>", views.ValiderRejeterPay, name="ValiderRejeter"),
+    path("paiement/vpay/<int:id_prop>/<int:montant_recu>", views.ValiderPay, name="ValiderPay"),
     path("paiement", views.ListerPaiement, name="ListerPaiement"),
     path("stats/paiementmens",views.ListerPaiementStatsMens,name="ListerPaiementStatsMens"),
     path("stats/paiementann",views.ListerPaiementStatsAnn,name="ListerPaiementStatsAnn"),
@@ -29,5 +29,7 @@ urlpatterns = [
     path("Docs/create/", views.CreateDocument, name="CreateDoc"),
     path("Docs/delete/<int:id_doc>/", views.DeleteDocument, name="DeleteDoc"),
     path('generate_pdf/<int:paiement_id>/<uidb64>/<token>/', views.GeneratePDFView.as_view(), name='generate_pdf'),
+    path('depense/Vis/<int:id_dep>',views.depenseVis, name="depenseVis"),
+    path('depense/Invis/<int:id_dep>',views.depenseInvis, name="depenseInvis"),
 
 ]

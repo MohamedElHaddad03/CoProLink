@@ -15,6 +15,9 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from users.models import User
+from django.db.models import Sum, Count, Max
+from rest_framework import serializers
+
 from .serializers import (
     CoproprieteSerializer,
     DepenseSerializer,
@@ -28,34 +31,55 @@ from .serializers import (
 from django.db.models import Sum
 
 
+class PropPaymentsSerializer(serializers.Serializer):
+    id_prop = serializers.IntegerField()
+    total_payments = serializers.FloatField()
+
 @api_view(["GET"])
 def ListerPaiement(request):
-    user = request.user
-    pay = Paiement.objects.filter(id_prop__id_cop__id_cop=user.profile.id_cop.id_cop)
-    serializer = PaiementSerializer(pay, many=True)
-    return Response(serializer.data)
+    prop_payments = (
+        Paiement.objects
+        .filter(etat=False, id_prop__id_cop=request.user.profile.id_cop)
+        .values('id_prop')
+        .annotate(total_payments=Sum('montant'))
+    )
 
+    serializer = PropPaymentsSerializer(prop_payments, many=True)
+    return Response({"paiements": serializer.data})
 
-@api_view(["GET"])
-def ValiderRejeterPay(request, id_pay):
-    paiement = get_object_or_404(Paiement, id_pay=id_pay)
-    if paiement:
-        paiement.etat = not paiement.etat
-        paiement.save()
-        if paiement.etat is True:
-            return Response(
-                {
-                    "message": "Paiement validé avec succès",
-                },
-                status=status.HTTP_200_OK,
+@api_view(["PUT"])
+def ValiderPay(request, id_prop, montant_recu):
+    # Récupérer la propriété
+    propriete = Propriete.objects.get(pk=id_prop)
+
+    # Mettre à jour l'état des anciens paiements à True
+    anciens_paiements = Paiement.objects.filter(
+    id_prop=propriete,
+    etat=False
+).order_by('-date_creation')
+    nb = montant_recu // propriete.id_cot.montant
+    count_anciens_paiements = anciens_paiements.count()
+
+    if nb < count_anciens_paiements:
+         for paiement in anciens_paiements[:nb]:
+            paiement.etat = True
+            paiement.save()
+    else:
+        anciens_paiements.update(etat=True)
+
+        nb_prochains_paiements = int(nb - count_anciens_paiements)
+        montant_cotisation = propriete.id_cot.montant
+        for _ in range(nb_prochains_paiements):
+            Paiement.objects.create(
+                montant=montant_cotisation,
+                date_creation=datetime.now().date(),
+                etat=True,
+                id_cot=propriete.id_cot,
+                id_prop=propriete
             )
-        else:
-            return Response(
-                {
-                    "message": "Paiement rejeté avec succès",
-                },
-                status=status.HTTP_200_OK,
-            )
+    
+    return Response({"message": f"{nb} paiements validés avec succès."})
+
 
 
 @api_view(["GET"])
@@ -113,6 +137,7 @@ def DepenseUpdate(request, id_dep):
             "categorie": request.data.get("categorie"),
             "description": request.data.get("description"),
             "montant": request.data.get("montant"),
+            "visible": request.data.get("visible"),
             "date_dep": request.data.get("date_dep"),
         }
 
@@ -131,8 +156,8 @@ def UpdateProp(request, id_prop):
     prop = Propriete.objects.get(pk=id_prop)
     id_user = request.data.get('id_user')
     occupation = bool(id_user)
-
     request.data['occupation'] = occupation
+    request.data['statut'] = request.data.get('statut', prop.statut)
 
     serializer = ProprieteSerializer(prop, data=request.data)
     
@@ -161,6 +186,19 @@ def DeleteProp(request, id_prop):
     prop.delete()
     return Response({"message": "Propriété supprimé avec succès"})
 
+@api_view(["PUT"])
+def depenseVis(request,id_dep):
+    depense = Depense.objects.get(pk=id_dep)
+    depense.visible = True
+    depense.save()
+    return Response({"message": "Visibilité de la dépense mise à jour avec succès."})
+   
+@api_view(["PUT"])
+def depenseInvis(request,id_dep):
+    depense = Depense.objects.get(pk=id_dep)
+    depense.visible = False
+    depense.save()
+    return Response({"message": "invisibilité de la dépense mise à jour avec succès."})
 
 @api_view(["POST"])
 def CreateProp(request):
