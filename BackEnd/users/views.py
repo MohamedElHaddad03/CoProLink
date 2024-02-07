@@ -31,6 +31,7 @@ def signup(request):
     if utilisateur.is_valid():
         utilisateur.validated_data['is_active'] = False
         profile = utilisateur.validated_data.pop('profile')
+        utilisateur.validated_data['password']=make_password(utilisateur.validated_data['password'])
         user = User.objects.create(**utilisateur.validated_data)
         Profile.objects.create(user=user, **profile)
 
