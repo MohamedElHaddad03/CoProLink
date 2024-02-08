@@ -52,7 +52,7 @@ class Cotisation(models.Model):
 
 
 statut_opt = [
-    ('propritaire', 'proprietaire'),
+    ('proprietaire', 'proprietaire'),
     ('locataire', 'locataire'),
     
 ]

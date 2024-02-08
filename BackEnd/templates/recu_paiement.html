@@ -42,11 +42,12 @@
         margin: 0;
       }
 
-      h1 {
+      h3 {
         color: #3b67bb;
         font-family: Pacifico;
-        font-size: 40pt;
+        font-size: 24pt;
         margin: 0;
+        margin-bottom: 0.5cm;
         text-align: center;
         justify-content: center;
         align-items: center;
@@ -55,6 +56,7 @@
       .logo {
         width: 5cm;
         height: auto;
+        margin-bottom: -1.5cm;
       }
 
       aside {
@@ -64,7 +66,7 @@
 
       aside address {
         font-style: normal;
-        white-space: pre-line;
+        margin-left: 0.5cm;
       }
 
       aside address#from {
@@ -74,6 +76,7 @@
 
       aside address#to {
         text-align: right;
+        margin-top: -1cm;
       }
 
       dl {
@@ -140,13 +143,16 @@
       th:last-of-type,
       td:last-of-type {
         font-size: medium;
-        text-align: right;
       }
 
       footer {
         content: "";
         display: block;
         height: 6cm;
+      }
+      lol {
+        margin-top: -1cm;
+        margin-left: 0.5cm;
       }
 
       table#total {
@@ -174,19 +180,20 @@
     />
 
     <body>
-      {paiements[1].id_copro.name}
+      <div>
+        <address style="margin-left: 1cm" id="to">{{copronom}}</address>
+        <address style="margin-left: 1cm" id="to">{{adresse}}</address>
+      </div>
     </body>
-    <h4>Facture</h4>
-    <aside>
-      <address id="to">{paiements[1].id_copro.adresse}</address>
-    </aside>
+    <h3>Facture</h3>
+
     <dl id="informations">
       <dt>Facturé le</dt>
-      <dd>{{ paiements[1].date_paiement }}</dd>
+      <dd>{{ paiements.0.date_paiement }}</dd>
       <dt>Facturé à</dt>
-      <dd>{{ paiements[1].date_paiement.id_prop.id_user.get_full_name }}</dd>
+      <dd>{{ resident }}</dd>
       <dt>Résident de</dt>
-      <dd>{{ paiements[1].date_paiement.id_prop.num }}</dd>
+      <dd>{{ propri }}</dd>
     </dl>
 
     <table>
@@ -194,8 +201,7 @@
         <tr>
           <th>Description</th>
           <th>Date</th>
-          <th>Quantity</th>
-          <th>Subtotal</th>
+          <th>Montant</th>
         </tr>
       </thead>
       <tbody>
@@ -203,23 +209,22 @@
         <tr>
           <td>Cotisation Mensuelle du Syndic</td>
           <td>{{ item.date_creation }}</td>
-          <td>{{ item.quantity }}</td>
-          <td>{{ item.subtotal }}</td>
+          <td>{{ item.montant }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
 
     <footer>
-      <table id="total">
+      <table  id="total">
         <thead>
           <tr>
-            <th>Total due</th>
+            <th>Montant Total Payé :</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>{{ invoice_data.total_due }}</td>
+            <td>{{ tot }}</td>
           </tr>
         </tbody>
       </table>

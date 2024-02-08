@@ -1,9 +1,15 @@
+from base64 import urlsafe_b64decode
 import time
+from django.db.models import F, Sum, Count, Max
+from django.template.loader import get_template
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import timedelta
 from rest_framework.decorators import api_view
+
+from interfaces.serializers import PaiementSerializer
 from .models import Propriete, Paiement, Cotisation
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_save, post_save
@@ -155,12 +161,14 @@ def generer_pdf(paiement):
 @receiver(post_save, sender=Paiement)
 def generation_recu(sender, instance, **kwargs):
     if instance.etat == 1 and not instance.mail_envoye:
-        valider_paiements = Paiement.objects.filter(date_paiement=instance.date_paiement,id_prop=instance.id_prop)
+        valider_paiements = Paiement.objects.filter(
+            date_paiement=instance.date_paiement, id_prop=instance.id_prop
+        )
         valider_paiements.update(mail_envoye=True)
         user_id = instance.id_prop.id_user.id
         uid = urlsafe_base64_encode(force_bytes(user_id))
         token = default_token_generator.make_token(instance.id_prop.id_user)
-        lien = f"http://127.0.0.1:8000/api/interfaces/generate_pdf/{instance.id_pay}/{uid}/{token}/"
+        lien = f"http://16.171.140.68:8000/api/interfaces/generate_pdf/{instance.id_pay}/{uid}/{token}/"
         subject = "Reçu de paiement"
         message1 = "Bienvenue à notre application !"
         message2 = "Votre paiement a bien été validé !"
@@ -186,14 +194,34 @@ def generation_recu(sender, instance, **kwargs):
         )
 
 
+@api_view(["GET"])
+def generer_pdf(request, paiement_id, uidb64, token):
+    uid = urlsafe_b64decode(uidb64).decode("utf-8")
+    user = User.objects.get(pk=uid)
 
-def generer_pdf(paiement):
-    paiements = Paiement.objects.filter(date_paiement=paiement.date_paiement,id_prop=paiement.id_prop)
-    html_string = render_to_string("recu_paiement.html", {"paiement": paiements})
-    pdf = HTML(string=html_string).write_pdf()
-    response = HttpResponse(pdf, content_type="application/pdf")
-    response["Content-Disposition"] = 'filename="reçu.pdf"'
-    return response
+    if default_token_generator.check_token(user, token):
+        paiement = get_object_or_404(Paiement, pk=paiement_id)
+        paiements = Paiement.objects.filter(
+            date_paiement=paiement.date_paiement, id_prop=paiement.id_prop
+        )
+        tot = paiements.aggregate(total_montant=Sum("montant"))["total_montant"]
+        print(tot)
+        context = {
+            "paiements": paiements,
+            "copronom": paiement.id_prop.id_cop.name,
+            "adresse": paiement.id_prop.id_cop.adresse,
+            "propri": paiement.id_prop.num,
+            "resident": paiement.id_prop.id_user.get_full_name,
+            "tot": tot,
+        }
+        template = get_template("recu_paiement.html")
+        html_content = template.render(context)
+        pdf_file = HTML(string=html_content).write_pdf()
+        response = HttpResponse(pdf_file, content_type="application/pdf")
+        response["Content-Disposition"] = 'filename="invoice.pdf"'
+        return response
+    else:
+        return {"message": "Erreur en génération pdf"}
 
 
 @receiver(

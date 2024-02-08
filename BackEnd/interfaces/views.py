@@ -69,7 +69,8 @@ def ValiderPay(request, id_prop, montant_recu):
             paiement.etat = True
             paiement.save()
     else:
-        today = datetime.now().date()
+        pay = Paiement.objects.all().last()
+        today = pay.date_creation
         anciens_paiements.update(date_paiement=today, etat=True)
 
         nb_prochains_paiements = int(nb - count_anciens_paiements)
@@ -81,7 +82,7 @@ def ValiderPay(request, id_prop, montant_recu):
             Paiement.objects.create(
                 montant=montant_cotisation,
                 date_creation=payment_date,
-                date_paiement=today,
+                date_paiement=datetime.now().date(),
                 etat=True,
                 id_cot=propriete.id_cot,
                 id_prop=propriete,
@@ -251,7 +252,7 @@ def update_cotisation(request, pk):
     if request.method == "PUT":
         now = datetime.now()
         request.data["date_creation"] = cotisation.date_creation
-        request.data["id_cop"] = cotisation.id_cop
+        request.data["id_cop"] = cotisation.id_cop.id_cop
         serializer = CotisationSerializer(cotisation, data=request.data)
         if serializer.is_valid():
             serializer.save()
