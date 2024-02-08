@@ -16,7 +16,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from users.models import User
-from django.db.models import Sum, Count, Max
+from django.db.models import F, Sum, Count, Max
 from rest_framework import serializers
 
 from .serializers import (
@@ -34,20 +34,23 @@ from django.db.models import Sum
 
 
 class PropPaymentsSerializer(serializers.Serializer):
+    num = serializers.CharField()
     id_prop = serializers.IntegerField()
     total_payments = serializers.FloatField()
+
 
 @api_view(["GET"])
 def ListerPaiement(request):
     prop_payments = (
-        Paiement.objects
-        .filter(etat=False, id_prop__id_cop=request.user.profile.id_cop)
-        .values('id_prop')
-        .annotate(total_payments=Sum('montant'))
+        Paiement.objects.filter(etat=False, id_prop__id_cop=request.user.profile.id_cop)
+        .values("id_prop")
+        .annotate(num=F("id_prop__num"), total_payments=Sum("montant"))
     )
+    print(prop_payments)
 
     serializer = PropPaymentsSerializer(prop_payments, many=True)
     return Response({"paiements": serializer.data})
+
 
 @api_view(["PUT"])
 def ValiderPay(request, id_prop, montant_recu):
@@ -55,25 +58,23 @@ def ValiderPay(request, id_prop, montant_recu):
     propriete = Propriete.objects.get(pk=id_prop)
 
     # Mettre à jour l'état des anciens paiements à True
-    anciens_paiements = Paiement.objects.filter(
-    id_prop=propriete,
-    etat=False
-).order_by('date_creation')
+    anciens_paiements = Paiement.objects.filter(id_prop=propriete, etat=False).order_by(
+        "date_creation"
+    )
     nb = montant_recu // propriete.id_cot.montant
     count_anciens_paiements = anciens_paiements.count()
 
     if nb < count_anciens_paiements:
-         for paiement in anciens_paiements[:nb]:
+        for paiement in anciens_paiements[:nb]:
             paiement.etat = True
             paiement.save()
     else:
         today = datetime.now().date()
-        anciens_paiements.update(date_paiement=today,etat=True)
+        anciens_paiements.update(date_paiement=today, etat=True)
 
         nb_prochains_paiements = int(nb - count_anciens_paiements)
         montant_cotisation = propriete.id_cot.montant
 
-        
         first_payment_date = (today + relativedelta(months=1)).replace(day=1)
         for i in range(nb_prochains_paiements):
             payment_date = first_payment_date + relativedelta(months=i)
@@ -83,11 +84,10 @@ def ValiderPay(request, id_prop, montant_recu):
                 date_paiement=today,
                 etat=True,
                 id_cot=propriete.id_cot,
-                id_prop=propriete
+                id_prop=propriete,
             )
-    
-    return Response({"message": f"{nb} paiements validés avec succès."})
 
+    return Response({"message": f"{nb} paiements validés avec succès."})
 
 
 @api_view(["GET"])
@@ -159,16 +159,17 @@ def DepenseUpdate(request, id_dep):
 
     return Response({"error": "Invalid request method"}, status=400)
 
+
 @api_view(["PUT"])
 def UpdateProp(request, id_prop):
     prop = Propriete.objects.get(pk=id_prop)
-    id_user = request.data.get('id_user')
+    id_user = request.data.get("id_user")
     occupation = bool(id_user)
-    request.data['occupation'] = occupation
-    request.data['statut'] = request.data.get('statut', prop.statut)
+    request.data["occupation"] = occupation
+    request.data["statut"] = request.data.get("statut", prop.statut)
 
     serializer = ProprieteSerializer(prop, data=request.data)
-    
+
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -180,6 +181,7 @@ def ListProp(request):
     props = Propriete.objects.all()
     serializer = ProprieteSerializer(props, many=True)
     return Response(serializer.data)
+
 
 @api_view(["GET"])
 def ListPropUsers(request):
@@ -194,19 +196,22 @@ def DeleteProp(request, id_prop):
     prop.delete()
     return Response({"message": "Propriété supprimé avec succès"})
 
+
 @api_view(["PUT"])
-def depenseVis(request,id_dep):
+def depenseVis(request, id_dep):
     depense = Depense.objects.get(pk=id_dep)
-    depense.visible = True
+    depense.visible = not depense.visible
     depense.save()
     return Response({"message": "Visibilité de la dépense mise à jour avec succès."})
-   
+
+
 @api_view(["PUT"])
-def depenseInvis(request,id_dep):
+def depenseInvis(request, id_dep):
     depense = Depense.objects.get(pk=id_dep)
     depense.visible = False
     depense.save()
     return Response({"message": "invisibilité de la dépense mise à jour avec succès."})
+
 
 @api_view(["POST"])
 def CreateProp(request):
@@ -218,26 +223,34 @@ def CreateProp(request):
 
 
 def create_cotisation(copro):
-    now=datetime.now().date()
+    now = datetime.now().date()
 
-    cotisation1 = Cotisation.objects.create(montant=200, type_cot="Normale", id_cop=copro, date_creation=now)
-    cotisation2 = Cotisation.objects.create(montant=400, type_cot="Business", id_cop=copro, date_creation=now)
-    cotisation3 = Cotisation.objects.create(montant=500, type_cot="Exceptionnelle", id_cop=copro, date_creation=now)
+    cotisation1 = Cotisation.objects.create(
+        montant=200, type_cot="Normale", id_cop=copro, date_creation=now
+    )
+    cotisation2 = Cotisation.objects.create(
+        montant=400, type_cot="Business", id_cop=copro, date_creation=now
+    )
+    cotisation3 = Cotisation.objects.create(
+        montant=500, type_cot="Exceptionnelle", id_cop=copro, date_creation=now
+    )
 
     return [cotisation1, cotisation2, cotisation3]
 
+
 from datetime import datetime
 
-@api_view(['PUT'])
+
+@api_view(["PUT"])
 def update_cotisation(request, pk):
     try:
         cotisation = Cotisation.objects.get(pk=pk)
     except Cotisation.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'PUT':
+    if request.method == "PUT":
         now = datetime.now()
-        request.data['date_creation'] = now.date()
+        request.data["date_creation"] = now.date()
         serializer = CotisationSerializer(cotisation, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -248,7 +261,7 @@ def update_cotisation(request, pk):
 @api_view(["POST"])
 def CreateCopro(request):
     serializer = CoproprieteSerializer(data=request.data)
-    utilisateur=request.user
+    utilisateur = request.user
     if serializer.is_valid() and utilisateur.profile.role == "admin":
         copro = serializer.save()
         create_cotisation(copro)
@@ -259,7 +272,7 @@ def CreateCopro(request):
                 id_user=None,
                 occupation=False,
                 id_cop=copro,
-                id_cot=get_object_or_404(Cotisation,type_cot="Normale", id_cop=copro),
+                id_cot=get_object_or_404(Cotisation, type_cot="Normale", id_cop=copro),
             )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
@@ -415,18 +428,31 @@ class GeneratePDFView(View):
 
 
 @api_view(["GET"])
-def PieChart(request,annee):
+def PieChart(request, annee):
     depenses_par_categorie = {
-        "Assainissement": Depense.objects.filter(date_dep__year=annee,categorie="Assainissement",id_cop=request.user.profile.id_cop),
+        "Assainissement": Depense.objects.filter(
+            date_dep__year=annee,
+            categorie="Assainissement",
+            id_cop=request.user.profile.id_cop,
+        ),
         "Maintenance et reparation": Depense.objects.filter(
             date_dep__year=annee,
             categorie="Maintenance et reparation",
             id_cop=request.user.profile.id_cop,
-
         ),
-        "Matériel": Depense.objects.filter(date_dep__year=annee,categorie="Matériel",id_cop=request.user.profile.id_cop),
-        "Gardiennage": Depense.objects.filter(date_dep__year=annee,categorie="Gardiennage",id_cop=request.user.profile.id_cop),
-        "Autre": Depense.objects.filter(date_dep__year=annee,categorie="Autre",id_cop=request.user.profile.id_cop),
+        "Matériel": Depense.objects.filter(
+            date_dep__year=annee,
+            categorie="Matériel",
+            id_cop=request.user.profile.id_cop,
+        ),
+        "Gardiennage": Depense.objects.filter(
+            date_dep__year=annee,
+            categorie="Gardiennage",
+            id_cop=request.user.profile.id_cop,
+        ),
+        "Autre": Depense.objects.filter(
+            date_dep__year=annee, categorie="Autre", id_cop=request.user.profile.id_cop
+        ),
     }
 
     serialized_depenses_par_categorie = {
@@ -440,14 +466,15 @@ def PieChart(request,annee):
 
 
 @api_view(["GET"])
-def PaiementPerso(request,annee):
+def PaiementPerso(request, annee):
     user = request.user
     pay = Paiement.objects.filter(id_prop__id_user=user.id, date_creation__year=annee)
     serializer = PaiementSerializer(pay, many=True)
     return Response(serializer.data)
 
+
 @api_view(["GET"])
 def ListCotisation(request):
-    cot= Cotisation.objects.filter(id_cop=request.user.profile.id_cop)
-    serializer=CotisationSerializer(cot, many=True)
+    cot = Cotisation.objects.filter(id_cop=request.user.profile.id_cop)
+    serializer = CotisationSerializer(cot, many=True)
     return Response(serializer.data)

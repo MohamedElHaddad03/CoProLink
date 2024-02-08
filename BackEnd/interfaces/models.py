@@ -72,5 +72,6 @@ class Paiement(models.Model):
     date_creation = models.DateField()
     date_paiement = models.DateField(null=True,blank=True)
     etat = models.BooleanField(default=False)
+    mail_envoye = models.BooleanField(default=False,blank=True)
     id_cot = models.ForeignKey(Cotisation, on_delete=models.CASCADE) 
     id_prop = models.ForeignKey(Propriete, on_delete=models.CASCADE)  

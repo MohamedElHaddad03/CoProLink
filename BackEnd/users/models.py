@@ -15,7 +15,7 @@ class Profile(models.Model):
     cin = models.CharField(max_length=10, null=True)
     telephone = models.CharField(max_length=14,unique=True)
     role = models.CharField(max_length=15,choices=ROLE)
-    id_cop = models.ForeignKey(Copropriete, on_delete=models.CASCADE,null=True)
+    id_cop = models.ForeignKey(Copropriete, on_delete=models.CASCADE,null=True,blank=True)
 
     def save(self, *args, **kwargs):
         if self.role.lower() == 'admin':

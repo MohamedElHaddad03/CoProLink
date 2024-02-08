@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path
+
+from interfaces import signals
 from . import views
 
 
@@ -29,7 +31,7 @@ urlpatterns = [
     path("Docs", views.ListerDocument, name="ListerDoc"),
     path("Docs/create/", views.CreateDocument, name="CreateDoc"),
     path("Docs/delete/<int:id_doc>/", views.DeleteDocument, name="DeleteDoc"),
-    path('generate_pdf/<int:paiement_id>/<uidb64>/<token>/', views.GeneratePDFView.as_view(), name='generate_pdf'),
+    path('generate_pdf/<int:paiement_id>', signals.generer_pdf, name='generate_pdf'),
     path('depense/Vis/<int:id_dep>',views.depenseVis, name="depenseVis"),
     path('depense/Invis/<int:id_dep>',views.depenseInvis, name="depenseInvis"),
     path('cotisation/update/<int:pk>/', views.update_cotisation, name='update_cotisation'),
