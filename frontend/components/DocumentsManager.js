@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, ScrollView, Dimensions, Alert, Linking, ProgressBarAndroid, ActivityIndicator, StatusBar } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { app } from '../firebase'; // Import the firebase app instance
-import * as Permissions from 'expo-permissions';
 import * as MediaLibrary from 'expo-media-library';
 
 import useFetchSecure from '../hook/useFetchSecure';
