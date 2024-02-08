@@ -197,7 +197,6 @@ const LoginScreen = () => {
         cin: cin,
         telephone: phone,
         role: "admin",
-        id_cop: 3,
       },
     };
 

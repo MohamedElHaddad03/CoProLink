@@ -3,12 +3,13 @@ import { Ionicons } from '@expo/vector-icons';
 import getBaseUrl from "../../config";
 import { useEffect,useState } from "react";
 import { useAuth } from "../../Context/AuthContext";
+import axios from 'axios';
 
 
 const CardDepense = ({ item,refetch }) => {
   const [BASEURL,setBaseUrl]=useState('');
   const {user}=useAuth();
-  const [showEyeIcon, setShowEyeIcon] = useState(true);
+  const [showEyeIcon, setShowEyeIcon] = useState(item.visible);
 
 
   useEffect(() => {
@@ -73,14 +74,27 @@ const handleDeleteDepense = async (id) => {
     // );
   };
 
-  const handleEyeIconPress = (idDepense) => {
-    handleVisibleDepense(idDepense);
+  const handleEyeIconPress = async () => {
     setShowEyeIcon(!showEyeIcon);
   };
 
 
   const handleVisibleDepense = async (id_depense) => {
-    handleEyeIconPress();
+    
+    try{
+      const options = {
+        method: 'PUT',
+        url: `${BASEURL}/api/interfaces/depense/Vis/${id_depense}`,
+      };
+      const response = await axios.request(options);
+      console.log(response.data);
+      console.log(item.id_depense);
+      handleEyeIconPress();
+    }catch (error) {
+      console.error('Error updating Depense:', error.message);
+    }
+ 
+    
   
   };
 
