@@ -176,31 +176,33 @@
     <body>
       {paiements[1].id_copro.name}
     </body>
-    <h1>Facture</h1>
+    <h4>Facture</h4>
     <aside>
-      <address id="to">{adress}</address>
+      <address id="to">{paiements[1].id_copro.adresse}</address>
     </aside>
     <dl id="informations">
-      <dt>Invoice number</dt>
-      <dd>{{ invoice_data.invoice_number }}</dd>
-      <dt>Date</dt>
-      <dd>{{ invoice_data.date }}</dd>
+      <dt>Facturé le</dt>
+      <dd>{{ paiements[1].date_paiement }}</dd>
+      <dt>Facturé à</dt>
+      <dd>{{ paiements[1].date_paiement.id_prop.id_user.get_full_name }}</dd>
+      <dt>Résident de</dt>
+      <dd>{{ paiements[1].date_paiement.id_prop.num }}</dd>
     </dl>
 
     <table>
       <thead>
         <tr>
           <th>Description</th>
-          <th>Price</th>
+          <th>Date</th>
           <th>Quantity</th>
           <th>Subtotal</th>
         </tr>
       </thead>
       <tbody>
-        {% for item in invoice_data.items %}
+        {% for item in paiements %}
         <tr>
-          <td>{{ item.description }}</td>
-          <td>{{ item.price }}</td>
+          <td>Cotisation Mensuelle du Syndic</td>
+          <td>{{ item.date_creation }}</td>
           <td>{{ item.quantity }}</td>
           <td>{{ item.subtotal }}</td>
         </tr>

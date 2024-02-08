@@ -250,7 +250,8 @@ def update_cotisation(request, pk):
 
     if request.method == "PUT":
         now = datetime.now()
-        request.data["date_creation"] = now.date()
+        request.data["date_creation"] = cotisation.date_creation
+        request.data["id_cop"] = cotisation.id_cop
         serializer = CotisationSerializer(cotisation, data=request.data)
         if serializer.is_valid():
             serializer.save()
