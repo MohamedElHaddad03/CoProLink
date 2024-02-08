@@ -1,9 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from Expo
+import useFetchSecure from '../../hook/useFetchSecure';
 
 const YearCheck = () => {
+  
+  //paiementperso
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [isLoading , setIsLoading] = useState(true);
+  const [properties , setProperties] = useState();
+  const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/paiementperso/'+selectedYear);
+
+  useEffect(() => {
+    setIsLoading(isLoadingData);
+    if (!isLoadingData && fetchedData) {
+        const defaultDataForYear = Array.from({ length: 12 }, (_, i) => {
+            const existingMonth = fetchedData.find(item => {
+                const month = new Date(item.date_creation).getMonth() + 1;
+                return month === i + 1;
+            });
+            if (existingMonth) {
+                return existingMonth;
+            } else {
+                return { date_creation: `2024-${i + 1}-10`, etat: false };
+            }
+        });
+        setProperties(defaultDataForYear);
+        setIsLoading(false);
+    }
+}, [fetchedData, isLoadingData]);
+  useEffect(() => {
+    refetch();
+
+
+  }, [selectedYear]);
 
   const handleYearChange = (year) => {
     setSelectedYear(year);
@@ -22,22 +52,22 @@ const YearCheck = () => {
     return chunkedArr;
   };
 
-  const properties = [
-    { num: 1, etat: true },
-    { num: 2, etat: false },
-    { num: 3, etat: true },
-    { num: 4, etat: false },
-    { num: 5, etat: false },
-    { num: 6, etat: false },
-    { num: 7, etat: true },
-    { num: 8, etat: false },
-    { num: 9, etat: true },
-    { num: 10, etat: true },
-    { num: 11, etat: false },
-    { num: 12, etat: true },
-  ];
+  // const properties = [
+  //   { num: 1, etat: true },
+  //   { num: 2, etat: false },
+  //   { num: 3, etat: true },
+  //   { num: 4, etat: false },
+  //   { num: 5, etat: false },
+  //   { num: 6, etat: false },
+  //   { num: 7, etat: true },
+  //   { num: 8, etat: false },
+  //   { num: 9, etat: true },
+  //   { num: 10, etat: true },
+  //   { num: 11, etat: false },
+  //   { num: 12, etat: true },
+  // ];
 
-  const rowsOfThree = chunkArray(properties, 4);
+  const rowsOfThree = properties ? chunkArray(properties, 3): rowsOfThree;
 
   const renderRow = (data, isCurrentMonth = false, index) => (
     <View key={isCurrentMonth ? `currentMonth-${index}` : `propertyNums-${index}`} style={[styles.tableRow, isCurrentMonth && styles.currentMonthRow]}>
@@ -54,7 +84,9 @@ const YearCheck = () => {
       )}
       {data.map((item, numx) => (
         <View key={numx} style={[styles.cell, styles.propertyBox, item.etat ? styles.greenBox : (isCurrentMonth ? {} : styles.yellowBox)]}>
-          <Text style={styles.boxText}>{item.num}</Text>
+          {/* <Text style={styles.boxText}>{item.date_creation}</Text> */}
+          <Text style={styles.boxText}>{new Date(item.date_creation).toLocaleString('default', { month: 'short' })}</Text>
+
         </View>
       ))}
     </View>
@@ -63,13 +95,19 @@ const YearCheck = () => {
   
 
   return (
-    <View style={styles.container}>
-      
-        {renderRow([], true, 0)}
-       
-      {rowsOfThree.map((row, rowIndex) => renderRow(row, false, rowIndex))}
-    </View>
+    <>
+      {isLoading && (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+      {!isLoading && (
+        <View style={styles.container}>
+          {renderRow([], true, 0)}
+          {rowsOfThree.map((row, rowIndex) => renderRow(row, false, rowIndex))}
+        </View>
+      )}
+    </>
   );
+  
 };
 
 

@@ -71,15 +71,21 @@ const UsersManagement = () => {
   const [passwordSU, setPasswordSU] = useState('');
   const [profile, setProfile] = useState('');
   const [error2, setError2] = useState('');
-  const [montantNormal, setMontantNormal] = useState(0);
-  const [montantBuisness, setMontantBuisness] = useState(0);
-  const [montantExceptionnel, setMontantExcetionnel] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState('Cotisation Normale');
+  const [montant, setMontant] = useState(0);
+  const [idCot, setIdCot] = useState(0);
+
+
+  const [selectedCategory, setSelectedCategory] = useState('proprietaire');
+  const [selectedCot, setSelectedCot] = useState();
+  const [selectedStatut, setSelectedStatut] = useState();
+
 
   const categories = [
-    'Cotisation Normale',
-    'Cotisation Buisness',
-    'Cotisation Exceptionnelle',
+    'proprietaire',
+    'locataire',
+
+  ];
+  const statuts = [
 
   ];
 
@@ -112,10 +118,44 @@ const UsersManagement = () => {
     setEmail(item?.user?.email);
     setFirstName(item?.user?.first_name)
     setLastName(item?.user?.last_name)
-    setPhone(item?.user?.telephone)
+    setPhone(item?.user?.profile?.telephone)
     setUserName(item?.user?.username)
     setPasswordSU(item?.user?.password)
   }
+  //api/interfaces/cotisation/update/{idCot}
+  const updateCotisation = async () => {
+    console.error('hhhhh', idCot);
+    const newCot = {
+      // "date_creation": "2024-02-01",
+      // "id_cop": 11,
+      // "id_cot": idCot,
+      "montant": parseFloat(montant),
+      "type_cot": selectedCot.toString()
+
+    };
+
+    console.log(newCot);
+    try {
+      const response = await fetch(`${BASEURL}/api/interfaces/cotisation/update/${idCot}/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Token ' + user.Token,
+        },
+        body: JSON.stringify(newCot),
+      });
+      console.log('TOKEEEEEEEEEEEEN', user.Token);
+      if (response.ok) {
+        Alert.alert("Success", "Cotisation modifiée avec succès")
+        setShowModal3(false)
+        refetchCot();
+      } else {
+        throw new Error(` ${response.statusText}`);
+      }
+    } catch (error) {
+      Alert.alert('Erreur lors de modification de cotisation', error.message);
+    }
+  };
 
   const { data: fetchedData, isLoading: isLoadingData, error: fetchedError, refetch } = useFetchSecure('api/interfaces/propusers');
 
@@ -127,13 +167,35 @@ const UsersManagement = () => {
 
 
   }, [fetchedData, isLoadingData]);
-  // //console.log(data)
-  // Call fetchData on component mount
-  // useEffect(()=>{
-  // // fetchData();
-  // //console.log(data)
-  // refetch();
-  // }, [data]);
+  const [Cot, setCot] = useState(null);
+  const [isLoadingCot, setIsLoadingCot] = useState(true);
+  const [errorCot, setErrorCot] = useState(null);
+  //   { id: '1', property: 'Propriété 1', date: 'Janvier 2024' , price: '1000 DH'},
+  //   { id: '2', property: 'Propriété 2', date: 'Février 2024' , price: '1000 DH'},
+  //   { id: '3', property: 'Propriété 3', date: 'Mars 2024' , price: '1000 DH'},
+  //   { id: '4', property: 'Propriété 4', date: 'Avril 2024' , price: '1000 DH'},
+  //   { id: '5', property: 'Propriété 5', date: 'Mai 2024' , price: '1000 DH'},
+  //   { id: '6', property: 'Propriété 6', date: 'Juin 2024' , price: '1000 DH'},
+  //   { id: '7', property: 'Propriété 7', date: 'Juillet 2024' , price: '1000 DH'},
+
+  //   // Add more property data as needed
+  // ]);
+
+
+  const { data: fetchedDataCot, isLoading: isLoadingDataCot, error: fetchedErrorCot, refetch: refetchCot } = useFetchSecure('api/interfaces/cotisations');
+
+  useEffect(() => {
+
+    setErrorCot(fetchedErrorCot)
+    setCot(fetchedDataCot);
+    setIsLoadingCot(isLoadingDataCot);
+
+    // console.error('coooooooooooooot', Cot);
+  }, [fetchedDataCot, isLoadingDataCot]);
+  // useEffect(() => {
+  //   refetchCot()
+  // }, []);
+
   const handleUser = async (id) => {
 
     const newUser = {
@@ -142,7 +204,8 @@ const UsersManagement = () => {
       email: email,
       username: username,
       //  password: "password" ,
-      id_cot: 1,
+      id_cot: selectedStatut,
+      //statut: selectedCategory,
       profile: {
         telephone: phone,
         cin: cin,
@@ -151,7 +214,7 @@ const UsersManagement = () => {
       },
     };
 
-    console.log(newUser);
+    console.error('newUseeeer', newUser);
     try {
       const response = await fetch(`${BASEURL}/api/users/update/${id}/`, {
         method: 'PATCH',
@@ -161,13 +224,32 @@ const UsersManagement = () => {
         },
         body: JSON.stringify(newUser),
       });
-      console.log('TOKEEEEEEEEEEEEN', user.Token);
+      console.log('TOKEEEEEEEEEEEEN', response.data);
       if (response.ok) {
-        Alert.alert("Success", "Utilisateur modifié avec succès")
-        setShowModal2(false)
-        refetch();
-      } else {
-        throw new Error(`Failed to Update user: ${response.statusText}`);
+        const responseData = await response.json();
+        const options = {
+          "num": item2?.num,
+          "id_cop": item2?.id_cop,
+          "occupation": true,
+          "id_user": responseData.id,
+          "statut": selectedCategory
+        }
+        const response2 = await fetch(`${BASEURL}/api/interfaces/prop/update/${idProp}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + user.Token,
+          },
+          body: JSON.stringify(options),
+        });
+        console.error(options);
+        if (response2.ok) {
+          setShowModal(false)
+          Alert.alert('Success', 'Utilisateur ajouté avec succés')
+          refetch();
+        } else {
+          throw new Error(`Failed to Update user: ${response.statusText}`);
+        }
       }
     } catch (error) {
       console.error('Error ADDING user:', error.message);
@@ -189,7 +271,7 @@ const UsersManagement = () => {
             <Text>
               Nom : {item.user?.first_name}  {item.user?.last_name}
             </Text>
-            <Text>Statut :  </Text>
+            <Text>Statut : {item.statut} </Text>
             <Text>
               Email : {item.user?.email}
             </Text>
@@ -205,6 +287,8 @@ const UsersManagement = () => {
             style={styles.settingUser}
             onPress={() => {
               setShowModal2(true);
+              setIdProp(item?.id_prop);
+              setItem(item)
               setIdUser(item?.user?.id);
               handleDefault(item);
             }}
@@ -271,7 +355,7 @@ const UsersManagement = () => {
       username: username,
       password: password,
       id_prop: idProp,
-      id_cot: 1,
+      id_cot: selectedStatut,
       profile: {
         telephone: phone,
         cin: cin,
@@ -302,7 +386,8 @@ const UsersManagement = () => {
             "num": item2?.num,
             "id_cop": item2?.id_cop,
             "occupation": true,
-            "id_user": responseData.id
+            "id_user": responseData.id,
+            "statut": selectedCategory
           }),
         });
 
@@ -328,37 +413,39 @@ const UsersManagement = () => {
         method: 'DELETE',
       });
 
-      if (response.ok) {
-        if (response.ok) {
-          const responseData = await response.json();
-          const response2 = await fetch(`${BASEURL}/api/interfaces/prop/update/${idProp}`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Token ' + user.Token,
-            },
-            body: JSON.stringify({
-              "num": item2?.num,
-              "id_cop": item2?.id_cop,
-              "occupation": false,
-              "id_user": responseData.id
-            }),
-          });
-        }
-        Alert.alert(
-          'Success',
-          'User deleted successfully',
-          [
-            {
-              text: 'ok',
-              style: 'cancel',
-            },
-          ],
-          { cancelable: false }
-        );
 
-      } else {
-        throw new Error('Failed to delete user');
+      if (response.ok) {
+        const responseData = await response.json();
+        const response2 = await fetch(`${BASEURL}/api/interfaces/prop/update/${idProp}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + user.Token,
+          },
+          body: JSON.stringify({
+            "num": item2?.num,
+            "id_cop": item2?.id_cop,
+            "occupation": false,
+            "id_user": responseData.id
+          }),
+        });
+
+        if (response2.ok) {
+          Alert.alert(
+            'Success',
+            'User deleted successfully',
+            [
+              {
+                text: 'ok',
+                style: 'cancel',
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+        else {
+          throw new Error('Failed to delete user');
+        }
       }
     } catch (error) {
       //console.error('Error deleting user:', error.message);
@@ -410,7 +497,7 @@ const UsersManagement = () => {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Utilisateurs</Text>
       </View>
-      
+
       <View style={[styles.header]}>
 
         <TextInput
@@ -459,7 +546,7 @@ const UsersManagement = () => {
       >
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Ajouter User</Text>
+            <Text style={styles.modalTitle}>Ajouter Utilisateur</Text>
             <TextInput
               style={styles.modalInput}
               placeholder="CIN"
@@ -503,12 +590,41 @@ const UsersManagement = () => {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ width: '28%', marginRight: 8 }}>Statut</Text>
+              <Picker
+                selectedValue={selectedCategory}
+                onValueChange={(itemValue, itemIndex) => setSelectedCategory(itemValue)}
+                style={styles.input}
+                itemStyle={styles.pickerItem}
+                mode="dropdown"
+              >
+                {categories.map((category, index) => (
+                  <Picker.Item key={index} label={category} value={category} />
+                ))}
+              </Picker>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ width: '28%', marginRight: 8 }}>Cotisation</Text>
+              <Picker
+                selectedValue={selectedStatut}
+                onValueChange={(itemValue, itemIndex) => setSelectedStatut(itemValue)}
+                style={styles.input}
+                itemStyle={styles.pickerItem} // Style des éléments de la liste déroulante
+                mode="dropdown" // Mode de la liste déroulante
+              >
+                {Cot && Cot.map((category) => (
+                  <Picker.Item key={category.id_cot} label={category.type_cot} value={category.id_cot} />
+                ))}
+              </Picker>
+            </View>
+
 
             <TouchableOpacity style={styles.modalButton} onPress={() => addUser()}>
               <Text style={styles.modalButtonText}>Ajouter Utilisateur</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal(false)}>
-              <Text style={styles.modalButtonText}>Cancel</Text>
+              <Text style={styles.modalButtonText}>Annuler</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -561,17 +677,34 @@ const UsersManagement = () => {
               value={username}
               onChangeText={(text) => setUserName(text)}
             />
-            <Picker
-              selectedValue={selectedCategory}
-              onValueChange={(itemValue, itemIndex) => setSelectedCategory(itemValue)}
-              style={styles.input}
-              itemStyle={styles.pickerItem} // Style des éléments de la liste déroulante
-              mode="dropdown" // Mode de la liste déroulante
-            >
-              {categories.map((category, index) => (
-                <Picker.Item key={index} label={category} value={category} />
-              ))}
-            </Picker>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ width: '28%', marginRight: 8 }}>Statut</Text>
+              <Picker
+                selectedValue={selectedCategory}
+                onValueChange={(itemValue, itemIndex) => setSelectedCategory(itemValue)}
+                style={styles.input}
+                itemStyle={styles.pickerItem}
+                mode="dropdown"
+              >
+                {categories.map((category, index) => (
+                  <Picker.Item key={index} label={category} value={category} />
+                ))}
+              </Picker>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ width: '28%', marginRight: 8 }}>Cotisation</Text>
+              <Picker
+                selectedValue={selectedStatut}
+                onValueChange={(itemValue, itemIndex) => { setSelectedStatut(itemValue); console.error(selectedStatut) }}
+                style={styles.input}
+                itemStyle={styles.pickerItem} // Style des éléments de la liste déroulante
+                mode="dropdown" // Mode de la liste déroulante
+              >
+                {Cot && Cot.map((category) => (
+                  <Picker.Item key={category.id_cot} label={category.type_cot} value={category.id_cot} />
+                ))}
+              </Picker>
+            </View>
 
             <TouchableOpacity style={styles.modalButton} onPress={() => {
               handleUser(id_current_user);
@@ -584,6 +717,7 @@ const UsersManagement = () => {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -593,54 +727,65 @@ const UsersManagement = () => {
         <KeyboardAvoidingView style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Modifier les cotisations</Text>
-            <Picker
-              selectedValue={selectedCategory}
-              onValueChange={(itemValue, itemIndex) => setSelectedCategory(itemValue)}
-              style={styles.input}
-              itemStyle={styles.pickerItem} // Style des éléments de la liste déroulante
-              mode="dropdown" // Mode de la liste déroulante
-            >
-              {categories.map((category, index) => (
-                <Picker.Item key={index} label={category} value={category} />
-              ))}
-            </Picker>
+            {Cot !== null && (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ width: '28%', marginRight: 8 }}>Cotisation</Text>
+                <Picker
+                  selectedValue={selectedStatut}
+                  onValueChange={(itemValue, itemIndex) => setSelectedStatut(itemValue)}
+                  style={styles.input}
+                  itemStyle={styles.pickerItem}
+                  mode="dropdown"
+                >
+                  {Cot?.map((category) => (
+                    <Picker.Item key={category.id_cot} label={category.type_cot} value={category.id_cot} />
+                  ))}
+                </Picker>
+              </View>
+            )}
 
-            {selectedCategory === 'Cotisation Normale' && <View>
-              <Text >Modifier la cotisation normale</Text>
-              <TextInput
+            {Cot !== null && selectedStatut === Cot[1]?.id_cot && (
+              <View>
+                <Text>Modifier la cotisation {Cot[1]?.type_cot}</Text>
+                <TextInput
+                  style={styles.modalInput}
+                  keyboardType="numeric"
+                  placeholder="Cotisation"
+                  value={montant}
+                  defaultValue={Cot[1]?.montant ? Cot[1]?.montant.toString() : ''}
+                  onChangeText={(text) => { setMontant(text); setIdCot(Cot[1]?.id_cot); setSelectedCot(Cot[1]?.type_cot) }}
+                />
+              </View>
+            )}
 
-                style={styles.modalInput}
-                keyboardType="numeric"
-                placeholder="Cotisation normale"
-                value={montantNormal}
-                onChangeText={(text) => setMontantNormal(text)}
-              />
-            </View>}
-            {selectedCategory === 'Cotisation Buisness' && <View>
-              <Text >Modifier la cotisation buisness</Text>
-
-              <TextInput
-                style={styles.modalInput}
-                keyboardType="numeric"
-                placeholder="Cotisation buisness"
-                value={montantBuisness}
-                onChangeText={(text) => setMontantBuisness(text)}
-              />
-            </View>}
-            {selectedCategory === 'Cotisation Exceptionnelle' && <View>
-              <Text >Modifier la cotisation exceptionnelle</Text>
+            {Cot !== null && (selectedStatut === Cot[2]?.id_cot) && <View>
+              <Text >Modifier la cotisation {Cot[2]?.type_cot}</Text>
 
               <TextInput
                 style={styles.modalInput}
                 keyboardType="numeric"
-                placeholder="Cotisation exceptionnelle"
-                value={montantExceptionnel}
-                onChangeText={(text) => setMontantExcetionnel(text)}
+                placeholder="Cotisation"
+                value={montant}
+                defaultValue={Cot[2]?.montant.toString()}
+
+                onChangeText={(text) => { setMontant(text); setIdCot(Cot[2]?.id_cot); setSelectedCot(Cot[2]?.type_cot) }}
+              />
+            </View>}
+            {Cot !== null && (selectedStatut === Cot[0]?.id_cot) && <View>
+              <Text >Modifier la cotisation {Cot[0]?.type_cot}</Text>
+
+              <TextInput
+                style={styles.modalInput}
+                keyboardType="numeric"
+                placeholder="Cotisation"
+                value={montant}
+                defaultValue={Cot[0]?.montant.toString()}
+
+                onChangeText={(text) => { setMontant(text); setIdCot(Cot[0]?.id_cot); setSelectedCot(Cot[0]?.type_cot) }}
               />
             </View>}
 
-
-            <TouchableOpacity style={styles.modalButton} onPress={() => addUser()}>
+            <TouchableOpacity style={styles.modalButton} onPress={updateCotisation}>
               <Text style={styles.modalButtonText}>Confirmer</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton} onPress={() => setShowModal3(false)}>
@@ -649,6 +794,7 @@ const UsersManagement = () => {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
     </View>
   );
 };
@@ -657,8 +803,9 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     flex: 1,
-    flexDirection:'column',
+    flexDirection: 'column',
     padding: 20,
+    paddingBottom: 30,
     backgroundColor: '#fff',
     alignSelf: 'center',
     justifyContent: 'center',
@@ -668,18 +815,18 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
   },
   titleContainer: {
-    top: StatusBar.currentHeight ,
+    top: StatusBar.currentHeight,
     alignSelf: 'center',
     alignItems: 'center',
- //   position: 'absolute',
+    //   position: 'absolute',
   },
   title: {
     fontSize: 24,
-   // marginBottom:125,
+    // marginBottom:125,
     fontWeight: '300',
   },
   header: {
-   // top:100,
+    // top:100,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
@@ -746,6 +893,7 @@ const styles = StyleSheet.create({
     flex: 1, // Takes remaining space in the row
   },
   input: {
+    width: '70%',
     height: 40,
     borderColor: 'black',
     borderWidth: 10,
@@ -769,8 +917,8 @@ const styles = StyleSheet.create({
     width: '100%',
     maxHeight: '80%',
     marginTop: 20,
-    paddingBottom:100,
-    
+    paddingBottom: 100,
+
   },
   modalContainer: {
     flex: 1,
@@ -807,6 +955,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   modalButtonText: {
+
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
