@@ -53,15 +53,34 @@ const {user}=useAuth();
   //     // Add more property data as needed
   //   ]);
   const categories = data ? Array.from(new Set(data.map(item => item.categorie))) : [];
-
+  const [full, setFull] = useState();
+  const areAllExpensesInvisible = (data, categories) => {
+    return categories.every(category =>
+      data.filter(item => item.categorie === category).every(expense => !expense.visible)
+    );
+  };
+  
   const renderCategory = (category) => {
     const expensesInCategory = data?.filter((item) => item.categorie === category );
+
+    if(user.User?.profile?.role === "proprietaire" && areAllExpensesInvisible(data, categories)){
+      return (
+        <View style={styles.container}>
+        
+            <View style={{flex: 1, alignContent:'center',top:'20%'}}>
+              <Text>Aucune dépense visible</Text>
+            </View>
+          
+          
+        </View>
+      );
+    }
+
 
     if(user.User?.profile?.role === "proprietaire"){
       const allExpensesInvisible = expensesInCategory.every(expense => !expense.visible);
 
   if (allExpensesInvisible) {
-    // If all expenses in this category have visible set to false, return null
     return null;
   }
     }
