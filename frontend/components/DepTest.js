@@ -53,16 +53,43 @@ const {user}=useAuth();
   //     // Add more property data as needed
   //   ]);
   const categories = data ? Array.from(new Set(data.map(item => item.categorie))) : [];
-
+  const [full, setFull] = useState();
+  const areAllExpensesInvisible = (data, categories) => {
+    return categories.every(category =>
+      data.filter(item => item.categorie === category).every(expense => !expense.visible)
+    );
+  };
+  
   const renderCategory = (category) => {
-    const expensesInCategory = data?.filter((item) => item.categorie === category);
+    const expensesInCategory = data?.filter((item) => item.categorie === category );
+
+    if(user.User?.profile?.role === "proprietaire" && areAllExpensesInvisible(data, categories)){
+      return (
+        <View style={styles.container}>
+        
+            <View style={{flex: 1, alignContent:'center',top:'20%'}}>
+              <Text>Aucune dépense visible</Text>
+            </View>
+          
+          
+        </View>
+      );
+    }
 
 
+    if(user.User?.profile?.role === "proprietaire"){
+      const allExpensesInvisible = expensesInCategory.every(expense => !expense.visible);
+
+  if (allExpensesInvisible) {
+    return null;
+  }
+    }
+    
 
     return (
       <View key={category}>
         <Text style={styles.categoryTitle}>{category}</Text>
-        <FlatList
+        {user.User?.profile?.role === "syndic" && (<FlatList
           data={expensesInCategory}
           renderItem={({ item: expense }) => (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -70,13 +97,26 @@ const {user}=useAuth();
             </View>
           )}
           keyExtractor={(expense) => expense.id_depense.toString()}
-        />
-        <View style={styles.totalContainer}>
+        />)}
+
+        {user.User?.profile?.role === "proprietaire" && (<FlatList
+          data={expensesInCategory.filter(expense => expense.visible === true)}
+          renderItem={({ item: expense }) => (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <CardDepense key={expense.id_depense} item={expense} refetch={refetch} />
+            </View>
+          )}
+          keyExtractor={(expense) => expense.id_depense.toString()}
+        />)}
+        {user.User?.profile?.role === "proprietaire" && (
+          <View style={styles.totalContainer}>
           <Text style={{ padding: 7, color: '#339df2' }}>
             <Text style={{ color: 'black', fontWeight: 'bold' }}>Prix total:</Text>
             {` ${calculateTotal(data, category)} MAD`}
           </Text>
         </View>
+        )}
+        
       </View>
     );
   };

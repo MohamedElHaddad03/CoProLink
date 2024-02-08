@@ -22,8 +22,8 @@ const PaiementsManager = () => {
   }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [montantPayer, setMontantPayer] = useState('');
-  const [data, setData] = useState({});
-  const [data1, setData1] = useState({});
+  const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   //   { id: '1', property: 'Propriété 1', date: 'Janvier 2024' , price: '1000 DH'},
@@ -42,16 +42,28 @@ const PaiementsManager = () => {
 
   useEffect(() => {
     setError(fetchedError)
-    setData(fetchedData);
+    setData(fetchedData.paiements);
     setIsLoading(isLoadingData);
     setData1(fetchedData);
 
   }, [fetchedData, isLoadingData]);
   console.log(data);
 
-
-  const confirmPayment = (id_pay,num) => {
-    Alert.alert(
+  const confirmPayment = (id_prop, num, montant) => {
+    if(!montantPayer[id_prop]){
+      Alert.alert(
+        'Erreur',
+        'Veuillez entrer un montant',
+        [
+          {
+            text: 'Ok',
+            style: 'cancel',
+          },
+        ],
+        { cancelable: true }
+      );
+    }else{
+      Alert.alert(
       'Confirmation',
       `Changer l'état du paiement pour ${num}?`,
       [
@@ -61,31 +73,38 @@ const PaiementsManager = () => {
         },
         {
           text: 'Confirmer',
-          onPress: () => { handlePaymentConfirmation(id_pay), alert('Etat changé') },
-        },
-      ],
-      { cancelable: true }
-    );
+          onPress: () => { handlePaymentConfirmation(id_prop, montant) },
+         },
+          ],
+        { cancelable: true }
+      );
+    }  
   };
-
-  const handlePaymentConfirmation = async (id_pay) => {
+  const handleMontantChange = (id_prop, value) => {
+    setMontantPayer(prevState => ({
+      ...prevState,
+      [id_prop]: value,
+    }));
+  };
+  const handlePaymentConfirmation = async (id_prop, montant) => {
     try {
-      const response = await fetch(BASEURL + '/api/interfaces/paiement/vrpay/' + id_pay, {
-        method: 'GET',
+      const response = await fetch(BASEURL + `/api/interfaces/paiement/vpay/${id_prop}/${montant}`, {
+        method: 'PUT',
         headers: {
-          'Content-Type': 'application/json', // Set appropriate headers
+          'Content-Type': 'application/json', 
         },
       });
 
       if (response.ok) {
         console.log(response);
-
+        alert('paiement validé');
+        montantPayer[id_prop] = '';
         refetch();
       } else {
-        throw new Error('Failed to validate/unvalidate pay');
+        throw new Error('Failed to validate pay');
       }
     } catch (error) {
-      console.error('Error validate/unvalidate pay:', error.message);
+      console.error('Error validate pay:', error.message);
 
     }
   };
@@ -103,46 +122,41 @@ const PaiementsManager = () => {
     return monthNames[date.getMonth()];
   };
 
-  const handlePaiement = async (id_pay,num) => {
-    confirmPayment(id_pay,num);
+  const handlePaiement = async (id_pay,num, montant) => {
+    confirmPayment(id_pay,num, montant);
   };
 
   const renderItem = ({ item }) => {
-    const buttonLabel = item.etat ? 'Invalider' : 'Valider';
-    const buttonColor = item.etat ? '#FF6347' : '#65B741';
-
-    return (
-
-
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View>
-            <Text style={styles.cardTitle}>Proprieté : {item.num}</Text>
-            <Text style={styles.cardSubtitle}>Date: {getMonthName(item.date_creation)}</Text>
+    // const buttonLabel = item.etat ? 'Invalider' : 'Valider';
+    // const buttonColor = item.etat ? '#FF6347' : '#65B741';
+      return (
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View>
+              <Text style={styles.cardTitle}>Proprieté : {item.num}</Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', backgroundColor: '#ffffff'}}>
+          <TextInput
+            style={styles.MontantInput}
+            placeholder="Entrer un montant"
+            value={montantPayer[item.id_prop] || ''}
+            onChangeText={text => handleMontantChange(item.id_prop, text)}
+            keyboardType='numeric'
+          />
+            <TouchableOpacity style={styles.confirmButton} onPress={() => handlePaiement(item.id_prop, item.num, montantPayer[item.id_prop]) }>
+              <Text style={styles.buttonText}>Confirmer</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.amountSection}>
+            <Text style={styles.amountText}>Total à payer: <Text style={styles.amountValue}>{item.total_payments}</Text></Text>
           </View>
         </View>
-        {/* <View style={styles.divider} /> */}
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start',backgroundColor:'#ffffff'}}>
-          <TextInput
-                  style={styles.MontantInput}
-                  placeholder="Entrer un montant"
-                  value={montantPayer}
-                  onChangeText={setMontantPayer}
-                />
-                <TouchableOpacity style={styles.confirmButton} onPress={()=>handlePaiement(item.id_pay,item.num)}>
-          <Text style={styles.buttonText}>Confirmer</Text>
-                </TouchableOpacity>
-        </View>
-        <View style={styles.amountSection}>
-          <Text style={styles.amountText}>Total à payer: <Text style={styles.amountValue}>{item.montant}</Text></Text>
-        </View>
-      </View>
-    );
-
-  };
+      );
+    };
+    
   const searchPaiement = () => {
     if (searchQuery.trim() === '') {
-      // If the search query is empty, reset the payments to the original data
       setData(fetchedData);
     } else {
       const filteredPaiements = data1.filter(item => {
@@ -179,7 +193,7 @@ const PaiementsManager = () => {
         <FlatList
           data={data}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id_pay}
+          keyExtractor={(item) => item.id_prop}
           style={styles.Flatlist}
           showsVerticalScrollIndicator={false}
         />
