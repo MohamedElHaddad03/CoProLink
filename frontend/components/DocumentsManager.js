@@ -332,6 +332,17 @@ const DocumentsManager = () => {
 
   };
 
+
+  documents.sort((a, b) => {
+    if (a.nomdoc.toLowerCase() === 'rib.pdf' || a.nomdoc.toLowerCase() === 'rib.doc') {
+      return -1; // a should come before b
+    }
+    if (b.nomdoc.toLowerCase() === 'rib.pdf' || b.nomdoc.toLowerCase() === 'rib.doc') {
+      return 1; // b should come before a
+    }
+    return 0; // no changes to the order
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
