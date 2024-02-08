@@ -178,12 +178,4 @@ def AutogenPayement():
     for instance in propriete_instances:
         CreerPaiement(instance)
 
-def tache_planif():
-    schedule.every(31).days.do(AutogenPayement)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-
-
-# threading.Thread(target=tache_planif).start()
 

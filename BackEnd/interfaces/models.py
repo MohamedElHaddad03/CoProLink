@@ -33,6 +33,7 @@ class Depense(models.Model):
     categorie = models.CharField(max_length=40, choices=CATEGORIE)
     description = models.CharField(max_length=255)
     montant = models.FloatField()
+    visible = models.BooleanField(default=False)
     date_dep = models.DateField()
     id_cop = models.ForeignKey(Copropriete, on_delete=models.CASCADE)
 
@@ -50,11 +51,17 @@ class Cotisation(models.Model):
     id_cop = models.ForeignKey(Copropriete, on_delete=models.CASCADE)
 
 
+statut_opt = [
+    ('propritaire', 'proprietaire'),
+    ('locataire', 'locataire'),
+    
+]
 class Propriete(models.Model):
     id_prop = models.AutoField(primary_key=True)
     num = models.CharField(max_length=10)
-    id_user = models.ForeignKey(User, on_delete=models.SET_NULL, null = True, blank=True)  
+    id_user = models.ForeignKey(User, on_delete=models.CASCADE, null = True)  
     occupation = models.BooleanField(default=False)
+    statut=models.CharField(max_length=30,choices=statut_opt,default='proprietaire')
     id_cot = models.ForeignKey(Cotisation, on_delete=models.CASCADE,null = True)
     id_cop = models.ForeignKey(Copropriete, on_delete=models.CASCADE)
 
