@@ -59,7 +59,7 @@ statut_opt = [
 class Propriete(models.Model):
     id_prop = models.AutoField(primary_key=True)
     num = models.CharField(max_length=10)
-    id_user = models.ForeignKey(User, on_delete=models.CASCADE, null = True)  
+    id_user = models.ForeignKey(User, null = True)  
     occupation = models.BooleanField(default=False)
     statut=models.CharField(max_length=30,choices=statut_opt,default='proprietaire')
     id_cot = models.ForeignKey(Cotisation, on_delete=models.CASCADE,null = True)
