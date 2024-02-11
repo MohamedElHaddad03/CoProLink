@@ -61,17 +61,33 @@ def ValiderPay(request, id_prop, montant_recu):
     anciens_paiements = Paiement.objects.filter(id_prop=propriete, etat=False).order_by(
         "date_creation"
     )
+    
     nb = montant_recu // propriete.id_cot.montant
     count_anciens_paiements = anciens_paiements.count()
+    ajd = datetime.now().date()
+    if nb <= count_anciens_paiements:
+        first_paiement_id = anciens_paiements.first().id_pay
+        anciens_paiements.exclude(id_pay=first_paiement_id).update(mail_envoye=True)
 
-    if nb < count_anciens_paiements:
         for paiement in anciens_paiements[:nb]:
             paiement.etat = True
+            paiement.date_paiement=ajd
             paiement.save()
+            print(paiement.mail_envoye)
+
     else:
-        pay = Paiement.objects.all().last()
+        pay = Paiement.objects.filter(id_prop=propriete).last()
+        
         today = pay.date_creation
-        anciens_paiements.update(date_paiement=today, etat=True)
+        if anciens_paiements.exists():
+            first_paiement_id = anciens_paiements.first().id_pay
+            anciens_paiements.exclude(id_pay=first_paiement_id).update(mail_envoye=True)
+
+        for paiement in anciens_paiements[:nb]:
+            paiement.etat = True
+            paiement.date_paiement=ajd
+            paiement.save()
+   
 
         nb_prochains_paiements = int(nb - count_anciens_paiements)
         montant_cotisation = propriete.id_cot.montant
@@ -82,10 +98,11 @@ def ValiderPay(request, id_prop, montant_recu):
             Paiement.objects.create(
                 montant=montant_cotisation,
                 date_creation=payment_date,
-                date_paiement=datetime.now().date(),
+                date_paiement=ajd,
                 etat=True,
                 id_cot=propriete.id_cot,
                 id_prop=propriete,
+                mail_envoye=True,
             )
 
     return Response({"message": f"{nb} paiements validés avec succès."})

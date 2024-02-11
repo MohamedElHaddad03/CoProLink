@@ -1,4 +1,4 @@
-from base64 import urlsafe_b64decode
+from django.utils.http import urlsafe_base64_decode
 import time
 from django.db.models import F, Sum, Count, Max
 from django.template.loader import get_template
@@ -196,7 +196,7 @@ def generation_recu(sender, instance, **kwargs):
 
 @api_view(["GET"])
 def generer_pdf(request, paiement_id, uidb64, token):
-    uid = urlsafe_b64decode(uidb64).decode("utf-8")
+    uid = urlsafe_base64_decode(uidb64).decode("utf-8")
     user = User.objects.get(pk=uid)
 
     if default_token_generator.check_token(user, token):
@@ -205,7 +205,6 @@ def generer_pdf(request, paiement_id, uidb64, token):
             date_paiement=paiement.date_paiement, id_prop=paiement.id_prop
         )
         tot = paiements.aggregate(total_montant=Sum("montant"))["total_montant"]
-        print(tot)
         context = {
             "paiements": paiements,
             "copronom": paiement.id_prop.id_cop.name,
@@ -216,9 +215,11 @@ def generer_pdf(request, paiement_id, uidb64, token):
         }
         template = get_template("recu_paiement.html")
         html_content = template.render(context)
+        date_paiement_str = paiement.date_paiement.strftime("%Y-%m-%d")
+        filename = f"Reçu_{date_paiement_str}.pdf"
         pdf_file = HTML(string=html_content).write_pdf()
         response = HttpResponse(pdf_file, content_type="application/pdf")
-        response["Content-Disposition"] = 'filename="invoice.pdf"'
+        response["Content-Disposition"] = f'filename="{filename}"'
         return response
     else:
         return {"message": "Erreur en génération pdf"}
