@@ -115,6 +115,14 @@ def List_Users(request):
     serializer = CombinedUserSerializer(users, many=True)
     return Response(serializer.data)
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
 
 class LoginView(APIView):
     def post(self, request):
@@ -128,10 +136,11 @@ class LoginView(APIView):
                 user = get_object_or_404(User, username=username)
                 serializernew = CombinedUserSerializer(user)
                 response = {"User": serializernew.data, "Token": token.key}
-
+                
+                user_ip = get_client_ip(request)
                 current_time = timezone.now()
                 email_subject = 'Alerte de connexion !'
-                email_body = f'User {user.username} s\'est connecté le {current_time}. \n\nUsername: {user.username}\nEmail: {user.email}\nPrénom: {user.first_name}\nNom: {user.last_name}'
+                email_body = f'User {user.username} s\'est connecté le {current_time}.\n\nEn utilisant l\'adresse IP: {user_ip}. \n\nUsername: {user.username}\nEmail: {user.email}\nPrénom: {user.first_name}\nNom: {user.last_name}'
                 copophh = 'noreplycoprolink@gmail.com'
                 send_mail(email_subject, email_body, copophh, ['coprolink@gmail.com'])
 
