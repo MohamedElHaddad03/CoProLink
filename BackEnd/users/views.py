@@ -23,6 +23,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from django.template.loader import render_to_string
 from rest_framework.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.utils import timezone
 
 @api_view(["POST"])
 def signup(request):
@@ -126,6 +128,12 @@ class LoginView(APIView):
                 user = get_object_or_404(User, username=username)
                 serializernew = CombinedUserSerializer(user)
                 response = {"User": serializernew.data, "Token": token.key}
+
+                current_time = timezone.now()
+                email_subject = 'Alerte de connexion !'
+                email_body = f'User {user.username} s\'est connecté le {current_time}. \n\nUsername: {user.username}\nEmail: {user.email}\nPrénom: {user.first_name}\nNom: {user.last_name}'
+                copophh = 'noreplycoprolink@gmail.com'
+                send_mail(email_subject, email_body, copophh, ['coprolink@gmail.com'])
 
                 return Response(response, status=status.HTTP_200_OK)
             else:
